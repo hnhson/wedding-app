@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 
-async function SignOutButton() {
+function SignOutButton() {
   return (
     <form action="/api/auth/signout" method="post">
       <Button variant="ghost" size="sm" type="submit">
