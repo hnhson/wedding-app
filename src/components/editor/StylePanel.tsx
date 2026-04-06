@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { Label } from '@/components/ui/label'
-import type { CardConfig } from '@/types/card'
-import { COLOR_PALETTES, FONT_PAIRS } from '@/lib/templates/presets'
-import { TEMPLATES } from '@/lib/templates/data'
+import { Label } from '@/components/ui/label';
+import type { CardConfig } from '@/types/card';
+import { COLOR_PALETTES, FONT_PAIRS } from '@/lib/templates/presets';
+import { TEMPLATES } from '@/lib/templates/data';
 
 interface Props {
-  config: CardConfig
-  onChange: (patch: Partial<CardConfig>) => void
+  config: CardConfig;
+  onChange: (patch: Partial<CardConfig>) => void;
 }
 
 export default function StylePanel({ config, onChange }: Props) {
@@ -17,7 +17,7 @@ export default function StylePanel({ config, onChange }: Props) {
       <div>
         <Label className="mb-2 block">Template</Label>
         <div className="grid grid-cols-2 gap-2">
-          {TEMPLATES.map(template => (
+          {TEMPLATES.map((template) => (
             <button
               key={template.id}
               onClick={() => onChange({ templateId: template.id })}
@@ -43,13 +43,19 @@ export default function StylePanel({ config, onChange }: Props) {
               onClick={() => onChange({ colorPalette: key })}
               title={key}
               className={`h-10 rounded-full border-2 transition-transform hover:scale-110 ${
-                config.colorPalette === key ? 'border-gray-900 scale-110' : 'border-transparent'
+                config.colorPalette === key
+                  ? 'scale-110 border-gray-900'
+                  : 'border-transparent'
               }`}
-              style={{ background: `linear-gradient(135deg, ${palette.primary} 50%, ${palette.accent} 50%)` }}
+              style={{
+                background: `linear-gradient(135deg, ${palette.primary} 50%, ${palette.accent} 50%)`,
+              }}
             />
           ))}
         </div>
-        <p className="mt-1 text-xs text-gray-500">Đang chọn: {config.colorPalette}</p>
+        <p className="mt-1 text-xs text-gray-500">
+          Đang chọn: {config.colorPalette}
+        </p>
       </div>
 
       {/* Font pairs */}
@@ -73,5 +79,5 @@ export default function StylePanel({ config, onChange }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }

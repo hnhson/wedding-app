@@ -1,5 +1,5 @@
-import type { Template, CardConfig } from '@/types/card'
-import { COLOR_PALETTES, FONT_PAIRS } from './presets'
+import type { Template, CardConfig } from '@/types/card';
+import { COLOR_PALETTES, FONT_PAIRS } from './presets';
 
 export const TEMPLATES: Template[] = [
   {
@@ -44,7 +44,7 @@ export const TEMPLATES: Template[] = [
     colorPalettes: COLOR_PALETTES,
     fontPairs: FONT_PAIRS,
   },
-]
+];
 
 export const DEFAULT_CARD_CONFIG: CardConfig = {
   templateId: 'classic',
@@ -58,8 +58,8 @@ export const DEFAULT_CARD_CONFIG: CardConfig = {
   fontPair: 'playfair-lato',
   heroImage: null,
   gallery: [],
-}
+};
 
 export function getTemplate(templateId: string): Template {
-  return TEMPLATES.find(t => t.id === templateId) ?? TEMPLATES[0]
+  return TEMPLATES.find((t) => t.id === templateId) ?? TEMPLATES[0];
 }

@@ -1,37 +1,54 @@
-import { notFound, redirect } from 'next/navigation'
-import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import TemplateRenderer from '@/components/templates/TemplateRenderer'
-import CountdownWidget from '@/components/CountdownWidget'
-import type { Card } from '@/types/card'
-import { FONT_PAIRS } from '@/lib/templates/presets'
+import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
+import TemplateRenderer from '@/components/templates/TemplateRenderer';
+import CountdownWidget from '@/components/CountdownWidget';
+import type { Card } from '@/types/card';
+import { FONT_PAIRS } from '@/lib/templates/presets';
 
-export default async function PreviewCardPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const supabase = await createClient()
+export default async function PreviewCardPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
 
-  const { data } = await supabase.from('cards').select('*').eq('id', id).eq('user_id', user.id).single()
+  const { data } = await supabase
+    .from('cards')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
 
-  if (!data) notFound()
+  if (!data) notFound();
 
-  const card = data as Card
-  const fontPair = FONT_PAIRS[card.config.fontPair]
+  const card = data as Card;
+  const fontPair = FONT_PAIRS[card.config.fontPair];
 
   return (
     <div>
       {/* Toolbar */}
-      <div className="fixed top-16 left-0 right-0 z-10 flex items-center justify-between bg-white border-b px-6 py-2 shadow-sm">
+      <div className="fixed top-16 right-0 left-0 z-10 flex items-center justify-between border-b bg-white px-6 py-2 shadow-sm">
         <div className="flex items-center gap-3">
-          <Link href={`/cards/${id}/edit`} className="text-sm text-blue-600 hover:underline">
+          <Link
+            href={`/cards/${id}/edit`}
+            className="text-sm text-blue-600 hover:underline"
+          >
             ← Quay lại chỉnh sửa
           </Link>
           <span className="text-gray-300">|</span>
-          <span className="text-sm text-gray-600">Preview — slug: <code className="bg-gray-100 px-1 rounded text-xs">{card.slug}</code></span>
+          <span className="text-sm text-gray-600">
+            Preview — slug:{' '}
+            <code className="rounded bg-gray-100 px-1 text-xs">
+              {card.slug}
+            </code>
+          </span>
         </div>
         <Link
           href={`/invitation/${card.slug}`}
@@ -62,5 +79,5 @@ export default async function PreviewCardPage({ params }: { params: Promise<{ id
         <TemplateRenderer config={card.config} />
       </div>
     </div>
-  )
+  );
 }
