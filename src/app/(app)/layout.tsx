@@ -32,7 +32,7 @@ export default async function AppLayout({
   const initial = (user.email ?? 'U')[0].toUpperCase();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       <header className="border-b bg-white px-6 py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href="/dashboard" className="font-semibold text-gray-900">
@@ -60,7 +60,7 @@ export default async function AppLayout({
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">{children}</main>
       <Footer />
     </div>
   );
