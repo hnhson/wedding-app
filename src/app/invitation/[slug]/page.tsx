@@ -1,80 +1,87 @@
-import { notFound } from 'next/navigation'
-import { headers } from 'next/headers'
-import { createClient } from '@supabase/supabase-js'
-import TemplateRenderer from '@/components/templates/TemplateRenderer'
-import CountdownWidget from '@/components/CountdownWidget'
-import ShareButtons from '@/components/invitation/ShareButtons'
-import QRCodeDownload from '@/components/invitation/QRCodeDownload'
-import RSVPForm from '@/components/invitation/RSVPForm'
-import GuestbookSection from '@/components/invitation/GuestbookSection'
-import { hashViewKey } from '@/lib/hash'
-import type { Card } from '@/types/card'
-import { FONT_PAIRS } from '@/lib/templates/presets'
+import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
+import { createClient } from '@supabase/supabase-js';
+import TemplateRenderer from '@/components/templates/TemplateRenderer';
+import CountdownWidget from '@/components/CountdownWidget';
+import ShareButtons from '@/components/invitation/ShareButtons';
+import QRCodeDownload from '@/components/invitation/QRCodeDownload';
+import RSVPForm from '@/components/invitation/RSVPForm';
+import GuestbookSection from '@/components/invitation/GuestbookSection';
+import { hashViewKey } from '@/lib/hash';
+import type { Card } from '@/types/card';
+import { FONT_PAIRS } from '@/lib/templates/presets';
 
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  )
+  );
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params
+  const { slug } = await params;
   const { data } = await getSupabase()
     .from('cards')
     .select('config')
     .eq('slug', slug)
-    .single()
-  if (!data) return {}
+    .single();
+  if (!data) return {};
 
-  const { partner1, partner2 } = data.config.coupleNames
-  const title = `${partner1} & ${partner2} — Thiệp cưới`
+  const { partner1, partner2 } = data.config.coupleNames;
+  const title = `${partner1} & ${partner2} — Thiệp cưới`;
 
   return {
     title,
     description: `Trân trọng kính mời bạn đến dự lễ cưới của ${partner1} và ${partner2}`,
     openGraph: { title, type: 'website' },
-  }
+  };
 }
 
 export default async function InvitationPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params
-  const supabase = getSupabase()
+  const { slug } = await params;
+  const supabase = getSupabase();
 
-  const { data } = await supabase.from('cards').select('*').eq('slug', slug).single()
-  if (!data) notFound()
+  const { data } = await supabase
+    .from('cards')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  if (!data) notFound();
 
-  const card = data as Card
+  const card = data as Card;
 
   // Track view (fire-and-forget)
-  const headersList = await headers()
+  const headersList = await headers();
   const ip =
     headersList.get('x-forwarded-for')?.split(',')[0].trim() ??
     headersList.get('x-real-ip') ??
-    'unknown'
-  const ua = headersList.get('user-agent') ?? ''
-  const viewHash = await hashViewKey(ip, ua)
-  const today = new Date().toISOString().split('T')[0]
-  supabase.from('page_views').upsert(
-    { card_id: card.id, view_date: today, view_hash: viewHash },
-    { onConflict: 'card_id,view_date,view_hash', ignoreDuplicates: true },
-  )
+    'unknown';
+  const ua = headersList.get('user-agent') ?? '';
+  const viewHash = await hashViewKey(ip, ua);
+  const today = new Date().toISOString().split('T')[0];
+  void supabase
+    .from('page_views')
+    .upsert(
+      { card_id: card.id, view_date: today, view_hash: viewHash },
+      { onConflict: 'card_id,view_date,view_hash', ignoreDuplicates: true },
+    )
+    .catch(console.error);
 
-  const fontPair = FONT_PAIRS[card.config.fontPair]
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
-  const publicUrl = `${appUrl}/invitation/${slug}`
+  const fontPair = FONT_PAIRS[card.config.fontPair];
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
+  const publicUrl = `${appUrl}/invitation/${slug}`;
   const title =
     card.config.coupleNames.partner1 && card.config.coupleNames.partner2
       ? `${card.config.coupleNames.partner1} & ${card.config.coupleNames.partner2}`
-      : 'Thiệp cưới'
+      : 'Thiệp cưới';
 
   return (
     <div className="min-h-screen">
@@ -124,12 +131,14 @@ export default async function InvitationPage({
 
       {/* Share & QR section */}
       <div className="bg-white py-14 text-center">
-        <h2 className="mb-6 text-lg font-semibold text-gray-700">Chia sẻ thiệp cưới</h2>
+        <h2 className="mb-6 text-lg font-semibold text-gray-700">
+          Chia sẻ thiệp cưới
+        </h2>
         <ShareButtons url={publicUrl} title={title} />
         <div className="mt-10">
           <QRCodeDownload url={publicUrl} slug={slug} />
         </div>
       </div>
     </div>
-  )
+  );
 }

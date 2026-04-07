@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { Card } from '@/types/card';
 
@@ -7,11 +8,12 @@ export default async function DashboardPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
 
   const { data: cards } = await supabase
     .from('cards')
     .select('*')
-    .eq('user_id', user!.id)
+    .eq('user_id', user.id)
     .order('updated_at', { ascending: false });
 
   const cardList = (cards ?? []) as Card[];
