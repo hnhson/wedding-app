@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
 
 export const metadata = {
   title: 'Thiệp Cưới — Tạo thiệp cưới đẹp, chia sẻ dễ dàng',
@@ -13,8 +12,6 @@ export default async function HomePage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  if (user) redirect('/dashboard');
 
   return (
     <>
@@ -35,12 +32,20 @@ export default async function HomePage() {
         <nav className="landing-nav">
           <span className="landing-logo">Thiệp Cưới</span>
           <div className="landing-nav-links">
-            <Link href="/login" className="landing-nav-link">
-              Đăng nhập
-            </Link>
-            <Link href="/register" className="landing-btn-sm">
-              Bắt đầu miễn phí
-            </Link>
+            {user ? (
+              <Link href="/dashboard" className="landing-btn-sm">
+                Vào dashboard
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="landing-nav-link">
+                  Đăng nhập
+                </Link>
+                <Link href="/register" className="landing-btn-sm">
+                  Bắt đầu miễn phí
+                </Link>
+              </>
+            )}
           </div>
         </nav>
 
@@ -68,14 +73,24 @@ export default async function HomePage() {
                 khách mời — tất cả ở một nơi.
               </p>
               <div className="hero-actions">
-                <Link href="/register" className="landing-btn-primary">
-                  Tạo thiệp miễn phí
-                </Link>
-                <Link href="/login" className="landing-btn-ghost">
-                  Đăng nhập
-                </Link>
+                {user ? (
+                  <Link href="/dashboard" className="landing-btn-primary">
+                    Vào dashboard của tôi
+                  </Link>
+                ) : (
+                  <>
+                    <Link href="/register" className="landing-btn-primary">
+                      Tạo thiệp miễn phí
+                    </Link>
+                    <Link href="/login" className="landing-btn-ghost">
+                      Đăng nhập
+                    </Link>
+                  </>
+                )}
               </div>
-              <p className="hero-note">Miễn phí · Không cần thẻ tín dụng</p>
+              {!user && (
+                <p className="hero-note">Miễn phí · Không cần thẻ tín dụng</p>
+              )}
             </div>
 
             {/* Right — floating card mockup */}

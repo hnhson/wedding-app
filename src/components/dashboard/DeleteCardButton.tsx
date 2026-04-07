@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Props {
-  cardId: string
-  cardName: string
+  cardId: string;
+  cardName: string;
 }
 
 export default function DeleteCardButton({ cardId, cardName }: Props) {
-  const router = useRouter()
-  const [confirming, setConfirming] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [confirming, setConfirming] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await fetch(`/api/cards/${cardId}`, { method: 'DELETE' })
+      const res = await fetch(`/api/cards/${cardId}`, { method: 'DELETE' });
       if (res.ok) {
-        router.refresh()
+        router.refresh();
       }
     } finally {
-      setLoading(false)
-      setConfirming(false)
+      setLoading(false);
+      setConfirming(false);
     }
   }
 
@@ -46,7 +46,7 @@ export default function DeleteCardButton({ cardId, cardName }: Props) {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -56,5 +56,5 @@ export default function DeleteCardButton({ cardId, cardName }: Props) {
     >
       Xóa thiệp
     </button>
-  )
+  );
 }
