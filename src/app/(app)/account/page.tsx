@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import ChangePasswordForm from '@/components/account/ChangePasswordForm';
+import AvatarUpload from '@/components/account/AvatarUpload';
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -8,6 +9,8 @@ export default async function AccountPage() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect('/login');
+
+  const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
 
   const createdAt = new Date(user.created_at).toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -18,6 +21,14 @@ export default async function AccountPage() {
   return (
     <div className="mx-auto max-w-lg">
       <h1 className="mb-8 text-2xl font-semibold text-gray-900">Tài khoản</h1>
+
+      {/* Avatar */}
+      <div className="mb-6 rounded-lg border bg-white p-6">
+        <h2 className="mb-4 text-base font-semibold text-gray-900">
+          Ảnh đại diện
+        </h2>
+        <AvatarUpload currentUrl={avatarUrl} email={user.email ?? ''} />
+      </div>
 
       {/* Account info */}
       <div className="mb-6 rounded-lg border bg-white p-6">

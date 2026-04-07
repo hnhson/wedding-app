@@ -27,6 +27,9 @@ export default async function AppLayout({
     redirect('/login');
   }
 
+  const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
+  const initial = (user.email ?? 'U')[0].toUpperCase();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="border-b bg-white px-6 py-3">
@@ -34,12 +37,23 @@ export default async function AppLayout({
           <Link href="/dashboard" className="font-semibold text-gray-900">
             Thiệp Cưới
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/account"
-              className="text-sm text-gray-600 hover:text-gray-900 hover:underline"
+              title={user.email}
+              className="flex-shrink-0 overflow-hidden rounded-full ring-2 ring-transparent transition-all hover:ring-gray-300"
             >
-              {user.email}
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-xs font-bold text-white">
+                  {initial}
+                </div>
+              )}
             </Link>
             <SignOutButton />
           </div>
