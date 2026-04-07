@@ -39,13 +39,15 @@ export default function AvatarUpload({ currentUrl, email }: Props) {
     setPreview(localUrl);
 
     try {
-      // Upload to Vercel Blob
-      const formData = new FormData();
-      formData.append('file', file);
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      // Upload to Vercel Blob (raw body + filename query param)
+      const res = await fetch(
+        `/api/upload?filename=${encodeURIComponent(file.name)}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': file.type },
+          body: file,
+        },
+      );
       if (!res.ok) throw new Error('Upload thất bại');
       const { url } = await res.json();
 
