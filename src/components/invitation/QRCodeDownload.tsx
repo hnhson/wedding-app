@@ -1,27 +1,27 @@
-'use client'
+'use client';
 
-import { useEffect, useRef } from 'react'
-import QRCode from 'qrcode'
+import { useEffect, useRef } from 'react';
+import QRCode from 'qrcode';
 
 interface Props {
-  url: string
-  slug: string
+  url: string;
+  slug: string;
 }
 
 export default function QRCodeDownload({ url, slug }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!canvasRef.current) return
-    QRCode.toCanvas(canvasRef.current, url, { width: 200, margin: 2 })
-  }, [url])
+    if (!canvasRef.current) return;
+    QRCode.toCanvas(canvasRef.current, url, { width: 200, margin: 2 });
+  }, [url]);
 
   function handleDownload() {
-    if (!canvasRef.current) return
-    const link = document.createElement('a')
-    link.download = `thiep-cuoi-${slug}.png`
-    link.href = canvasRef.current.toDataURL('image/png')
-    link.click()
+    if (!canvasRef.current) return;
+    const link = document.createElement('a');
+    link.download = `thiep-cuoi-${slug}.png`;
+    link.href = canvasRef.current.toDataURL('image/png');
+    link.click();
   }
 
   return (
@@ -34,5 +34,5 @@ export default function QRCodeDownload({ url, slug }: Props) {
         Tải QR Code
       </button>
     </div>
-  )
+  );
 }

@@ -1,58 +1,58 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import type { Wish } from '@/types/rsvp'
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import type { Wish } from '@/types/rsvp';
 
 interface Props {
-  cardId: string
+  cardId: string;
 }
 
 export default function GuestbookSection({ cardId }: Props) {
-  const [wishes, setWishes] = useState<Wish[]>([])
-  const [name, setName] = useState('')
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
+  const [wishes, setWishes] = useState<Wish[]>([]);
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetch(`/api/wishes?cardId=${cardId}`)
-      .then(r => r.json())
+      .then((r) => r.json())
       .then((data: Wish[]) => setWishes(data))
-      .catch(() => {})
-  }, [cardId])
+      .catch(() => {});
+  }, [cardId]);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     if (!name.trim() || !message.trim()) {
-      setError('Vui lòng điền đầy đủ họ tên và lời chúc')
-      return
+      setError('Vui lòng điền đầy đủ họ tên và lời chúc');
+      return;
     }
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
     try {
       const res = await fetch('/api/wishes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cardId, name, message }),
-      })
+      });
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error ?? 'Có lỗi xảy ra')
-        return
+        const data = await res.json();
+        setError(data.error ?? 'Có lỗi xảy ra');
+        return;
       }
-      const newWish = (await res.json()) as Wish
-      setWishes(prev => [newWish, ...prev])
-      setSubmitted(true)
-      setName('')
-      setMessage('')
+      const newWish = (await res.json()) as Wish;
+      setWishes((prev) => [newWish, ...prev]);
+      setSubmitted(true);
+      setName('');
+      setMessage('');
     } catch {
-      setError('Có lỗi xảy ra, vui lòng thử lại')
+      setError('Có lỗi xảy ra, vui lòng thử lại');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -67,7 +67,7 @@ export default function GuestbookSection({ cardId }: Props) {
             <Input
               id="wish-name"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Nguyễn Văn A"
             />
           </div>
@@ -76,10 +76,10 @@ export default function GuestbookSection({ cardId }: Props) {
             <textarea
               id="wish-message"
               value={message}
-              onChange={e => setMessage(e.target.value)}
+              onChange={(e) => setMessage(e.target.value)}
               rows={4}
               placeholder="Chúc mừng hạnh phúc..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 focus:outline-none"
             />
           </div>
           <Button type="submit" disabled={loading} className="w-full">
@@ -103,10 +103,10 @@ export default function GuestbookSection({ cardId }: Props) {
       {/* Wishes list */}
       {wishes.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
+          <h3 className="text-sm font-semibold tracking-wide text-gray-500 uppercase">
             {wishes.length} lời chúc
           </h3>
-          {wishes.map(wish => (
+          {wishes.map((wish) => (
             <div key={wish.id} className="rounded-lg border bg-white p-4">
               <p className="text-sm font-semibold text-gray-900">{wish.name}</p>
               <p className="mt-1 text-sm text-gray-700">{wish.message}</p>
@@ -118,5 +118,5 @@ export default function GuestbookSection({ cardId }: Props) {
         </div>
       )}
     </div>
-  )
+  );
 }

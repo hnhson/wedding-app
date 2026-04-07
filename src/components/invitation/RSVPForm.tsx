@@ -1,32 +1,32 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Props {
-  cardId: string
+  cardId: string;
 }
 
 export default function RSVPForm({ cardId }: Props) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [attending, setAttending] = useState<boolean | null>(null)
-  const [guestCount, setGuestCount] = useState(1)
-  const [message, setMessage] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [attending, setAttending] = useState<boolean | null>(null);
+  const [guestCount, setGuestCount] = useState(1);
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     if (!name.trim() || attending === null) {
-      setError('Vui lòng điền tên và xác nhận tham dự')
-      return
+      setError('Vui lòng điền tên và xác nhận tham dự');
+      return;
     }
-    setLoading(true)
-    setError('')
+    setLoading(true);
+    setError('');
     try {
       const res = await fetch('/api/rsvp', {
         method: 'POST',
@@ -39,17 +39,17 @@ export default function RSVPForm({ cardId }: Props) {
           guestCount: attending ? guestCount : 0,
           message,
         }),
-      })
+      });
       if (!res.ok) {
-        const data = await res.json()
-        setError(data.error ?? 'Có lỗi xảy ra')
-        return
+        const data = await res.json();
+        setError(data.error ?? 'Có lỗi xảy ra');
+        return;
       }
-      setSubmitted(true)
+      setSubmitted(true);
     } catch {
-      setError('Có lỗi xảy ra, vui lòng thử lại')
+      setError('Có lỗi xảy ra, vui lòng thử lại');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -67,7 +67,7 @@ export default function RSVPForm({ cardId }: Props) {
             : 'Chúng tôi rất tiếc khi bạn không thể tham dự.'}
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -79,7 +79,7 @@ export default function RSVPForm({ cardId }: Props) {
         <Input
           id="rsvp-name"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Nguyễn Văn A"
         />
       </div>
@@ -90,7 +90,7 @@ export default function RSVPForm({ cardId }: Props) {
           id="rsvp-email"
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="email@example.com"
         />
       </div>
@@ -132,7 +132,7 @@ export default function RSVPForm({ cardId }: Props) {
             min={1}
             max={10}
             value={guestCount}
-            onChange={e => setGuestCount(Number(e.target.value))}
+            onChange={(e) => setGuestCount(Number(e.target.value))}
           />
         </div>
       )}
@@ -142,10 +142,10 @@ export default function RSVPForm({ cardId }: Props) {
         <textarea
           id="rsvp-message"
           value={message}
-          onChange={e => setMessage(e.target.value)}
+          onChange={(e) => setMessage(e.target.value)}
           rows={3}
           placeholder="Gửi lời chúc mừng đến đôi uyên ương..."
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900"
+          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 focus:outline-none"
         />
       </div>
 
@@ -153,5 +153,5 @@ export default function RSVPForm({ cardId }: Props) {
         {loading ? 'Đang gửi...' : 'Xác nhận'}
       </Button>
     </form>
-  )
+  );
 }

@@ -1,21 +1,21 @@
-import { notFound, redirect } from 'next/navigation'
-import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
-import ViewsChart from '@/components/analytics/ViewsChart'
-import type { DailyView } from '@/types/analytics'
+import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
+import ViewsChart from '@/components/analytics/ViewsChart';
+import type { DailyView } from '@/types/analytics';
 
 export default async function AnalyticsPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const supabase = await createClient()
+  const { id } = await params;
+  const supabase = await createClient();
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  } = await supabase.auth.getUser();
+  if (!user) redirect('/login');
 
   // Verify ownership
   const { data: card } = await supabase
@@ -23,13 +23,13 @@ export default async function AnalyticsPage({
     .select('id, slug, config')
     .eq('id', id)
     .eq('user_id', user.id)
-    .single()
-  if (!card) notFound()
+    .single();
+  if (!card) notFound();
 
   // Last 14 days of page views
-  const fromDate = new Date()
-  fromDate.setDate(fromDate.getDate() - 13)
-  const fromDateStr = fromDate.toISOString().split('T')[0]
+  const fromDate = new Date();
+  fromDate.setDate(fromDate.getDate() - 13);
+  const fromDateStr = fromDate.toISOString().split('T')[0];
 
   const [{ data: viewRows }, { data: rsvps }, { count: wishCount }] =
     await Promise.all([
@@ -38,42 +38,43 @@ export default async function AnalyticsPage({
         .select('view_date')
         .eq('card_id', id)
         .gte('view_date', fromDateStr),
-      supabase
-        .from('rsvps')
-        .select('attending, guest_count')
-        .eq('card_id', id),
+      supabase.from('rsvps').select('attending, guest_count').eq('card_id', id),
       supabase
         .from('wishes')
         .select('id', { count: 'exact', head: true })
         .eq('card_id', id),
-    ])
+    ]);
 
   // Group page views by date
-  const viewMap = new Map<string, number>()
+  const viewMap = new Map<string, number>();
   for (const row of viewRows ?? []) {
-    viewMap.set(row.view_date, (viewMap.get(row.view_date) ?? 0) + 1)
+    viewMap.set(row.view_date, (viewMap.get(row.view_date) ?? 0) + 1);
   }
   const recentDays: DailyView[] = Array.from(viewMap.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([view_date, view_count]) => ({ view_date, view_count }))
-  const totalViews = recentDays.reduce((sum, d) => sum + d.view_count, 0)
+    .map(([view_date, view_count]) => ({ view_date, view_count }));
+  const totalViews = recentDays.reduce((sum, d) => sum + d.view_count, 0);
 
   // RSVP stats
-  const rsvpList = rsvps ?? []
-  const rsvpAttending = rsvpList.filter(r => r.attending).length
-  const rsvpNotAttending = rsvpList.filter(r => !r.attending).length
+  const rsvpList = rsvps ?? [];
+  const rsvpAttending = rsvpList.filter((r) => r.attending).length;
+  const rsvpNotAttending = rsvpList.filter((r) => !r.attending).length;
   const totalGuests = rsvpList
-    .filter(r => r.attending)
-    .reduce((sum, r) => sum + r.guest_count, 0)
+    .filter((r) => r.attending)
+    .reduce((sum, r) => sum + r.guest_count, 0);
 
-  const { partner1, partner2 } = card.config.coupleNames
-  const coupleTitle = partner1 && partner2 ? `${partner1} & ${partner2}` : 'Thiệp'
+  const { partner1, partner2 } = card.config.coupleNames;
+  const coupleTitle =
+    partner1 && partner2 ? `${partner1} & ${partner2}` : 'Thiệp';
 
   return (
     <div>
       {/* Breadcrumb */}
       <div className="mb-6 flex items-center gap-3">
-        <Link href="/dashboard" className="text-sm text-gray-500 hover:underline">
+        <Link
+          href="/dashboard"
+          className="text-sm text-gray-500 hover:underline"
+        >
           ← Dashboard
         </Link>
         <span className="text-gray-300">|</span>
@@ -94,7 +95,9 @@ export default async function AnalyticsPage({
         </div>
         <div className="rounded-lg border bg-white p-4 text-center">
           <p className="text-3xl font-bold text-green-600">{rsvpAttending}</p>
-          <p className="mt-1 text-sm text-gray-500">Tham dự ({totalGuests} người)</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Tham dự ({totalGuests} người)
+          </p>
         </div>
         <div className="rounded-lg border bg-white p-4 text-center">
           <p className="text-3xl font-bold text-purple-600">{wishCount ?? 0}</p>
@@ -149,5 +152,5 @@ export default async function AnalyticsPage({
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,26 +1,26 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState } from 'react';
 
 interface Props {
-  url: string
-  title: string
+  url: string;
+  title: string;
 }
 
 export default function ShareButtons({ url, title }: Props) {
-  const [copied, setCopied] = useState(false)
-  const encodedUrl = encodeURIComponent(url)
-  const encodedTitle = encodeURIComponent(title)
+  const [copied, setCopied] = useState(false);
+  const encodedUrl = encodeURIComponent(url);
+  const encodedTitle = encodeURIComponent(title);
 
   async function handleCopyLink() {
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   async function handleWebShare() {
     if (navigator.share) {
-      await navigator.share({ title, url })
+      await navigator.share({ title, url });
     }
   }
 
@@ -58,5 +58,5 @@ export default function ShareButtons({ url, title }: Props) {
         Chia sẻ
       </button>
     </div>
-  )
+  );
 }
