@@ -35,7 +35,12 @@ export default async function AppLayout({
             Thiệp Cưới
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">{user.email}</span>
+            <Link
+              href="/account"
+              className="text-sm text-gray-600 hover:text-gray-900 hover:underline"
+            >
+              {user.email}
+            </Link>
             <SignOutButton />
           </div>
         </div>
