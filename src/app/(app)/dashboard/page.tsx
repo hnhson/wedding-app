@@ -65,18 +65,24 @@ export default async function DashboardPage() {
                 <p className="mt-1 text-xs text-gray-400">
                   /invitation/{card.slug}
                 </p>
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 grid grid-cols-3 gap-2">
                   <Link
                     href={`/cards/${card.id}/edit`}
-                    className="flex-1 rounded border border-gray-300 px-3 py-1.5 text-center text-sm hover:bg-gray-50"
+                    className="rounded border border-gray-300 px-2 py-1.5 text-center text-sm hover:bg-gray-50"
                   >
                     Chỉnh sửa
                   </Link>
                   <Link
                     href={`/cards/${card.id}/preview`}
-                    className="flex-1 rounded border border-gray-300 px-3 py-1.5 text-center text-sm hover:bg-gray-50"
+                    className="rounded border border-gray-300 px-2 py-1.5 text-center text-sm hover:bg-gray-50"
                   >
                     Xem trước
+                  </Link>
+                  <Link
+                    href={`/cards/${card.id}/guests`}
+                    className="rounded border border-gray-300 px-2 py-1.5 text-center text-sm hover:bg-gray-50"
+                  >
+                    Khách mời
                   </Link>
                 </div>
               </div>
