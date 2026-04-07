@@ -10,6 +10,7 @@ import GuestbookSection from '@/components/invitation/GuestbookSection';
 import { hashViewKey } from '@/lib/hash';
 import type { Card } from '@/types/card';
 import { FONT_PAIRS } from '@/lib/templates/presets';
+import Footer from '@/components/Footer';
 
 function getSupabase() {
   return createClient(
@@ -142,6 +143,8 @@ export default async function InvitationPage({
           <QRCodeDownload url={publicUrl} slug={slug} />
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

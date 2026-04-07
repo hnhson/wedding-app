@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import Footer from '@/components/Footer';
 
 function SignOutButton() {
   return (
@@ -60,6 +61,7 @@ export default async function AppLayout({
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+      <Footer />
     </div>
   );
 }
