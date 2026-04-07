@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { Card } from '@/types/card';
+import DeleteCardButton from '@/components/dashboard/DeleteCardButton';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -133,6 +134,14 @@ export default async function DashboardPage() {
                   >
                     Thống kê
                   </Link>
+                  <DeleteCardButton
+                    cardId={card.id}
+                    cardName={
+                      coupleNames.partner1 && coupleNames.partner2
+                        ? `${coupleNames.partner1} & ${coupleNames.partner2}`
+                        : 'Thiệp chưa đặt tên'
+                    }
+                  />
                 </div>
               </div>
             );
