@@ -67,11 +67,14 @@ export default async function InvitationPage({
   const ua = headersList.get('user-agent') ?? '';
   const viewHash = await hashViewKey(ip, ua);
   const today = new Date().toISOString().split('T')[0];
-  void supabase
-    .from('page_views')
-    .upsert(
-      { card_id: card.id, view_date: today, view_hash: viewHash },
-      { onConflict: 'card_id,view_date,view_hash', ignoreDuplicates: true },
+  void Promise.resolve()
+    .then(() =>
+      supabase
+        .from('page_views')
+        .upsert(
+          { card_id: card.id, view_date: today, view_hash: viewHash },
+          { onConflict: 'card_id,view_date,view_hash', ignoreDuplicates: true },
+        ),
     )
     .catch(console.error);
 
