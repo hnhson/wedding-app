@@ -18,8 +18,8 @@ export default function ContentPanel({ config, onChange }: Props) {
     description: '',
   });
 
-  const schedule = config.schedule ?? [];
-  const families = config.families ?? [];
+  const schedule = Array.isArray(config.schedule) ? config.schedule : [];
+  const families = Array.isArray(config.families) ? config.families : [];
 
   function addScheduleItem() {
     if (!newScheduleItem.time || !newScheduleItem.title) return;
