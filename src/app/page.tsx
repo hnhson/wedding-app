@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import Logo from '@/components/Logo';
 
 export const metadata = {
   title: 'Thiệp Cưới — Tạo thiệp cưới đẹp, chia sẻ dễ dàng',
@@ -30,7 +31,9 @@ export default async function HomePage() {
       <div className="landing-root">
         {/* ── NAV ── */}
         <nav className="landing-nav">
-          <a href="#hero" className="landing-logo">Thiệp Cưới</a>
+          <a href="#hero" className="landing-logo-link">
+            <Logo size={34} variant="dark" />
+          </a>
           <div className="landing-nav-center">
             <a href="#features" className="landing-nav-link">Tính năng</a>
             <a href="#how-it-works" className="landing-nav-link">Cách hoạt động</a>
@@ -232,7 +235,9 @@ export default async function HomePage() {
 
         {/* ── FOOTER ── */}
         <footer className="landing-footer">
-          <p className="footer-brand">Thiệp Cưới</p>
+          <div className="footer-logo-wrap">
+            <Logo size={32} variant="light" />
+          </div>
           <p className="footer-tagline">Tạo thiệp cưới đẹp, chia sẻ dễ dàng</p>
           <p className="footer-copy">
             © {new Date().getFullYear()} Thiệp Cưới · Made with ♥ in Vietnam
@@ -266,13 +271,10 @@ export default async function HomePage() {
           backdrop-filter: blur(12px);
           border-bottom: 1px solid rgba(26, 23, 20, 0.08);
         }
-        .landing-logo {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.35rem;
-          font-weight: 600;
-          color: #1a1714;
-          letter-spacing: 0.01em;
+        .landing-logo-link {
           text-decoration: none;
+          display: inline-flex;
+          align-items: center;
         }
         .landing-nav-center {
           display: flex;
@@ -733,11 +735,11 @@ export default async function HomePage() {
           text-align: center;
           border-top: 1px solid rgba(255,255,255,0.05);
         }
-        .footer-brand {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.2rem;
-          color: rgba(250,248,245,0.8);
-          margin-bottom: 0.4rem;
+        .footer-logo-wrap {
+          display: inline-flex;
+          justify-content: center;
+          margin-bottom: 0.75rem;
+          opacity: 0.85;
         }
         .footer-tagline {
           font-size: 0.8rem;

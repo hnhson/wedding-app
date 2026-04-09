@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
+import Logo from '@/components/Logo';
 
 function SignOutButton() {
   return (
@@ -35,8 +36,8 @@ export default async function AppLayout({
     <div className="flex min-h-screen flex-col bg-gray-50">
       <header className="border-b bg-white px-6 py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <Link href="/dashboard" className="font-semibold text-gray-900">
-            Thiệp Cưới
+          <Link href="/dashboard">
+            <Logo size={32} variant="dark" />
           </Link>
           <div className="flex items-center gap-3">
             <Link
