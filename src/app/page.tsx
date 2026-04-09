@@ -40,8 +40,22 @@ export default async function HomePage() {
           </div>
           <div className="landing-nav-links">
             {user ? (
-              <Link href="/dashboard" className="landing-btn-sm">
-                Vào dashboard
+              <Link
+                href="/dashboard"
+                title={user.email ?? 'Dashboard'}
+                className="landing-avatar-link"
+              >
+                {user.user_metadata?.avatar_url ? (
+                  <img
+                    src={user.user_metadata.avatar_url as string}
+                    alt="Avatar"
+                    className="landing-avatar-img"
+                  />
+                ) : (
+                  <div className="landing-avatar-initial">
+                    {(user.email ?? 'U')[0].toUpperCase()}
+                  </div>
+                )}
               </Link>
             ) : (
               <>
@@ -275,6 +289,35 @@ export default async function HomePage() {
           text-decoration: none;
           display: inline-flex;
           align-items: center;
+        }
+        .landing-avatar-link {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 50%;
+          ring: 2px solid transparent;
+          transition: box-shadow 0.2s;
+          text-decoration: none;
+        }
+        .landing-avatar-link:hover {
+          box-shadow: 0 0 0 3px rgba(201,169,110,0.5);
+        }
+        .landing-avatar-img {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .landing-avatar-initial {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #1a1714;
+          color: #faf8f5;
+          font-size: 0.85rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .landing-nav-center {
           display: flex;
