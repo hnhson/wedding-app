@@ -18,18 +18,21 @@ export default function ContentPanel({ config, onChange }: Props) {
     description: '',
   });
 
+  const schedule = config.schedule ?? [];
+  const families = config.families ?? [];
+
   function addScheduleItem() {
     if (!newScheduleItem.time || !newScheduleItem.title) return;
-    onChange({ schedule: [...config.schedule, newScheduleItem] });
+    onChange({ schedule: [...schedule, newScheduleItem] });
     setNewScheduleItem({ time: '', title: '', description: '' });
   }
 
   function removeScheduleItem(index: number) {
-    onChange({ schedule: config.schedule.filter((_, i) => i !== index) });
+    onChange({ schedule: schedule.filter((_, i) => i !== index) });
   }
 
   function updateFamily(side: 'groom' | 'bride', members: string) {
-    const existing = config.families.filter((f) => f.side !== side);
+    const existing = families.filter((f) => f.side !== side);
     const memberList = members
       .split('\n')
       .map((m) => m.trim())
@@ -38,9 +41,9 @@ export default function ContentPanel({ config, onChange }: Props) {
   }
 
   const groomFamily =
-    config.families.find((f) => f.side === 'groom')?.members.join('\n') ?? '';
+    families.find((f) => f.side === 'groom')?.members.join('\n') ?? '';
   const brideFamily =
-    config.families.find((f) => f.side === 'bride')?.members.join('\n') ?? '';
+    families.find((f) => f.side === 'bride')?.members.join('\n') ?? '';
 
   return (
     <div className="space-y-6">
@@ -59,7 +62,7 @@ export default function ContentPanel({ config, onChange }: Props) {
       {/* Schedule */}
       <div>
         <Label className="mb-2 block">Lịch trình</Label>
-        {config.schedule.map((item, i) => (
+        {schedule.map((item, i) => (
           <div
             key={i}
             className="mb-2 flex items-start gap-2 rounded border p-2 text-sm"
