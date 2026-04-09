@@ -47,12 +47,11 @@ export default function CountdownWidget({
 }: {
   weddingDate: string;
 }) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(() =>
-    weddingDate ? getTimeLeft(weddingDate) : null,
-  );
+  const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
 
   useEffect(() => {
     if (!weddingDate) return;
+    setTimeLeft(getTimeLeft(weddingDate));
     const interval = setInterval(
       () => setTimeLeft(getTimeLeft(weddingDate)),
       1000,
