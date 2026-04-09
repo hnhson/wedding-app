@@ -88,7 +88,7 @@ export default async function InvitationPage({
       : 'Thiệp cưới';
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-100">
       {/* Load fonts */}
       {fontPair && (
         <link
@@ -97,54 +97,56 @@ export default async function InvitationPage({
         />
       )}
 
-      {/* Countdown */}
-      {card.config.weddingDate && (
-        <div className="py-10 text-center">
-          <CountdownWidget weddingDate={card.config.weddingDate} />
-        </div>
-      )}
+      {/* Card container — 1/4 screen width, centered */}
+      <div className="flex min-h-screen justify-center py-10 px-4">
+        <div className="w-full max-w-[25vw] min-w-[320px] overflow-hidden rounded-2xl bg-white shadow-2xl">
 
-      {/* Wedding template */}
-      <TemplateRenderer config={card.config} />
+          {/* Countdown */}
+          {card.config.weddingDate && (
+            <div className="py-8 text-center">
+              <CountdownWidget weddingDate={card.config.weddingDate} />
+            </div>
+          )}
 
-      {/* RSVP section */}
-      <div className="bg-white px-6 py-14">
-        <div className="mx-auto max-w-lg">
-          <h2 className="mb-2 text-center text-2xl font-semibold text-gray-900">
-            Xác nhận tham dự
-          </h2>
-          <p className="mb-8 text-center text-gray-500">
-            Vui lòng xác nhận để chúng tôi chuẩn bị tốt nhất cho ngày trọng đại
-          </p>
-          <RSVPForm cardId={card.id} />
+          {/* Wedding template */}
+          <TemplateRenderer config={card.config} />
+
+          {/* RSVP section */}
+          <div className="bg-white px-6 py-10">
+            <h2 className="mb-2 text-center text-xl font-semibold text-gray-900">
+              Xác nhận tham dự
+            </h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              Vui lòng xác nhận để chúng tôi chuẩn bị tốt nhất cho ngày trọng đại
+            </p>
+            <RSVPForm cardId={card.id} />
+          </div>
+
+          {/* Guestbook section */}
+          <div className="bg-gray-50 px-6 py-10">
+            <h2 className="mb-2 text-center text-xl font-semibold text-gray-900">
+              Sổ lưu bút
+            </h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              Để lại lời chúc cho đôi uyên ương
+            </p>
+            <GuestbookSection cardId={card.id} />
+          </div>
+
+          {/* Share & QR section */}
+          <div className="bg-white py-10 text-center">
+            <h2 className="mb-4 text-base font-semibold text-gray-700">
+              Chia sẻ thiệp cưới
+            </h2>
+            <ShareButtons url={publicUrl} title={title} />
+            <div className="mt-8">
+              <QRCodeDownload url={publicUrl} slug={slug} />
+            </div>
+          </div>
+
+          <Footer />
         </div>
       </div>
-
-      {/* Guestbook section */}
-      <div className="bg-gray-50 px-6 py-14">
-        <div className="mx-auto max-w-lg">
-          <h2 className="mb-2 text-center text-2xl font-semibold text-gray-900">
-            Sổ lưu bút
-          </h2>
-          <p className="mb-8 text-center text-gray-500">
-            Để lại lời chúc cho đôi uyên ương
-          </p>
-          <GuestbookSection cardId={card.id} />
-        </div>
-      </div>
-
-      {/* Share & QR section */}
-      <div className="bg-white py-14 text-center">
-        <h2 className="mb-6 text-lg font-semibold text-gray-700">
-          Chia sẻ thiệp cưới
-        </h2>
-        <ShareButtons url={publicUrl} title={title} />
-        <div className="mt-10">
-          <QRCodeDownload url={publicUrl} slug={slug} />
-        </div>
-      </div>
-
-      <Footer />
     </div>
   );
 }
