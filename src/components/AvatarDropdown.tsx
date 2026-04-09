@@ -12,7 +12,7 @@ interface Props {
 const menuItems = [
   { href: '/dashboard', icon: '◎', label: 'Tổng quan' },
   { href: '/dashboard', icon: '✦', label: 'Thiệp của tôi' },
-  { href: '/account', icon: '◈', label: 'Quản lý tài khoản' },
+  { href: '/dashboard/account', icon: '◈', label: 'Quản lý tài khoản' },
 ];
 
 export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {

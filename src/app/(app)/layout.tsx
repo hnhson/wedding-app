@@ -43,7 +43,7 @@ export default async function AppLayout({
 
           <div className="flex items-center gap-2">
             <Link
-              href="/account"
+              href="/dashboard/account"
               title={user.email}
               className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-gray-100"
             >

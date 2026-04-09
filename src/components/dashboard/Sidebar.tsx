@@ -40,7 +40,7 @@ const sections = [
   {
     label: 'TÀI KHOẢN',
     items: [
-      { href: '/account', icon: User, label: 'Thông tin cá nhân' },
+      { href: '/dashboard/account', icon: User, label: 'Thông tin cá nhân' },
     ],
   },
   {
