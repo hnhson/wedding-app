@@ -21,6 +21,16 @@ export interface FamilyInfo {
   members: string[];
 }
 
+export interface OverlayElement {
+  id: string;
+  type: 'image';
+  url: string;
+  x: number;      // px, in card space (card width = 480px)
+  y: number;      // px, from top
+  width: number;  // px
+  height: number; // px
+}
+
 export interface CardConfig {
   templateId: string;
   coupleNames: { partner1: string; partner2: string };
@@ -39,6 +49,7 @@ export interface CardConfig {
   fontPair: string;
   heroImage: string | null;
   gallery: string[];
+  overlayElements?: OverlayElement[];
 }
 
 export interface Template {

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import type { Card, CardConfig } from '@/types/card';
-import TemplateRenderer from '@/components/templates/TemplateRenderer';
+import type { Card, CardConfig, OverlayElement } from '@/types/card';
+import DraggableCanvas from './DraggableCanvas';
 import ContentPanel from './ContentPanel';
 import StylePanel from './StylePanel';
 import MediaPanel from './MediaPanel';
@@ -34,11 +34,12 @@ const TOOLS: { id: Tab; icon: React.ReactNode; label: string }[] = [
 ];
 
 export default function EditorShell({ card }: { card: Card }) {
-  const [config, setConfig]       = useState<CardConfig>(card.config);
-  const [activeTab, setActiveTab] = useState<Tab | null>('content');
-  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
-  const [copied, setCopied]       = useState(false);
-  const [scale, setScale]         = useState(0.38);
+  const [config, setConfig]           = useState<CardConfig>(card.config);
+  const [activeTab, setActiveTab]     = useState<Tab | null>('content');
+  const [saveStatus, setSaveStatus]   = useState<'saved' | 'saving' | 'unsaved'>('saved');
+  const [copied, setCopied]           = useState(false);
+  const [scale, setScale]             = useState(0.38);
+  const [selectedElId, setSelectedElId] = useState<string | null>(null);
   const autoSaveRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const canvasRef   = useRef<HTMLDivElement>(null);
 
@@ -101,6 +102,29 @@ export default function EditorShell({ card }: { card: Card }) {
 
   function updateConfig(patch: Partial<CardConfig>) {
     setConfig(prev => ({ ...prev, ...patch }));
+  }
+
+  const updateElements = useCallback((elements: OverlayElement[]) => {
+    setConfig(prev => ({ ...prev, overlayElements: elements }));
+  }, []);
+
+  function addToCanvas(url: string) {
+    const newEl: OverlayElement = {
+      id: `el-${Date.now()}`,
+      type: 'image',
+      url,
+      x: 40,
+      y: 120,
+      width: 160,
+      height: 160,
+    };
+    setConfig(prev => ({
+      ...prev,
+      overlayElements: [...(prev.overlayElements ?? []), newEl],
+    }));
+    setSelectedElId(newEl.id);
+    // Switch to canvas view
+    setActiveTab(null);
   }
 
   function toggleTab(tab: Tab) {
@@ -173,7 +197,7 @@ export default function EditorShell({ card }: { card: Card }) {
           <div className="flex-1 overflow-y-auto p-4">
             {activeTab === 'content' && <ContentPanel config={config} onChange={updateConfig} />}
             {activeTab === 'style'   && <StylePanel   config={config} onChange={updateConfig} />}
-            {activeTab === 'media'   && <MediaPanel   config={config} onChange={updateConfig} cardId={card.id} />}
+            {activeTab === 'media'   && <MediaPanel   config={config} onChange={updateConfig} cardId={card.id} onAddToCanvas={addToCanvas} />}
             {activeTab === 'map'     && <MapPanel     config={config} onChange={updateConfig} />}
           </div>
         </div>
@@ -196,10 +220,16 @@ export default function EditorShell({ card }: { card: Card }) {
           <button onClick={() => setScale(s => Math.min(1, +(s + 0.05).toFixed(2)))} className="h-5 w-5 flex items-center justify-center rounded hover:bg-gray-100">+</button>
         </div>
 
-        {/* Card */}
+        {/* Card — draggable canvas */}
         <div className="mt-10" style={{ transformOrigin: 'top center', transform: `scale(${scale})`, width: 480 }}>
           <div className="overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-black/5">
-            <TemplateRenderer config={config} />
+            <DraggableCanvas
+              config={config}
+              scale={scale}
+              selectedId={selectedElId}
+              onSelect={setSelectedElId}
+              onUpdateElements={updateElements}
+            />
           </div>
         </div>
 
@@ -245,7 +275,13 @@ export default function EditorShell({ card }: { card: Card }) {
                 pointerEvents: 'none',
               }}>
                 <div style={{ width: 480 }}>
-                  <TemplateRenderer config={config} />
+                  <DraggableCanvas
+                    config={config}
+                    scale={0.195}
+                    selectedId={null}
+                    onSelect={() => {}}
+                    onUpdateElements={() => {}}
+                  />
                 </div>
               </div>
               <div className="absolute inset-0 flex items-end justify-center pb-2 opacity-0 hover:opacity-100 transition-opacity bg-black/10">
