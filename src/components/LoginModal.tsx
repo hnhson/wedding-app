@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -62,7 +63,7 @@ export default function LoginModal({ onClose }: Props) {
     router.push('/dashboard');
   }
 
-  return (
+  const content = (
     <>
       {/* Backdrop */}
       <div
@@ -302,4 +303,6 @@ export default function LoginModal({ onClose }: Props) {
       `}</style>
     </>
   );
+
+  return createPortal(content, document.body);
 }
