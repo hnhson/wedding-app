@@ -37,7 +37,7 @@ export default async function AppLayout({
       <header className="border-b bg-white px-6 py-2.5">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           {/* Left — Logo mark only (no wordmark) */}
-          <Link href="/dashboard" title="Dashboard" className="flex-shrink-0">
+          <Link href="/" title="Trang chủ" className="flex-shrink-0">
             <Logo size={32} variant="dark" showText={false} />
           </Link>
 
