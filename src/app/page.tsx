@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import Logo from '@/components/Logo';
 import NavActions from '@/components/NavActions';
+import HeroActions from '@/components/HeroActions';
+import CTAButton from '@/components/CTAButton';
 
 export const metadata = {
   title: 'Thiệp Cưới — Tạo thiệp cưới đẹp, chia sẻ dễ dàng',
@@ -78,20 +80,7 @@ export default async function HomePage() {
                 khách mời — tất cả ở một nơi.
               </p>
               <div className="hero-actions">
-                {user ? (
-                  <Link href="/cards/new" className="landing-btn-primary">
-                    Tạo thiệp ngay
-                  </Link>
-                ) : (
-                  <>
-                    <Link href="/register" className="landing-btn-primary">
-                      Tạo thiệp miễn phí
-                    </Link>
-                    <Link href="/login" className="landing-btn-ghost">
-                      Đăng nhập
-                    </Link>
-                  </>
-                )}
+                <HeroActions isLoggedIn={!!user} />
               </div>
               {!user && (
                 <p className="hero-note">Miễn phí · Không cần thẻ tín dụng</p>
@@ -220,12 +209,9 @@ export default async function HomePage() {
             Tham gia cùng hàng trăm cặp đôi đã dùng Thiệp Cưới cho ngày trọng
             đại của họ.
           </p>
-          <Link
-            href={user ? '/cards/new' : '/register'}
-            className="landing-btn-primary landing-btn-lg"
-          >
+          <CTAButton isLoggedIn={!!user} className="landing-btn-primary landing-btn-lg">
             Tạo thiệp ngay — Miễn phí
-          </Link>
+          </CTAButton>
           <span className="cta-decor cta-decor-right" aria-hidden="true">
             ❀
           </span>
