@@ -6,11 +6,16 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="-mx-6 -my-8 flex" style={{ minHeight: 'calc(100vh - 57px)' }}>
+    <>
+      {/* Sidebar — sát trái màn hình */}
       <Sidebar />
-      <div className="flex-1 overflow-y-auto p-6 lg:p-8">
-        {children}
+
+      {/* Content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+          {children}
+        </main>
       </div>
-    </div>
+    </>
   );
 }

@@ -34,21 +34,19 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
+      {/* Header — full width, no max-w constraint */}
       <header className="border-b bg-white px-6 py-2.5">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
-          {/* Left — Logo mark only (no wordmark) */}
+        <div className="flex items-center justify-between">
           <Link href="/" title="Trang chủ" className="flex-shrink-0">
             <Logo size={32} variant="dark" showText={false} />
           </Link>
 
-          {/* Right — Avatar + email + sign out */}
           <div className="flex items-center gap-2">
             <Link
               href="/account"
               title={user.email}
               className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-gray-100"
             >
-              {/* Avatar circle */}
               <span className="flex-shrink-0 overflow-hidden rounded-full ring-2 ring-transparent transition-all hover:ring-gray-300">
                 {avatarUrl ? (
                   <img
@@ -62,20 +60,21 @@ export default async function AppLayout({
                   </div>
                 )}
               </span>
-              {/* Email */}
               <span className="hidden max-w-[160px] truncate text-sm text-gray-600 sm:block">
                 {user.email}
               </span>
             </Link>
-
             <div className="h-4 w-px bg-gray-200" />
             <SignOutButton />
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-8">
+
+      {/* Body — full width, children control their own layout */}
+      <div className="flex flex-1">
         {children}
-      </main>
+      </div>
+
       <Footer />
     </div>
   );
