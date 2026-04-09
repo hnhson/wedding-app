@@ -84,8 +84,8 @@ export default async function HomePage() {
               </p>
               <div className="hero-actions">
                 {user ? (
-                  <Link href="/dashboard" className="landing-btn-primary">
-                    Vào dashboard của tôi
+                  <Link href="/cards/new" className="landing-btn-primary">
+                    Tạo thiệp ngay
                   </Link>
                 ) : (
                   <>
@@ -226,10 +226,10 @@ export default async function HomePage() {
             đại của họ.
           </p>
           <Link
-            href={user ? '/dashboard' : '/register'}
+            href={user ? '/cards/new' : '/register'}
             className="landing-btn-primary landing-btn-lg"
           >
-            {user ? 'Vào dashboard của tôi' : 'Tạo thiệp ngay — Miễn phí'}
+            Tạo thiệp ngay — Miễn phí
           </Link>
           <span className="cta-decor cta-decor-right" aria-hidden="true">
             ❀
