@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import Logo from '@/components/Logo';
+import NavActions from '@/components/NavActions';
 
 export const metadata = {
   title: 'Thiệp Cưới — Tạo thiệp cưới đẹp, chia sẻ dễ dàng',
@@ -30,27 +32,30 @@ export default async function HomePage() {
       <div className="landing-root">
         {/* ── NAV ── */}
         <nav className="landing-nav">
-          <span className="landing-logo">Thiệp Cưới</span>
+          <a href="#hero" className="landing-logo-link">
+            <Logo size={34} variant="dark" />
+          </a>
+          <div className="landing-nav-center">
+            <a href="#features" className="landing-nav-link">Tính năng</a>
+            <a href="#how-it-works" className="landing-nav-link">Cách hoạt động</a>
+          </div>
           <div className="landing-nav-links">
-            {user ? (
-              <Link href="/dashboard" className="landing-btn-sm">
-                Vào dashboard
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className="landing-nav-link">
-                  Đăng nhập
-                </Link>
-                <Link href="/register" className="landing-btn-sm">
-                  Bắt đầu miễn phí
-                </Link>
-              </>
-            )}
+            <NavActions
+              user={
+                user
+                  ? {
+                      email: user.email,
+                      avatarUrl: user.user_metadata?.avatar_url as string | undefined,
+                      initial: (user.email ?? 'U')[0].toUpperCase(),
+                    }
+                  : null
+              }
+            />
           </div>
         </nav>
 
         {/* ── HERO ── */}
-        <section className="landing-hero">
+        <section id="hero" className="landing-hero">
           {/* Decorative petals */}
           <span className="petal petal-1" aria-hidden="true" />
           <span className="petal petal-2" aria-hidden="true" />
@@ -74,8 +79,8 @@ export default async function HomePage() {
               </p>
               <div className="hero-actions">
                 {user ? (
-                  <Link href="/dashboard" className="landing-btn-primary">
-                    Vào dashboard của tôi
+                  <Link href="/cards/new" className="landing-btn-primary">
+                    Tạo thiệp ngay
                   </Link>
                 ) : (
                   <>
@@ -120,7 +125,7 @@ export default async function HomePage() {
         </section>
 
         {/* ── FEATURES ── */}
-        <section className="landing-features">
+        <section id="features" className="landing-features">
           <p className="section-eyebrow">Tính năng</p>
           <h2 className="section-title">Mọi thứ bạn cần cho ngày trọng đại</h2>
 
@@ -167,7 +172,7 @@ export default async function HomePage() {
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section className="landing-steps">
+        <section id="how-it-works" className="landing-steps">
           <p className="section-eyebrow">Cách hoạt động</p>
           <h2 className="section-title">Chỉ 3 bước là xong</h2>
 
@@ -216,10 +221,10 @@ export default async function HomePage() {
             đại của họ.
           </p>
           <Link
-            href={user ? '/dashboard' : '/register'}
+            href={user ? '/cards/new' : '/register'}
             className="landing-btn-primary landing-btn-lg"
           >
-            {user ? 'Vào dashboard của tôi' : 'Tạo thiệp ngay — Miễn phí'}
+            Tạo thiệp ngay — Miễn phí
           </Link>
           <span className="cta-decor cta-decor-right" aria-hidden="true">
             ❀
@@ -228,7 +233,9 @@ export default async function HomePage() {
 
         {/* ── FOOTER ── */}
         <footer className="landing-footer">
-          <p className="footer-brand">Thiệp Cưới</p>
+          <div className="footer-logo-wrap">
+            <Logo size={32} variant="light" />
+          </div>
           <p className="footer-tagline">Tạo thiệp cưới đẹp, chia sẻ dễ dàng</p>
           <p className="footer-copy">
             © {new Date().getFullYear()} Thiệp Cưới · Made with ♥ in Vietnam
@@ -246,30 +253,66 @@ export default async function HomePage() {
           overflow-x: hidden;
         }
 
+        /* ── Smooth scroll ── */
+        html { scroll-behavior: smooth; }
+
         /* ── Nav ── */
         .landing-nav {
           position: sticky;
           top: 0;
           z-index: 50;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
-          justify-content: space-between;
           padding: 1.1rem 2.5rem;
           background: rgba(250, 248, 245, 0.92);
           backdrop-filter: blur(12px);
           border-bottom: 1px solid rgba(26, 23, 20, 0.08);
         }
-        .landing-logo {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.35rem;
-          font-weight: 600;
-          color: #1a1714;
-          letter-spacing: 0.01em;
+        .landing-logo-link {
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+        }
+        .landing-avatar-link {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 50%;
+          ring: 2px solid transparent;
+          transition: box-shadow 0.2s;
+          text-decoration: none;
+        }
+        .landing-avatar-link:hover {
+          box-shadow: 0 0 0 3px rgba(201,169,110,0.5);
+        }
+        .landing-avatar-img {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .landing-avatar-initial {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #1a1714;
+          color: #faf8f5;
+          font-size: 0.85rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .landing-nav-center {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
         }
         .landing-nav-links {
           display: flex;
           align-items: center;
           gap: 1.25rem;
+          justify-content: flex-end;
         }
         .landing-nav-link {
           font-size: 0.875rem;
@@ -719,11 +762,11 @@ export default async function HomePage() {
           text-align: center;
           border-top: 1px solid rgba(255,255,255,0.05);
         }
-        .footer-brand {
-          font-family: 'Playfair Display', serif;
-          font-size: 1.2rem;
-          color: rgba(250,248,245,0.8);
-          margin-bottom: 0.4rem;
+        .footer-logo-wrap {
+          display: inline-flex;
+          justify-content: center;
+          margin-bottom: 0.75rem;
+          opacity: 0.85;
         }
         .footer-tagline {
           font-size: 0.8rem;
@@ -739,7 +782,8 @@ export default async function HomePage() {
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
-          .landing-nav { padding: 1rem 1.25rem; }
+          .landing-nav { padding: 1rem 1.25rem; grid-template-columns: 1fr auto; }
+          .landing-nav-center { display: none; }
           .landing-hero { padding: 3.5rem 1.25rem 5rem; min-height: auto; }
           .hero-inner {
             grid-template-columns: 1fr;
