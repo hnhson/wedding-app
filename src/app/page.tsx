@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import Logo from '@/components/Logo';
-import AvatarDropdown from '@/components/AvatarDropdown';
+import NavActions from '@/components/NavActions';
 
 export const metadata = {
   title: 'Thiệp Cưới — Tạo thiệp cưới đẹp, chia sẻ dễ dàng',
@@ -40,22 +40,17 @@ export default async function HomePage() {
             <a href="#how-it-works" className="landing-nav-link">Cách hoạt động</a>
           </div>
           <div className="landing-nav-links">
-            {user ? (
-              <AvatarDropdown
-                avatarUrl={user.user_metadata?.avatar_url as string | undefined}
-                email={user.email ?? ''}
-                initial={(user.email ?? 'U')[0].toUpperCase()}
-              />
-            ) : (
-              <>
-                <Link href="/login" className="landing-nav-link">
-                  Đăng nhập
-                </Link>
-                <Link href="/register" className="landing-btn-sm">
-                  Bắt đầu miễn phí
-                </Link>
-              </>
-            )}
+            <NavActions
+              user={
+                user
+                  ? {
+                      email: user.email,
+                      avatarUrl: user.user_metadata?.avatar_url as string | undefined,
+                      initial: (user.email ?? 'U')[0].toUpperCase(),
+                    }
+                  : null
+              }
+            />
           </div>
         </nav>
 
