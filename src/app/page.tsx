@@ -30,7 +30,11 @@ export default async function HomePage() {
       <div className="landing-root">
         {/* ── NAV ── */}
         <nav className="landing-nav">
-          <span className="landing-logo">Thiệp Cưới</span>
+          <a href="#hero" className="landing-logo">Thiệp Cưới</a>
+          <div className="landing-nav-center">
+            <a href="#features" className="landing-nav-link">Tính năng</a>
+            <a href="#how-it-works" className="landing-nav-link">Cách hoạt động</a>
+          </div>
           <div className="landing-nav-links">
             {user ? (
               <Link href="/dashboard" className="landing-btn-sm">
@@ -50,7 +54,7 @@ export default async function HomePage() {
         </nav>
 
         {/* ── HERO ── */}
-        <section className="landing-hero">
+        <section id="hero" className="landing-hero">
           {/* Decorative petals */}
           <span className="petal petal-1" aria-hidden="true" />
           <span className="petal petal-2" aria-hidden="true" />
@@ -120,7 +124,7 @@ export default async function HomePage() {
         </section>
 
         {/* ── FEATURES ── */}
-        <section className="landing-features">
+        <section id="features" className="landing-features">
           <p className="section-eyebrow">Tính năng</p>
           <h2 className="section-title">Mọi thứ bạn cần cho ngày trọng đại</h2>
 
@@ -167,7 +171,7 @@ export default async function HomePage() {
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section className="landing-steps">
+        <section id="how-it-works" className="landing-steps">
           <p className="section-eyebrow">Cách hoạt động</p>
           <h2 className="section-title">Chỉ 3 bước là xong</h2>
 
@@ -246,14 +250,17 @@ export default async function HomePage() {
           overflow-x: hidden;
         }
 
+        /* ── Smooth scroll ── */
+        html { scroll-behavior: smooth; }
+
         /* ── Nav ── */
         .landing-nav {
           position: sticky;
           top: 0;
           z-index: 50;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
           align-items: center;
-          justify-content: space-between;
           padding: 1.1rem 2.5rem;
           background: rgba(250, 248, 245, 0.92);
           backdrop-filter: blur(12px);
@@ -265,11 +272,18 @@ export default async function HomePage() {
           font-weight: 600;
           color: #1a1714;
           letter-spacing: 0.01em;
+          text-decoration: none;
+        }
+        .landing-nav-center {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
         }
         .landing-nav-links {
           display: flex;
           align-items: center;
           gap: 1.25rem;
+          justify-content: flex-end;
         }
         .landing-nav-link {
           font-size: 0.875rem;
@@ -739,7 +753,8 @@ export default async function HomePage() {
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
-          .landing-nav { padding: 1rem 1.25rem; }
+          .landing-nav { padding: 1rem 1.25rem; grid-template-columns: 1fr auto; }
+          .landing-nav-center { display: none; }
           .landing-hero { padding: 3.5rem 1.25rem 5rem; min-height: auto; }
           .hero-inner {
             grid-template-columns: 1fr;
