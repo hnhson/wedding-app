@@ -215,8 +215,11 @@ export default async function HomePage() {
             Tham gia cùng hàng trăm cặp đôi đã dùng Thiệp Cưới cho ngày trọng
             đại của họ.
           </p>
-          <Link href="/register" className="landing-btn-primary landing-btn-lg">
-            Tạo thiệp ngay — Miễn phí
+          <Link
+            href={user ? '/dashboard' : '/register'}
+            className="landing-btn-primary landing-btn-lg"
+          >
+            {user ? 'Vào dashboard của tôi' : 'Tạo thiệp ngay — Miễn phí'}
           </Link>
           <span className="cta-decor cta-decor-right" aria-hidden="true">
             ❀
