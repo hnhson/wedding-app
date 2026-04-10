@@ -57,6 +57,13 @@ export interface OverlayElement {
   height: number;
 }
 
+export interface MusicConfig {
+  url: string;
+  name?: string;
+  autoPlay: boolean;
+  loop: boolean;
+}
+
 export interface CardConfig {
   templateId: string;
   coupleNames: { partner1: string; partner2: string };
@@ -77,6 +84,7 @@ export interface CardConfig {
   gallery: string[];
   overlayElements?: OverlayElement[];
   cardHeight?: number; // px, min height of card (default 900)
+  music?: MusicConfig;
 }
 
 export interface Template {

@@ -17,6 +17,7 @@ import {
   MapPin,
   Shapes,
   Type,
+  Music,
   Eye,
   Share2,
   Copy,
@@ -26,8 +27,9 @@ import {
   Save,
   ExternalLink,
 } from 'lucide-react';
+import type { MusicConfig } from '@/types/card';
 
-type Tab = 'content' | 'style' | 'media' | 'map' | 'decor' | 'text';
+type Tab = 'content' | 'style' | 'media' | 'map' | 'decor' | 'text' | 'music';
 
 const TOOLS: { id: Tab; icon: React.ReactNode; label: string }[] = [
   { id: 'content', icon: <FileText size={19} />, label: 'Nội dung' },
@@ -35,6 +37,7 @@ const TOOLS: { id: Tab; icon: React.ReactNode; label: string }[] = [
   { id: 'media', icon: <ImageIcon size={19} />, label: 'Ảnh & Media' },
   { id: 'map', icon: <MapPin size={19} />, label: 'Địa điểm' },
   { id: 'text', icon: <Type size={19} />, label: 'Văn bản' },
+  { id: 'music', icon: <Music size={19} />, label: 'Nhạc' },
   { id: 'decor', icon: <Shapes size={19} />, label: 'Trang trí' },
 ];
 
@@ -339,6 +342,12 @@ export default function EditorShell({ card }: { card: Card }) {
               <MapPanel config={config} onChange={updateConfig} />
             )}
             {activeTab === 'text' && <TextPanel addText={addText} />}
+            {activeTab === 'music' && (
+              <MusicPanel
+                music={config.music}
+                onChange={(m) => updateConfig({ music: m })}
+              />
+            )}
             {activeTab === 'decor' && (
               <DecorPanel
                 cardHeight={config.cardHeight ?? 900}
@@ -1259,6 +1268,241 @@ function ImageEditPanel({
             </button>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Music Panel ──────────────────────────────────────────────────── */
+function MusicPanel({
+  music,
+  onChange,
+}: {
+  music: MusicConfig | undefined;
+  onChange: (m: MusicConfig | undefined) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
+  const [nameInput, setNameInput] = useState(music?.name ?? '');
+  const [error, setError] = useState('');
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const res = await fetch(
+        `/api/upload?filename=${encodeURIComponent(file.name)}`,
+        { method: 'POST', headers: { 'Content-Type': file.type }, body: file },
+      );
+      if (!res.ok) throw new Error('Upload thất bại');
+      const data = await res.json();
+      onChange({
+        url: data.url,
+        name: file.name.replace(/\.[^.]+$/, ''),
+        autoPlay: music?.autoPlay ?? true,
+        loop: music?.loop ?? true,
+      });
+      setNameInput(file.name.replace(/\.[^.]+$/, ''));
+    } catch {
+      setError('Upload thất bại. Thử lại.');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  }
+
+  function applyUrl() {
+    const url = urlInput.trim();
+    if (!url) return;
+    onChange({
+      url,
+      name: nameInput.trim() || 'Nhạc nền',
+      autoPlay: music?.autoPlay ?? true,
+      loop: music?.loop ?? true,
+    });
+    setUrlInput('');
+  }
+
+  function updateField(patch: Partial<MusicConfig>) {
+    if (!music) return;
+    onChange({ ...music, ...patch });
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Current track */}
+      {music?.url ? (
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+          <div className="mb-1 flex items-center gap-2">
+            <span className="text-lg">🎵</span>
+            <span className="flex-1 truncate text-sm font-medium text-green-800">
+              {music.name || 'Nhạc nền'}
+            </span>
+          </div>
+          <audio
+            src={music.url}
+            controls
+            className="mt-2 w-full"
+            style={{ height: 32 }}
+          />
+          <button
+            onClick={() => onChange(undefined)}
+            className="mt-3 w-full rounded-lg border border-red-200 py-1.5 text-xs text-red-500 transition hover:bg-red-50"
+          >
+            Xoá nhạc
+          </button>
+        </div>
+      ) : (
+        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 p-5 text-center">
+          <p className="text-2xl">🎵</p>
+          <p className="mt-1 text-sm font-medium text-gray-600">
+            Chưa có nhạc nền
+          </p>
+          <p className="mt-0.5 text-xs text-gray-400">
+            Tải file MP3 lên hoặc dán link bên dưới
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+          {error}
+        </p>
+      )}
+
+      {/* Upload */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Tải file lên
+        </p>
+        <button
+          onClick={() => inputRef.current?.click()}
+          disabled={uploading}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-blue-200 bg-blue-50 py-4 text-sm font-medium text-blue-600 transition hover:border-blue-400 hover:bg-blue-100 disabled:opacity-60"
+        >
+          {uploading ? (
+            <>
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-400 border-t-transparent" />
+              Đang tải lên...
+            </>
+          ) : (
+            <>🎵 Chọn file MP3 / AAC / OGG</>
+          )}
+        </button>
+        <input
+          ref={inputRef}
+          type="file"
+          accept="audio/*"
+          className="hidden"
+          onChange={handleUpload}
+        />
+      </div>
+
+      {/* URL input */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Hoặc dán link nhạc
+        </p>
+        <div className="space-y-2">
+          <input
+            type="url"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            placeholder="https://... (link MP3 trực tiếp)"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+            onKeyDown={(e) => e.key === 'Enter' && applyUrl()}
+          />
+          <input
+            type="text"
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            placeholder="Tên bài hát (tuỳ chọn)"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+          />
+          <button
+            onClick={applyUrl}
+            disabled={!urlInput.trim()}
+            className="w-full rounded-lg bg-gray-900 py-2 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-40"
+          >
+            Áp dụng
+          </button>
+        </div>
+      </div>
+
+      {/* Settings */}
+      {music?.url && (
+        <div>
+          <p className="mb-3 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+            Cài đặt
+          </p>
+          <div className="space-y-3">
+            {/* Track name */}
+            <div>
+              <p className="mb-1 text-[11px] text-gray-600">Tên hiển thị</p>
+              <input
+                type="text"
+                value={music.name ?? ''}
+                onChange={(e) => updateField({ name: e.target.value })}
+                placeholder="Tên bài hát..."
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+              />
+            </div>
+
+            {/* Autoplay toggle */}
+            <label className="flex cursor-pointer items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+              <div>
+                <p className="text-xs font-medium text-gray-700">
+                  Tự động phát
+                </p>
+                <p className="text-[10px] text-gray-400">
+                  Phát nhạc khi khách mở thiệp
+                </p>
+              </div>
+              <div
+                onClick={() => updateField({ autoPlay: !music.autoPlay })}
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  music.autoPlay ? 'bg-blue-500' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                    music.autoPlay ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                />
+              </div>
+            </label>
+
+            {/* Loop toggle */}
+            <label className="flex cursor-pointer items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3">
+              <div>
+                <p className="text-xs font-medium text-gray-700">Lặp lại</p>
+                <p className="text-[10px] text-gray-400">
+                  Phát lại từ đầu khi hết bài
+                </p>
+              </div>
+              <div
+                onClick={() => updateField({ loop: !music.loop })}
+                className={`relative h-6 w-11 rounded-full transition-colors ${
+                  music.loop ? 'bg-blue-500' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                    music.loop ? 'translate-x-5' : 'translate-x-0.5'
+                  }`}
+                />
+              </div>
+            </label>
+          </div>
+        </div>
+      )}
+
+      <div className="rounded-xl bg-amber-50 p-3 text-[11px] leading-relaxed text-amber-700">
+        💡 Nhạc sẽ xuất hiện dưới dạng nút nổi ở góc phải thiệp. Khách có thể
+        nhấn để bật/tắt nhạc.
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import ShareButtons from '@/components/invitation/ShareButtons';
 import QRCodeDownload from '@/components/invitation/QRCodeDownload';
 import RSVPForm from '@/components/invitation/RSVPForm';
 import GuestbookSection from '@/components/invitation/GuestbookSection';
+import MusicPlayer from '@/components/invitation/MusicPlayer';
 import { hashViewKey } from '@/lib/hash';
 import type { Card } from '@/types/card';
 import { FONT_PAIRS } from '@/lib/templates/presets';
@@ -147,6 +148,9 @@ export default async function InvitationPage({
           <Footer />
         </div>
       </div>
+
+      {/* Music player */}
+      {card.config.music?.url && <MusicPlayer music={card.config.music} />}
     </div>
   );
 }
