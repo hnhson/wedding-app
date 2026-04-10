@@ -38,8 +38,15 @@ export default async function HomePage() {
             <Logo size={34} variant="dark" />
           </a>
           <div className="landing-nav-center">
-            <a href="#features" className="landing-nav-link">Tính năng</a>
-            <a href="#how-it-works" className="landing-nav-link">Cách hoạt động</a>
+            <a href="#features" className="landing-nav-link">
+              Tính năng
+            </a>
+            <a href="#how-it-works" className="landing-nav-link">
+              Cách hoạt động
+            </a>
+            <Link href="/templates" className="landing-nav-link">
+              Mẫu thiệp
+            </Link>
           </div>
           <div className="landing-nav-links">
             <NavActions
@@ -47,7 +54,9 @@ export default async function HomePage() {
                 user
                   ? {
                       email: user.email,
-                      avatarUrl: user.user_metadata?.avatar_url as string | undefined,
+                      avatarUrl: user.user_metadata?.avatar_url as
+                        | string
+                        | undefined,
                       initial: (user.email ?? 'U')[0].toUpperCase(),
                     }
                   : null
@@ -209,7 +218,10 @@ export default async function HomePage() {
             Tham gia cùng hàng trăm cặp đôi đã dùng Thiệp Cưới cho ngày trọng
             đại của họ.
           </p>
-          <CTAButton isLoggedIn={!!user} className="landing-btn-primary landing-btn-lg">
+          <CTAButton
+            isLoggedIn={!!user}
+            className="landing-btn-primary landing-btn-lg"
+          >
             Tạo thiệp ngay — Miễn phí
           </CTAButton>
           <span className="cta-decor cta-decor-right" aria-hidden="true">
