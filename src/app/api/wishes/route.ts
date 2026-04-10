@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
-function getAnonClient() {
+function getServiceClient() {
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 }
 
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = getAnonClient();
+  const supabase = getServiceClient();
   const { data, error } = await supabase
     .from('wishes')
     .insert({ card_id: cardId, name: name.trim(), message: message.trim() })
@@ -38,7 +38,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'cardId is required' }, { status: 400 });
   }
 
-  const supabase = getAnonClient();
+  const supabase = getServiceClient();
   const { data, error } = await supabase
     .from('wishes')
     .select('id, name, message, created_at')

@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 
-function getAnonClient() {
+function getServiceClient() {
+  // Use service role key so anonymous guests can insert without RLS blocking
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 }
 
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = getAnonClient();
+  const supabase = getServiceClient();
   const { data, error } = await supabase
     .from('rsvps')
     .insert({
