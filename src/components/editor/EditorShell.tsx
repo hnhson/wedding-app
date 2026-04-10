@@ -15,6 +15,7 @@ import {
   Palette,
   ImageIcon,
   MapPin,
+  Shapes,
   Eye,
   Share2,
   Copy,
@@ -25,13 +26,14 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-type Tab = 'content' | 'style' | 'media' | 'map';
+type Tab = 'content' | 'style' | 'media' | 'map' | 'decor';
 
 const TOOLS: { id: Tab; icon: React.ReactNode; label: string }[] = [
   { id: 'content', icon: <FileText size={19} />, label: 'Nội dung' },
   { id: 'style', icon: <Palette size={19} />, label: 'Phong cách' },
   { id: 'media', icon: <ImageIcon size={19} />, label: 'Ảnh & Media' },
   { id: 'map', icon: <MapPin size={19} />, label: 'Địa điểm' },
+  { id: 'decor', icon: <Shapes size={19} />, label: 'Trang trí' },
 ];
 
 export default function EditorShell({ card }: { card: Card }) {
@@ -150,6 +152,34 @@ export default function EditorShell({ card }: { card: Card }) {
     setActiveTab(null);
   }
 
+  function addRect(opts: {
+    backgroundColor: string;
+    borderRadius: number;
+    opacity: number;
+    width: number;
+    height: number;
+  }) {
+    const CARD_W = 480;
+    setConfig((prev) => {
+      const existing = prev.overlayElements ?? [];
+      const offset = (existing.length % 5) * 20;
+      const newEl: OverlayElement = {
+        id: `el-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: 'rect',
+        backgroundColor: opts.backgroundColor,
+        borderRadius: opts.borderRadius,
+        opacity: opts.opacity,
+        x: Math.round((CARD_W - opts.width) / 2) + offset,
+        y: 300 + offset,
+        width: opts.width,
+        height: opts.height,
+      };
+      setSelectedElId(newEl.id);
+      return { ...prev, overlayElements: [...existing, newEl] };
+    });
+    setActiveTab(null);
+  }
+
   function toggleTab(tab: Tab) {
     setActiveTab((prev) => (prev === tab ? null : tab));
   }
@@ -239,6 +269,9 @@ export default function EditorShell({ card }: { card: Card }) {
             )}
             {activeTab === 'map' && (
               <MapPanel config={config} onChange={updateConfig} />
+            )}
+            {activeTab === 'decor' && (
+              <DecorPanel onAdd={addToCanvas} addRect={addRect} />
             )}
           </div>
         </div>
@@ -522,6 +555,133 @@ function HeightHandle({
       <GripHorizontal size={14} />
       <span>Kéo để thay đổi chiều dài</span>
       <span style={{ opacity: 0.6 }}>({cardHeight}px)</span>
+    </div>
+  );
+}
+
+/* ── Decor Panel ──────────────────────────────────────────────────── */
+const PRESETS = [
+  { label: 'Vùng trắng', bg: '#ffffff', radius: 0, opacity: 1, w: 480, h: 120 },
+  {
+    label: 'Vùng trắng bo góc',
+    bg: '#ffffff',
+    radius: 16,
+    opacity: 1,
+    w: 380,
+    h: 100,
+  },
+  { label: 'Dải màu kem', bg: '#faf8f5', radius: 0, opacity: 1, w: 480, h: 80 },
+  {
+    label: 'Thanh vàng gold',
+    bg: '#c9a96e',
+    radius: 0,
+    opacity: 1,
+    w: 480,
+    h: 4,
+  },
+  {
+    label: 'Thanh đen mỏng',
+    bg: '#1a1714',
+    radius: 0,
+    opacity: 1,
+    w: 480,
+    h: 2,
+  },
+  {
+    label: 'Khối mờ trắng',
+    bg: '#ffffff',
+    radius: 12,
+    opacity: 0.6,
+    w: 300,
+    h: 150,
+  },
+  {
+    label: 'Khối hồng nhạt',
+    bg: '#fce7f3',
+    radius: 12,
+    opacity: 1,
+    w: 300,
+    h: 120,
+  },
+  {
+    label: 'Khối vàng nhạt',
+    bg: '#fef9ee',
+    radius: 12,
+    opacity: 1,
+    w: 300,
+    h: 120,
+  },
+  {
+    label: 'Khối xanh nhạt',
+    bg: '#f0f9ff',
+    radius: 12,
+    opacity: 1,
+    w: 300,
+    h: 120,
+  },
+];
+
+function DecorPanel({
+  addRect,
+}: {
+  onAdd: (url: string) => void;
+  addRect: (opts: {
+    backgroundColor: string;
+    borderRadius: number;
+    opacity: number;
+    width: number;
+    height: number;
+  }) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <p className="text-xs leading-relaxed text-gray-500">
+        Thêm vùng màu hoặc khối trang trí vào thiệp. Sau khi thêm có thể kéo,
+        thay đổi kích thước tự do.
+      </p>
+
+      <div className="space-y-2">
+        {PRESETS.map((p) => (
+          <button
+            key={p.label}
+            onClick={() =>
+              addRect({
+                backgroundColor: p.bg,
+                borderRadius: p.radius,
+                opacity: p.opacity,
+                width: p.w,
+                height: p.h,
+              })
+            }
+            className="flex w-full items-center gap-3 rounded-lg border border-gray-100 bg-white px-3 py-2.5 text-left text-sm transition hover:border-blue-200 hover:bg-blue-50"
+          >
+            {/* Preview swatch */}
+            <div
+              style={{
+                width: 44,
+                height: 28,
+                background: p.bg,
+                borderRadius: p.radius > 8 ? 6 : 2,
+                border: '1px solid #e5e7eb',
+                opacity: p.opacity,
+                flexShrink: 0,
+              }}
+            />
+            <div>
+              <p className="text-xs font-medium text-gray-800">{p.label}</p>
+              <p className="text-[10px] text-gray-400">
+                {p.w}×{p.h}px
+                {p.opacity < 1 ? ` · ${Math.round(p.opacity * 100)}% mờ` : ''}
+              </p>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <div className="rounded-lg bg-gray-50 p-3 text-[11px] leading-relaxed text-gray-400">
+        💡 Sau khi thêm, click vào vùng để chọn, kéo để di chuyển, kéo góc để
+        thay đổi kích thước.
+      </div>
     </div>
   );
 }
