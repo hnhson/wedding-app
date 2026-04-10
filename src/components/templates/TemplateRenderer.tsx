@@ -10,6 +10,12 @@ import ClassicTemplate from './ClassicTemplate';
 import ModernTemplate from './ModernTemplate';
 import MinimalTemplate from './MinimalTemplate';
 import FloralTemplate from './FloralTemplate';
+import ElegantTemplate from './ElegantTemplate';
+import RomanceTemplate from './RomanceTemplate';
+import GardenTemplate from './GardenTemplate';
+import LuxeTemplate from './LuxeTemplate';
+import VintageTemplate from './VintageTemplate';
+import CelestialTemplate from './CelestialTemplate';
 
 interface Props {
   config: CardConfig;
@@ -36,6 +42,12 @@ export default function TemplateRenderer({ config, className }: Props) {
       modern: ModernTemplate,
       minimal: MinimalTemplate,
       floral: FloralTemplate,
+      elegant: ElegantTemplate,
+      romance: RomanceTemplate,
+      garden: GardenTemplate,
+      luxe: LuxeTemplate,
+      vintage: VintageTemplate,
+      celestial: CelestialTemplate,
     }[template.layout] ?? ClassicTemplate;
 
   return (

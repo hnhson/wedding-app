@@ -90,7 +90,19 @@ export interface CardConfig {
 export interface Template {
   id: string;
   name: string;
-  layout: 'classic' | 'modern' | 'minimal' | 'floral';
+  description: string;
+  layout:
+    | 'classic'
+    | 'modern'
+    | 'minimal'
+    | 'floral'
+    | 'elegant'
+    | 'romance'
+    | 'garden'
+    | 'luxe'
+    | 'vintage'
+    | 'celestial';
+  thumbnail: { bg: string; accent: string; style: string };
   colorPalettes: Record<string, ColorPalette>;
   fontPairs: Record<string, FontPair>;
 }

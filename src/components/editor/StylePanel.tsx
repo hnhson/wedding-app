@@ -10,41 +10,487 @@ interface Props {
   onChange: (patch: Partial<CardConfig>) => void;
 }
 
+/* Mini visual thumbnail for each template */
+function TemplateThumbnail({
+  bg,
+  accent,
+  style,
+  active,
+}: {
+  bg: string;
+  accent: string;
+  style: string;
+  active: boolean;
+}) {
+  const ring = active ? `2px solid ${accent}` : '2px solid transparent';
+
+  const base = {
+    width: '100%',
+    height: 72,
+    background: bg,
+    borderRadius: 8,
+    overflow: 'hidden' as const,
+    position: 'relative' as const,
+    border: ring,
+    transition: 'border 0.15s',
+  };
+
+  if (style === 'luxe' || style === 'celestial') {
+    return (
+      <div style={base}>
+        <div style={{ position: 'absolute', inset: 0, background: bg }}>
+          {style === 'celestial' && (
+            <>
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 4,
+                  left: 8,
+                  color: accent,
+                  fontSize: 8,
+                }}
+              >
+                ★
+              </span>
+              <span
+                style={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 12,
+                  color: accent,
+                  fontSize: 6,
+                }}
+              >
+                ✦
+              </span>
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: 10,
+                  left: 16,
+                  color: accent,
+                  fontSize: 7,
+                }}
+              >
+                ☆
+              </span>
+            </>
+          )}
+          <div
+            style={{
+              position: 'absolute',
+              top: 12,
+              left: 0,
+              right: 0,
+              textAlign: 'center',
+            }}
+          >
+            <div
+              style={{
+                width: 40,
+                height: 1,
+                background: accent,
+                margin: '0 auto 4px',
+              }}
+            />
+            <div
+              style={{
+                fontSize: 9,
+                color: accent,
+                fontWeight: 'bold',
+                letterSpacing: 1,
+              }}
+            >
+              A & B
+            </div>
+            <div
+              style={{
+                width: 40,
+                height: 1,
+                background: accent,
+                margin: '4px auto 0',
+              }}
+            />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 10,
+              left: 0,
+              right: 0,
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: 7, color: accent, opacity: 0.8 }}>
+              01.01.2025
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (style === 'elegant') {
+    return (
+      <div style={base}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 4,
+            border: `1px solid ${accent}`,
+            borderRadius: 4,
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              inset: 3,
+              border: `0.5px solid ${accent}`,
+              borderRadius: 2,
+              opacity: 0.5,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              right: 0,
+              transform: 'translateY(-50%)',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: 7, color: accent, letterSpacing: 2 }}>
+              ✦
+            </div>
+            <div
+              style={{
+                fontSize: 9,
+                color: accent,
+                fontWeight: 'bold',
+                fontStyle: 'italic',
+              }}
+            >
+              A & B
+            </div>
+            <div style={{ fontSize: 7, color: accent, letterSpacing: 2 }}>
+              ✦
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (style === 'romance') {
+    return (
+      <div
+        style={{
+          ...base,
+          background: `linear-gradient(160deg, ${bg} 60%, ${accent}22)`,
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: 0,
+            right: 0,
+            transform: 'translateY(-50%)',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              fontSize: 9,
+              color: accent,
+              fontStyle: 'italic',
+              fontWeight: 'bold',
+            }}
+          >
+            A & B
+          </div>
+          <div style={{ fontSize: 10, color: accent, margin: '2px 0' }}>♥</div>
+          <div style={{ fontSize: 7, color: accent, opacity: 0.7 }}>
+            01.01.2025
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (style === 'garden') {
+    return (
+      <div style={base}>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 24,
+            background: accent,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span style={{ fontSize: 8, color: bg, fontWeight: 'bold' }}>
+            A & B
+          </span>
+        </div>
+        <span
+          style={{
+            position: 'absolute',
+            top: 2,
+            left: 3,
+            fontSize: 9,
+            color: bg,
+            opacity: 0.8,
+          }}
+        >
+          ✿
+        </span>
+        <span
+          style={{
+            position: 'absolute',
+            top: 2,
+            right: 3,
+            fontSize: 9,
+            color: bg,
+            opacity: 0.8,
+          }}
+        >
+          ❀
+        </span>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 8,
+            left: 0,
+            right: 0,
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 7, color: accent }}>01.01.2025</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (style === 'vintage') {
+    return (
+      <div style={{ ...base, background: bg }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 3,
+            border: `1.5px dashed ${accent}`,
+            borderRadius: 4,
+            opacity: 0.6,
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: 0,
+            right: 0,
+            transform: 'translateY(-50%)',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              fontSize: 7,
+              color: accent,
+              letterSpacing: 1,
+              opacity: 0.7,
+            }}
+          >
+            ~ ~ ~
+          </div>
+          <div style={{ fontSize: 9, color: accent, fontWeight: 'bold' }}>
+            A & B
+          </div>
+          <div
+            style={{
+              fontSize: 7,
+              color: accent,
+              letterSpacing: 1,
+              opacity: 0.7,
+            }}
+          >
+            ~ ~ ~
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Default: classic / modern / minimal / floral
+  return (
+    <div style={base}>
+      {style === 'floral' && (
+        <>
+          <span
+            style={{
+              position: 'absolute',
+              top: 3,
+              left: 4,
+              fontSize: 10,
+              color: accent,
+              opacity: 0.5,
+            }}
+          >
+            ❀
+          </span>
+          <span
+            style={{
+              position: 'absolute',
+              top: 3,
+              right: 4,
+              fontSize: 10,
+              color: accent,
+              opacity: 0.5,
+            }}
+          >
+            ❀
+          </span>
+          <span
+            style={{
+              position: 'absolute',
+              bottom: 3,
+              left: 4,
+              fontSize: 10,
+              color: accent,
+              opacity: 0.5,
+            }}
+          >
+            ✿
+          </span>
+          <span
+            style={{
+              position: 'absolute',
+              bottom: 3,
+              right: 4,
+              fontSize: 10,
+              color: accent,
+              opacity: 0.5,
+            }}
+          >
+            ✿
+          </span>
+        </>
+      )}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: 0,
+          right: 0,
+          transform: 'translateY(-50%)',
+          textAlign: 'center',
+        }}
+      >
+        {style === 'modern' && (
+          <div
+            style={{
+              width: 24,
+              height: 2,
+              background: accent,
+              margin: '0 auto 4px',
+            }}
+          />
+        )}
+        <div style={{ fontSize: 9, color: accent, fontWeight: 'bold' }}>
+          A & B
+        </div>
+        <div
+          style={{
+            width: 30,
+            height: 0.5,
+            background: accent,
+            margin: '3px auto',
+          }}
+        />
+        <div style={{ fontSize: 7, color: accent, opacity: 0.7 }}>
+          01.01.2025
+        </div>
+        {style === 'minimal' && (
+          <div
+            style={{
+              width: 20,
+              height: 0.5,
+              background: accent,
+              margin: '3px auto 0',
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function StylePanel({ config, onChange }: Props) {
   return (
     <div className="space-y-6">
       {/* Template selection */}
       <div>
-        <Label className="mb-2 block">Template</Label>
+        <p className="mb-3 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Mẫu thiệp
+        </p>
         <div className="grid grid-cols-2 gap-2">
-          {TEMPLATES.map((template) => (
-            <button
-              key={template.id}
-              onClick={() => onChange({ templateId: template.id })}
-              className={`rounded border p-2 text-left text-xs transition-colors ${
-                config.templateId === template.id
-                  ? 'border-gray-900 bg-gray-50 font-semibold'
-                  : 'border-gray-200 hover:border-gray-400'
-              }`}
-            >
-              {template.name}
-            </button>
-          ))}
+          {TEMPLATES.map((template) => {
+            const active = config.templateId === template.id;
+            return (
+              <button
+                key={template.id}
+                onClick={() => onChange({ templateId: template.id })}
+                className={`group flex flex-col overflow-hidden rounded-xl border-2 transition-all ${
+                  active
+                    ? 'border-blue-500 shadow-md'
+                    : 'border-gray-100 hover:border-gray-300'
+                }`}
+              >
+                <TemplateThumbnail
+                  bg={template.thumbnail.bg}
+                  accent={template.thumbnail.accent}
+                  style={template.thumbnail.style}
+                  active={active}
+                />
+                <div
+                  className={`px-2 py-1.5 text-left ${active ? 'bg-blue-50' : 'bg-white'}`}
+                >
+                  <p
+                    className={`text-[11px] font-semibold ${active ? 'text-blue-700' : 'text-gray-700'}`}
+                  >
+                    {template.name}
+                  </p>
+                  <p className="text-[9px] text-gray-400">
+                    {template.description}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Color palettes */}
       <div>
-        <Label className="mb-2 block">Bảng màu</Label>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Bảng màu
+        </p>
         <div className="grid grid-cols-4 gap-2">
           {Object.entries(COLOR_PALETTES).map(([key, palette]) => (
             <button
               key={key}
               onClick={() => onChange({ colorPalette: key })}
               title={key}
-              className={`h-10 rounded-full border-2 transition-transform hover:scale-110 ${
+              className={`h-9 rounded-xl border-2 transition-all hover:scale-105 ${
                 config.colorPalette === key
-                  ? 'scale-110 border-gray-900'
+                  ? 'scale-105 border-gray-800 shadow-md'
                   : 'border-transparent'
               }`}
               style={{
@@ -53,27 +499,33 @@ export default function StylePanel({ config, onChange }: Props) {
             />
           ))}
         </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Đang chọn: {config.colorPalette}
+        <p className="mt-1.5 text-[10px] text-gray-400">
+          Đang dùng: {config.colorPalette}
         </p>
       </div>
 
       {/* Font pairs */}
       <div>
-        <Label className="mb-2 block">Font chữ</Label>
-        <div className="space-y-2">
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Font chữ
+        </p>
+        <div className="space-y-1.5">
           {Object.entries(FONT_PAIRS).map(([key, pair]) => (
             <button
               key={key}
               onClick={() => onChange({ fontPair: key })}
-              className={`w-full rounded border px-3 py-2 text-left transition-colors ${
+              className={`w-full rounded-xl border px-3 py-2 text-left transition-all ${
                 config.fontPair === key
-                  ? 'border-gray-900 bg-gray-50'
-                  : 'border-gray-200 hover:border-gray-400'
+                  ? 'border-blue-400 bg-blue-50'
+                  : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
               }`}
             >
-              <p className="text-sm font-medium">{pair.heading}</p>
-              <p className="text-xs text-gray-500">{pair.body}</p>
+              <p
+                className={`text-xs font-medium ${config.fontPair === key ? 'text-blue-700' : 'text-gray-700'}`}
+              >
+                {pair.heading}
+              </p>
+              <p className="text-[10px] text-gray-400">{pair.body}</p>
             </button>
           ))}
         </div>
