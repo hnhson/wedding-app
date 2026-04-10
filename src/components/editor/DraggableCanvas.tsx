@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { X, Move } from 'lucide-react';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import type { CardConfig, OverlayElement } from '@/types/card';
@@ -74,6 +74,74 @@ interface Props {
   onUpdateElements: (elements: OverlayElement[]) => void;
 }
 
+// Inline text editor rendered inside a text overlay element
+function TextEditor({
+  el,
+  onCommit,
+  onClose,
+}: {
+  el: OverlayElement;
+  onCommit: (text: string) => void;
+  onClose: () => void;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const [val, setVal] = useState(el.text ?? '');
+
+  useEffect(() => {
+    ref.current?.focus();
+    ref.current?.select();
+  }, []);
+
+  function commit() {
+    onCommit(val);
+    onClose();
+  }
+
+  return (
+    <textarea
+      ref={ref}
+      value={val}
+      onChange={(e) => setVal(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          onClose();
+          e.preventDefault();
+        }
+        // Ctrl/Cmd+Enter commits
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          commit();
+          e.preventDefault();
+        }
+        e.stopPropagation();
+      }}
+      onPointerDown={(e) => e.stopPropagation()}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        resize: 'none',
+        background: 'rgba(255,255,255,0.15)',
+        border: '2px solid #3b82f6',
+        borderRadius: el.borderRadius ?? 0,
+        outline: 'none',
+        padding: 4,
+        fontSize: el.fontSize ?? 24,
+        fontFamily: el.fontFamily ?? 'inherit',
+        fontWeight: el.fontWeight ?? 'normal',
+        fontStyle: el.fontStyle ?? 'normal',
+        color: el.color ?? '#1a1714',
+        textAlign: el.textAlign ?? 'center',
+        lineHeight: el.lineHeight ?? 1.4,
+        letterSpacing: el.letterSpacing ? `${el.letterSpacing}px` : undefined,
+        caretColor: el.color ?? '#1a1714',
+        backdropFilter: 'none',
+      }}
+    />
+  );
+}
+
 export default function DraggableCanvas({
   config,
   selectedId,
@@ -84,6 +152,7 @@ export default function DraggableCanvas({
   const rootRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<DragOp | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   function pxPerUnit() {
     const rect = rootRef.current?.getBoundingClientRect();
@@ -198,6 +267,8 @@ export default function DraggableCanvas({
           const sel = selectedId === el.id;
           const dragging = activeId === el.id;
 
+          const isEditing = editingId === el.id;
+
           return (
             <div
               key={el.id}
@@ -208,25 +279,42 @@ export default function DraggableCanvas({
                 width: el.width,
                 height: el.height,
                 pointerEvents: 'auto',
-                touchAction: 'none', // required for pointer events on touch
-                outline: sel
-                  ? '2px solid #3b82f6'
-                  : '1.5px dashed rgba(59,130,246,0.5)',
+                touchAction: 'none',
+                outline: isEditing
+                  ? 'none'
+                  : sel
+                    ? '2px solid #3b82f6'
+                    : '1.5px dashed rgba(59,130,246,0.5)',
                 outlineOffset: sel ? 1 : 0,
-                cursor: dragging ? 'grabbing' : 'grab',
+                cursor: isEditing ? 'text' : dragging ? 'grabbing' : 'grab',
                 boxSizing: 'border-box',
                 userSelect: 'none',
-                zIndex: sel ? 10 : 1,
+                zIndex: sel || isEditing ? 10 : 1,
               }}
-              onPointerDown={(e) => onElPointerDown(e, el.id)}
-              onPointerMove={onPointerMove}
-              onPointerUp={onPointerUp}
+              onPointerDown={(e) => {
+                if (isEditing) return;
+                onElPointerDown(e, el.id);
+              }}
+              onPointerMove={(e) => {
+                if (isEditing) return;
+                onPointerMove(e);
+              }}
+              onPointerUp={(e) => {
+                if (isEditing) return;
+                onPointerUp(e);
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect(el.id);
               }}
+              onDoubleClick={(e) => {
+                if (el.type !== 'text') return;
+                e.stopPropagation();
+                setEditingId(el.id);
+              }}
             >
-              {el.type === 'image' && el.url ? (
+              {/* ── Image ── */}
+              {el.type === 'image' && el.url && (
                 <img
                   src={el.url}
                   alt=""
@@ -265,7 +353,10 @@ export default function DraggableCanvas({
                         : undefined,
                   }}
                 />
-              ) : (
+              )}
+
+              {/* ── Rect ── */}
+              {el.type === 'rect' && (
                 <div
                   style={{
                     width: '100%',
@@ -283,6 +374,65 @@ export default function DraggableCanvas({
                         : undefined,
                     pointerEvents: 'none',
                   }}
+                />
+              )}
+
+              {/* ── Text ── */}
+              {el.type === 'text' && !isEditing && (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent:
+                      el.textAlign === 'left'
+                        ? 'flex-start'
+                        : el.textAlign === 'right'
+                          ? 'flex-end'
+                          : 'center',
+                    pointerEvents: 'none',
+                    padding: 4,
+                    boxSizing: 'border-box',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: el.fontSize ?? 24,
+                      fontFamily: el.fontFamily ?? 'inherit',
+                      fontWeight: el.fontWeight ?? 'normal',
+                      fontStyle: el.fontStyle ?? 'normal',
+                      color: el.color ?? '#1a1714',
+                      textAlign: el.textAlign ?? 'center',
+                      lineHeight: el.lineHeight ?? 1.4,
+                      letterSpacing: el.letterSpacing
+                        ? `${el.letterSpacing}px`
+                        : undefined,
+                      opacity: el.opacity ?? 1,
+                      margin: 0,
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      width: '100%',
+                    }}
+                  >
+                    {el.text || (sel ? '✎ Nhấn đúp để sửa' : '')}
+                  </p>
+                </div>
+              )}
+
+              {/* ── Inline text editor ── */}
+              {el.type === 'text' && isEditing && (
+                <TextEditor
+                  el={el}
+                  onCommit={(text) => {
+                    onUpdateElements(
+                      elements.map((x) =>
+                        x.id === el.id ? { ...x, text } : x,
+                      ),
+                    );
+                  }}
+                  onClose={() => setEditingId(null)}
                 />
               )}
 

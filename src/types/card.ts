@@ -23,7 +23,7 @@ export interface FamilyInfo {
 
 export interface OverlayElement {
   id: string;
-  type: 'image' | 'rect';
+  type: 'image' | 'rect' | 'text';
   // image only
   url?: string;
   objectFit?: 'cover' | 'contain' | 'fill';
@@ -36,6 +36,16 @@ export interface OverlayElement {
   blur?: number; // 0–20, default 0
   // rect only
   backgroundColor?: string;
+  // text only
+  text?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  color?: string;
+  fontWeight?: 'normal' | 'bold';
+  fontStyle?: 'normal' | 'italic';
+  textAlign?: 'left' | 'center' | 'right';
+  lineHeight?: number;
+  letterSpacing?: number;
   // common
   borderRadius?: number;
   borderColor?: string;

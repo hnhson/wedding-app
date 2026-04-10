@@ -16,6 +16,7 @@ import {
   ImageIcon,
   MapPin,
   Shapes,
+  Type,
   Eye,
   Share2,
   Copy,
@@ -26,13 +27,14 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-type Tab = 'content' | 'style' | 'media' | 'map' | 'decor';
+type Tab = 'content' | 'style' | 'media' | 'map' | 'decor' | 'text';
 
 const TOOLS: { id: Tab; icon: React.ReactNode; label: string }[] = [
   { id: 'content', icon: <FileText size={19} />, label: 'Nội dung' },
   { id: 'style', icon: <Palette size={19} />, label: 'Phong cách' },
   { id: 'media', icon: <ImageIcon size={19} />, label: 'Ảnh & Media' },
   { id: 'map', icon: <MapPin size={19} />, label: 'Địa điểm' },
+  { id: 'text', icon: <Type size={19} />, label: 'Văn bản' },
   { id: 'decor', icon: <Shapes size={19} />, label: 'Trang trí' },
 ];
 
@@ -189,6 +191,40 @@ export default function EditorShell({ card }: { card: Card }) {
     setActiveTab(null);
   }
 
+  function addText(opts: {
+    text: string;
+    fontSize: number;
+    fontFamily: string;
+    color: string;
+    fontWeight: 'normal' | 'bold';
+    fontStyle: 'normal' | 'italic';
+    textAlign: 'left' | 'center' | 'right';
+  }) {
+    const CARD_W = 480;
+    setConfig((prev) => {
+      const existing = prev.overlayElements ?? [];
+      const offset = (existing.length % 5) * 24;
+      const newEl: OverlayElement = {
+        id: `el-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: 'text',
+        text: opts.text,
+        fontSize: opts.fontSize,
+        fontFamily: opts.fontFamily,
+        color: opts.color,
+        fontWeight: opts.fontWeight,
+        fontStyle: opts.fontStyle,
+        textAlign: opts.textAlign,
+        x: Math.round((CARD_W - 320) / 2) + offset,
+        y: 200 + offset,
+        width: 320,
+        height: Math.max(48, opts.fontSize * 2.2),
+      };
+      setSelectedElId(newEl.id);
+      return { ...prev, overlayElements: [...existing, newEl] };
+    });
+    setActiveTab(null);
+  }
+
   function toggleTab(tab: Tab) {
     setActiveTab((prev) => (prev === tab ? null : tab));
   }
@@ -279,6 +315,7 @@ export default function EditorShell({ card }: { card: Card }) {
             {activeTab === 'map' && (
               <MapPanel config={config} onChange={updateConfig} />
             )}
+            {activeTab === 'text' && <TextPanel addText={addText} />}
             {activeTab === 'decor' && (
               <DecorPanel
                 cardHeight={config.cardHeight ?? 900}
@@ -841,6 +878,17 @@ function DecorPanel({
 }
 
 /* ── Image / Element Edit Panel ───────────────────────────────────── */
+const FONT_OPTIONS = [
+  { label: 'Mặc định', value: 'inherit' },
+  { label: 'Serif', value: 'Georgia, serif' },
+  { label: 'Sans-serif', value: 'Arial, sans-serif' },
+  { label: 'Monospace', value: 'monospace' },
+  { label: 'Playfair Display', value: "'Playfair Display', serif" },
+  { label: 'Dancing Script', value: "'Dancing Script', cursive" },
+  { label: 'Great Vibes', value: "'Great Vibes', cursive" },
+  { label: 'Cormorant Garamond', value: "'Cormorant Garamond', serif" },
+];
+
 function ImageEditPanel({
   el,
   onChange,
@@ -851,13 +899,20 @@ function ImageEditPanel({
   onDelete: () => void;
 }) {
   const isImage = el.type === 'image';
+  const isText = el.type === 'text';
+
+  const labelMap = {
+    image: '🖼 Chỉnh sửa ảnh',
+    rect: '⬛ Chỉnh sửa khối',
+    text: '✍ Chỉnh sửa văn bản',
+  };
 
   return (
     <div className="border-b border-gray-200 bg-blue-50/40">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-blue-100 px-4 py-2.5">
         <span className="text-[11px] font-semibold text-blue-700">
-          {isImage ? '🖼 Chỉnh sửa ảnh' : '⬛ Chỉnh sửa khối'}
+          {labelMap[el.type]}
         </span>
         <button
           onClick={onDelete}
@@ -913,6 +968,144 @@ function ImageEditPanel({
             />
           </div>
         </div>
+
+        {/* Text-only controls */}
+        {isText && (
+          <>
+            {/* Text content */}
+            <div>
+              <p className="mb-1 text-[11px] text-gray-600">Nội dung</p>
+              <textarea
+                value={el.text ?? ''}
+                onChange={(e) => onChange({ text: e.target.value })}
+                rows={3}
+                className="w-full rounded-lg border border-gray-200 p-2 text-xs text-gray-800 focus:border-blue-400 focus:outline-none"
+                placeholder="Nhập văn bản..."
+              />
+            </div>
+
+            {/* Font size */}
+            <SliderRow
+              label="Cỡ chữ"
+              value={el.fontSize ?? 24}
+              min={8}
+              max={120}
+              unit="px"
+              onChange={(v) => onChange({ fontSize: v })}
+            />
+
+            {/* Color */}
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-600">Màu chữ</span>
+              <input
+                type="color"
+                value={el.color ?? '#1a1714'}
+                onChange={(e) => onChange({ color: e.target.value })}
+                className="h-7 w-12 cursor-pointer rounded border border-gray-200"
+              />
+            </div>
+
+            {/* Font family */}
+            <div>
+              <p className="mb-1 text-[11px] text-gray-600">Font chữ</p>
+              <select
+                value={el.fontFamily ?? 'inherit'}
+                onChange={(e) => onChange({ fontFamily: e.target.value })}
+                className="w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+              >
+                {FONT_OPTIONS.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Style toggles */}
+            <div>
+              <p className="mb-1.5 text-[11px] text-gray-600">Kiểu chữ</p>
+              <div className="flex gap-1.5">
+                <button
+                  onClick={() =>
+                    onChange({
+                      fontWeight: el.fontWeight === 'bold' ? 'normal' : 'bold',
+                    })
+                  }
+                  className={`flex-1 rounded-md border py-1 text-xs font-bold transition ${
+                    el.fontWeight === 'bold'
+                      ? 'border-blue-400 bg-blue-100 text-blue-700'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                  }`}
+                >
+                  B
+                </button>
+                <button
+                  onClick={() =>
+                    onChange({
+                      fontStyle:
+                        el.fontStyle === 'italic' ? 'normal' : 'italic',
+                    })
+                  }
+                  className={`flex-1 rounded-md border py-1 text-xs italic transition ${
+                    el.fontStyle === 'italic'
+                      ? 'border-blue-400 bg-blue-100 text-blue-700'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                  }`}
+                >
+                  I
+                </button>
+              </div>
+            </div>
+
+            {/* Text align */}
+            <div>
+              <p className="mb-1.5 text-[11px] text-gray-600">Căn lề</p>
+              <div className="flex gap-1">
+                {(
+                  [
+                    { v: 'left', label: '≡ Trái' },
+                    { v: 'center', label: '≡ Giữa' },
+                    { v: 'right', label: '≡ Phải' },
+                  ] as { v: OverlayElement['textAlign']; label: string }[]
+                ).map(({ v, label }) => (
+                  <button
+                    key={v}
+                    onClick={() => onChange({ textAlign: v })}
+                    className={`flex-1 rounded-md py-1 text-[10px] font-medium transition ${
+                      (el.textAlign ?? 'center') === v
+                        ? 'bg-blue-600 text-white'
+                        : 'border border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Line height */}
+            <SliderRow
+              label="Giãn dòng"
+              value={Math.round((el.lineHeight ?? 1.4) * 10)}
+              min={8}
+              max={30}
+              unit=""
+              onChange={(v) => onChange({ lineHeight: v / 10 })}
+            />
+
+            {/* Letter spacing */}
+            <SliderRow
+              label="Giãn chữ"
+              value={el.letterSpacing ?? 0}
+              min={-5}
+              max={20}
+              unit="px"
+              onChange={(v) => onChange({ letterSpacing: v })}
+            />
+
+            <div className="h-px bg-gray-100" />
+          </>
+        )}
 
         {/* Image-only controls */}
         {isImage && (
@@ -1043,6 +1236,287 @@ function ImageEditPanel({
             </button>
           </>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Text Panel ───────────────────────────────────────────────────── */
+const TEXT_PRESETS = [
+  {
+    label: 'Tiêu đề lớn',
+    text: 'Tiêu đề',
+    fontSize: 48,
+    fontWeight: 'bold' as const,
+    fontStyle: 'normal' as const,
+    color: '#1a1714',
+  },
+  {
+    label: 'Tiêu đề nhỏ',
+    text: 'Tiêu đề phụ',
+    fontSize: 28,
+    fontWeight: 'normal' as const,
+    fontStyle: 'normal' as const,
+    color: '#1a1714',
+  },
+  {
+    label: 'Đoạn văn',
+    text: 'Nhập nội dung...',
+    fontSize: 16,
+    fontWeight: 'normal' as const,
+    fontStyle: 'normal' as const,
+    color: '#555555',
+  },
+  {
+    label: 'Chữ ký / Tên',
+    text: 'Tên đôi',
+    fontSize: 36,
+    fontWeight: 'normal' as const,
+    fontStyle: 'italic' as const,
+    color: '#c9a96e',
+  },
+  {
+    label: 'Ghi chú nhỏ',
+    text: 'Chú thích',
+    fontSize: 12,
+    fontWeight: 'normal' as const,
+    fontStyle: 'normal' as const,
+    color: '#888888',
+  },
+  {
+    label: 'Trích dẫn',
+    text: '"Yêu thương mãi mãi"',
+    fontSize: 20,
+    fontWeight: 'normal' as const,
+    fontStyle: 'italic' as const,
+    color: '#c9a96e',
+  },
+];
+
+function TextPanel({
+  addText,
+}: {
+  addText: (opts: {
+    text: string;
+    fontSize: number;
+    fontFamily: string;
+    color: string;
+    fontWeight: 'normal' | 'bold';
+    fontStyle: 'normal' | 'italic';
+    textAlign: 'left' | 'center' | 'right';
+  }) => void;
+}) {
+  const [text, setText] = useState('Nhập văn bản');
+  const [fontSize, setFontSize] = useState(24);
+  const [color, setColor] = useState('#1a1714');
+  const [fontFamily, setFontFamily] = useState('inherit');
+  const [fontWeight, setFontWeight] = useState<'normal' | 'bold'>('normal');
+  const [fontStyle, setFontStyle] = useState<'normal' | 'italic'>('normal');
+  const [textAlign, setTextAlign] = useState<'left' | 'center' | 'right'>(
+    'center',
+  );
+
+  function add() {
+    addText({
+      text,
+      fontSize,
+      fontFamily,
+      color,
+      fontWeight,
+      fontStyle,
+      textAlign,
+    });
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Quick presets */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Mẫu nhanh
+        </p>
+        <div className="grid grid-cols-2 gap-1.5">
+          {TEXT_PRESETS.map((p) => (
+            <button
+              key={p.label}
+              onClick={() =>
+                addText({
+                  text: p.text,
+                  fontSize: p.fontSize,
+                  fontFamily: 'inherit',
+                  color: p.color,
+                  fontWeight: p.fontWeight,
+                  fontStyle: p.fontStyle,
+                  textAlign: 'center',
+                })
+              }
+              className="flex flex-col items-start rounded-xl border border-gray-100 bg-white px-3 py-2.5 text-left transition hover:border-blue-200 hover:bg-blue-50"
+            >
+              <span
+                style={{
+                  fontSize: Math.max(10, Math.min(18, p.fontSize / 2.5)),
+                  fontWeight: p.fontWeight,
+                  fontStyle: p.fontStyle,
+                  color: p.color,
+                  lineHeight: 1.3,
+                }}
+              >
+                {p.label}
+              </span>
+              <span className="mt-0.5 text-[9px] text-gray-400">
+                {p.fontSize}px
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="h-px bg-gray-100" />
+
+      {/* Custom */}
+      <div>
+        <p className="mb-3 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Tuỳ chỉnh
+        </p>
+        <div className="space-y-3">
+          {/* Text input */}
+          <div>
+            <p className="mb-1 text-[11px] text-gray-600">Nội dung</p>
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={2}
+              className="w-full rounded-lg border border-gray-200 p-2 text-xs text-gray-800 focus:border-blue-400 focus:outline-none"
+              placeholder="Nhập văn bản..."
+            />
+          </div>
+
+          {/* Font size slider */}
+          <div>
+            <div className="mb-1 flex justify-between text-[11px] text-gray-600">
+              <span>Cỡ chữ</span>
+              <span className="text-gray-400">{fontSize}px</span>
+            </div>
+            <input
+              type="range"
+              min={8}
+              max={120}
+              value={fontSize}
+              onChange={(e) => setFontSize(+e.target.value)}
+              className="w-full accent-blue-500"
+            />
+          </div>
+
+          {/* Color */}
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-gray-600">Màu chữ</span>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="h-7 w-10 cursor-pointer rounded border border-gray-200"
+              />
+              <span className="font-mono text-[10px] text-gray-400">
+                {color}
+              </span>
+            </div>
+          </div>
+
+          {/* Font family */}
+          <div>
+            <p className="mb-1 text-[11px] text-gray-600">Font chữ</p>
+            <select
+              value={fontFamily}
+              onChange={(e) => setFontFamily(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
+            >
+              {FONT_OPTIONS.map((f) => (
+                <option key={f.value} value={f.value}>
+                  {f.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Style */}
+          <div className="flex gap-2">
+            <button
+              onClick={() =>
+                setFontWeight((v) => (v === 'bold' ? 'normal' : 'bold'))
+              }
+              className={`flex-1 rounded-lg border py-1.5 text-xs font-bold transition ${
+                fontWeight === 'bold'
+                  ? 'border-blue-400 bg-blue-100 text-blue-700'
+                  : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+              }`}
+            >
+              B In đậm
+            </button>
+            <button
+              onClick={() =>
+                setFontStyle((v) => (v === 'italic' ? 'normal' : 'italic'))
+              }
+              className={`flex-1 rounded-lg border py-1.5 text-xs italic transition ${
+                fontStyle === 'italic'
+                  ? 'border-blue-400 bg-blue-100 text-blue-700'
+                  : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+              }`}
+            >
+              I Nghiêng
+            </button>
+          </div>
+
+          {/* Align */}
+          <div className="flex gap-1">
+            {(['left', 'center', 'right'] as const).map((a) => (
+              <button
+                key={a}
+                onClick={() => setTextAlign(a)}
+                className={`flex-1 rounded-lg border py-1.5 text-xs transition ${
+                  textAlign === a
+                    ? 'border-blue-400 bg-blue-600 text-white'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                }`}
+              >
+                {a === 'left'
+                  ? '◀ Trái'
+                  : a === 'center'
+                    ? '▶◀ Giữa'
+                    : 'Phải ▶'}
+              </button>
+            ))}
+          </div>
+
+          {/* Preview */}
+          <div
+            className="overflow-hidden rounded-lg border border-gray-100 bg-gray-50 p-3"
+            style={{ minHeight: 48 }}
+          >
+            <p
+              style={{
+                fontSize: Math.min(fontSize, 32),
+                fontFamily,
+                fontWeight,
+                fontStyle,
+                color,
+                textAlign,
+                lineHeight: 1.4,
+                wordBreak: 'break-word',
+                margin: 0,
+              }}
+            >
+              {text || 'Xem trước...'}
+            </p>
+          </div>
+
+          <button
+            onClick={add}
+            className="w-full rounded-lg bg-gray-900 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
+          >
+            + Thêm vào thiệp
+          </button>
+        </div>
       </div>
     </div>
   );
