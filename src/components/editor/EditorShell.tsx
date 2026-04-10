@@ -15,6 +15,7 @@ import {
   Palette,
   ImageIcon,
   MapPin,
+  Shapes,
   Eye,
   Share2,
   Copy,
@@ -25,13 +26,14 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-type Tab = 'content' | 'style' | 'media' | 'map';
+type Tab = 'content' | 'style' | 'media' | 'map' | 'decor';
 
 const TOOLS: { id: Tab; icon: React.ReactNode; label: string }[] = [
   { id: 'content', icon: <FileText size={19} />, label: 'Nội dung' },
   { id: 'style', icon: <Palette size={19} />, label: 'Phong cách' },
   { id: 'media', icon: <ImageIcon size={19} />, label: 'Ảnh & Media' },
   { id: 'map', icon: <MapPin size={19} />, label: 'Địa điểm' },
+  { id: 'decor', icon: <Shapes size={19} />, label: 'Trang trí' },
 ];
 
 export default function EditorShell({ card }: { card: Card }) {
@@ -150,6 +152,34 @@ export default function EditorShell({ card }: { card: Card }) {
     setActiveTab(null);
   }
 
+  function addRect(opts: {
+    backgroundColor: string;
+    borderRadius: number;
+    opacity: number;
+    width: number;
+    height: number;
+  }) {
+    const CARD_W = 480;
+    setConfig((prev) => {
+      const existing = prev.overlayElements ?? [];
+      const offset = (existing.length % 5) * 20;
+      const newEl: OverlayElement = {
+        id: `el-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: 'rect',
+        backgroundColor: opts.backgroundColor,
+        borderRadius: opts.borderRadius,
+        opacity: opts.opacity,
+        x: Math.round((CARD_W - opts.width) / 2) + offset,
+        y: 300 + offset,
+        width: opts.width,
+        height: opts.height,
+      };
+      setSelectedElId(newEl.id);
+      return { ...prev, overlayElements: [...existing, newEl] };
+    });
+    setActiveTab(null);
+  }
+
   function toggleTab(tab: Tab) {
     setActiveTab((prev) => (prev === tab ? null : tab));
   }
@@ -240,6 +270,7 @@ export default function EditorShell({ card }: { card: Card }) {
             {activeTab === 'map' && (
               <MapPanel config={config} onChange={updateConfig} />
             )}
+            {activeTab === 'decor' && <DecorPanel addRect={addRect} />}
           </div>
         </div>
       </div>
@@ -522,6 +553,193 @@ function HeightHandle({
       <GripHorizontal size={14} />
       <span>Kéo để thay đổi chiều dài</span>
       <span style={{ opacity: 0.6 }}>({cardHeight}px)</span>
+    </div>
+  );
+}
+
+/* ── Decor Panel ──────────────────────────────────────────────────── */
+const QUICK = [
+  { label: 'Dải trắng', bg: '#ffffff', r: 0, o: 1, w: 480, h: 80 },
+  { label: 'Dải kem', bg: '#faf8f5', r: 0, o: 1, w: 480, h: 80 },
+  { label: 'Dải hồng', bg: '#fce7f3', r: 0, o: 1, w: 480, h: 80 },
+  { label: 'Dải vàng gold', bg: '#fef9ee', r: 0, o: 1, w: 480, h: 80 },
+  { label: 'Đường kẻ gold', bg: '#c9a96e', r: 0, o: 1, w: 480, h: 3 },
+  { label: 'Đường kẻ đen', bg: '#1a1714', r: 0, o: 1, w: 480, h: 2 },
+  { label: 'Khối mờ trắng', bg: '#ffffff', r: 16, o: 0.7, w: 360, h: 160 },
+  { label: 'Khối hồng bo góc', bg: '#fce7f3', r: 20, o: 1, w: 320, h: 120 },
+  { label: 'Khối đen tối', bg: '#1a1714', r: 0, o: 0.85, w: 480, h: 120 },
+];
+
+function DecorPanel({
+  addRect,
+}: {
+  addRect: (opts: {
+    backgroundColor: string;
+    borderRadius: number;
+    opacity: number;
+    width: number;
+    height: number;
+  }) => void;
+}) {
+  const [color, setColor] = useState('#ffffff');
+  const [radius, setRadius] = useState(0);
+  const [opacity, setOpacity] = useState(100);
+  const [width, setWidth] = useState(480);
+  const [height, setHeight] = useState(100);
+
+  return (
+    <div className="space-y-5">
+      {/* Quick presets */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Mẫu nhanh
+        </p>
+        <div className="grid grid-cols-1 gap-1.5">
+          {QUICK.map((q) => (
+            <button
+              key={q.label}
+              onClick={() =>
+                addRect({
+                  backgroundColor: q.bg,
+                  borderRadius: q.r,
+                  opacity: q.o,
+                  width: q.w,
+                  height: q.h,
+                })
+              }
+              className="flex items-center gap-2.5 rounded-lg border border-gray-100 bg-white px-2.5 py-2 text-left transition hover:border-blue-200 hover:bg-blue-50"
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: Math.max(10, Math.min(28, q.h / 3)),
+                  background: q.bg,
+                  borderRadius: q.r > 0 ? 6 : 2,
+                  border: '1px solid #e5e7eb',
+                  opacity: q.o,
+                  flexShrink: 0,
+                }}
+              />
+              <span className="text-xs text-gray-700">{q.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="h-px bg-gray-100" />
+
+      {/* Custom builder */}
+      <div>
+        <p className="mb-3 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Tuỳ chỉnh
+        </p>
+        <div className="space-y-3">
+          {/* Color */}
+          <div className="flex items-center justify-between">
+            <label className="text-xs text-gray-600">Màu nền</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="h-7 w-10 cursor-pointer rounded border border-gray-200"
+              />
+              <span className="font-mono text-xs text-gray-400">{color}</span>
+            </div>
+          </div>
+
+          {/* Width */}
+          <div>
+            <div className="mb-1 flex justify-between text-xs text-gray-600">
+              <span>Chiều rộng</span>
+              <span className="text-gray-400">{width}px</span>
+            </div>
+            <input
+              type="range"
+              min={40}
+              max={480}
+              value={width}
+              onChange={(e) => setWidth(+e.target.value)}
+              className="w-full accent-blue-500"
+            />
+          </div>
+
+          {/* Height */}
+          <div>
+            <div className="mb-1 flex justify-between text-xs text-gray-600">
+              <span>Chiều cao</span>
+              <span className="text-gray-400">{height}px</span>
+            </div>
+            <input
+              type="range"
+              min={2}
+              max={600}
+              value={height}
+              onChange={(e) => setHeight(+e.target.value)}
+              className="w-full accent-blue-500"
+            />
+          </div>
+
+          {/* Border radius */}
+          <div>
+            <div className="mb-1 flex justify-between text-xs text-gray-600">
+              <span>Bo góc</span>
+              <span className="text-gray-400">{radius}px</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={80}
+              value={radius}
+              onChange={(e) => setRadius(+e.target.value)}
+              className="w-full accent-blue-500"
+            />
+          </div>
+
+          {/* Opacity */}
+          <div>
+            <div className="mb-1 flex justify-between text-xs text-gray-600">
+              <span>Độ mờ</span>
+              <span className="text-gray-400">{opacity}%</span>
+            </div>
+            <input
+              type="range"
+              min={10}
+              max={100}
+              value={opacity}
+              onChange={(e) => setOpacity(+e.target.value)}
+              className="w-full accent-blue-500"
+            />
+          </div>
+
+          {/* Preview + add */}
+          <div
+            style={{
+              width: '100%',
+              height: Math.max(24, Math.min(80, height / 3)),
+              background: color,
+              borderRadius: radius / 3,
+              opacity: opacity / 100,
+              border: '1px solid #e5e7eb',
+            }}
+          />
+
+          <button
+            onClick={() =>
+              addRect({
+                backgroundColor: color,
+                borderRadius: radius,
+                opacity: opacity / 100,
+                width,
+                height,
+              })
+            }
+            className="w-full rounded-lg bg-gray-900 py-2 text-sm font-medium text-white transition hover:bg-gray-700"
+          >
+            + Thêm vào thiệp
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -226,19 +226,32 @@ export default function DraggableCanvas({
                 onSelect(el.id);
               }}
             >
-              <img
-                src={el.url}
-                alt=""
-                draggable={false}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  display: 'block',
-                  pointerEvents: 'none',
-                  userSelect: 'none',
-                }}
-              />
+              {el.type === 'image' && el.url ? (
+                <img
+                  src={el.url}
+                  alt=""
+                  draggable={false}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    background: el.backgroundColor ?? '#ffffff',
+                    borderRadius: el.borderRadius ?? 0,
+                    opacity: el.opacity ?? 1,
+                    pointerEvents: 'none',
+                  }}
+                />
+              )}
 
               {/* Delete button */}
               {sel && (
