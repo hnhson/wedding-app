@@ -69,45 +69,39 @@ export default function AvatarUpload({ currentUrl, email }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-5">
+    <div className="flex flex-col items-center gap-3">
       {/* Avatar display */}
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
-        disabled={loading}
-        className="relative flex-shrink-0 overflow-hidden rounded-full focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 focus:outline-none"
-      >
+      <div className="relative flex-shrink-0">
         {preview ? (
           <img
             src={preview}
             alt="Avatar"
-            className="h-20 w-20 rounded-full object-cover"
+            className="h-24 w-24 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-900 text-2xl font-bold text-white">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-900 text-2xl font-bold text-white">
             {initial}
           </div>
         )}
-        <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity hover:opacity-100">
-          <span className="text-xs font-medium text-white">
-            {loading ? '...' : 'Đổi ảnh'}
-          </span>
-        </div>
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
+            <span className="text-xs font-medium text-white">Đang tải...</span>
+          </div>
+        )}
+      </div>
+
+      {/* Button below avatar */}
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        disabled={loading}
+        className="rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-50"
+      >
+        {loading ? 'Đang tải lên...' : 'Thay đổi ảnh'}
       </button>
 
-      {/* Info */}
-      <div>
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          disabled={loading}
-          className="text-sm font-medium text-gray-900 hover:underline disabled:opacity-50"
-        >
-          {loading ? 'Đang tải lên...' : 'Tải ảnh lên'}
-        </button>
-        <p className="mt-0.5 text-xs text-gray-400">JPG, PNG · Tối đa 2MB</p>
-        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+      <p className="text-xs text-gray-400">JPG, PNG · Tối đa 2MB</p>
 
       <input
         ref={inputRef}
