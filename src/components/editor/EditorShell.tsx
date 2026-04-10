@@ -132,6 +132,26 @@ export default function EditorShell({ card }: { card: Card }) {
     setConfig((prev) => ({ ...prev, overlayElements: elements }));
   }, []);
 
+  /**
+   * Returns the Y coordinate (in card-space px) of the center of the
+   * currently visible portion of the canvas.  Used so newly added
+   * elements appear where the user is looking instead of at the top.
+   *
+   * Layout inside canvasRef (overflow-y-auto):
+   *   40px  — py-10 top padding
+   *   48px  — mt-10 on card wrapper  (40px) + zoom bar overlap (~8px)
+   *   card  — scaled by `scale`, origin top-center
+   */
+  function getVisibleCenterY(): number {
+    const el = canvasRef.current;
+    if (!el) return 300;
+    // Approximate top of the card within the scrollable canvas
+    const CARD_OFFSET_PX = 88; // py-10 (40) + mt-10 (40) + a little for zoom bar
+    const visibleCenterInCanvas = el.scrollTop + el.clientHeight / 2;
+    const cardSpaceY = (visibleCenterInCanvas - CARD_OFFSET_PX) / scale;
+    return Math.max(0, Math.round(cardSpaceY));
+  }
+
   function updateElement(id: string, patch: Partial<OverlayElement>) {
     setConfig((prev) => ({
       ...prev,
@@ -144,16 +164,16 @@ export default function EditorShell({ card }: { card: Card }) {
   function addToCanvas(url: string) {
     const CARD_W = 480;
     const imgSize = 200;
+    const centerY = getVisibleCenterY();
     setConfig((prev) => {
       const existing = prev.overlayElements ?? [];
-      // Offset each new image slightly so multiple images don't stack exactly
       const offset = (existing.length % 5) * 24;
       const newEl: OverlayElement = {
         id: `el-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         type: 'image',
         url,
         x: Math.round((CARD_W - imgSize) / 2) + offset,
-        y: 300 + offset,
+        y: Math.round(centerY - imgSize / 2) + offset,
         width: imgSize,
         height: imgSize,
       };
@@ -171,6 +191,7 @@ export default function EditorShell({ card }: { card: Card }) {
     height: number;
   }) {
     const CARD_W = 480;
+    const centerY = getVisibleCenterY();
     setConfig((prev) => {
       const existing = prev.overlayElements ?? [];
       const offset = (existing.length % 5) * 20;
@@ -181,7 +202,7 @@ export default function EditorShell({ card }: { card: Card }) {
         borderRadius: opts.borderRadius,
         opacity: opts.opacity,
         x: Math.round((CARD_W - opts.width) / 2) + offset,
-        y: 300 + offset,
+        y: Math.round(centerY - opts.height / 2) + offset,
         width: opts.width,
         height: opts.height,
       };
@@ -201,9 +222,11 @@ export default function EditorShell({ card }: { card: Card }) {
     textAlign: 'left' | 'center' | 'right';
   }) {
     const CARD_W = 480;
+    const centerY = getVisibleCenterY();
     setConfig((prev) => {
       const existing = prev.overlayElements ?? [];
       const offset = (existing.length % 5) * 24;
+      const elH = Math.max(48, opts.fontSize * 2.2);
       const newEl: OverlayElement = {
         id: `el-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         type: 'text',
@@ -215,9 +238,9 @@ export default function EditorShell({ card }: { card: Card }) {
         fontStyle: opts.fontStyle,
         textAlign: opts.textAlign,
         x: Math.round((CARD_W - 320) / 2) + offset,
-        y: 200 + offset,
+        y: Math.round(centerY - elH / 2) + offset,
         width: 320,
-        height: Math.max(48, opts.fontSize * 2.2),
+        height: elH,
       };
       setSelectedElId(newEl.id);
       return { ...prev, overlayElements: [...existing, newEl] };
