@@ -130,22 +130,22 @@ export default function EditorShell({ card }: { card: Card }) {
   function addToCanvas(url: string) {
     const CARD_W = 480;
     const imgSize = 200;
-    // Place image centered horizontally, ~1/3 down the visible card
-    const newEl: OverlayElement = {
-      id: `el-${Date.now()}`,
-      type: 'image',
-      url,
-      x: Math.round((CARD_W - imgSize) / 2),
-      y: 300,
-      width: imgSize,
-      height: imgSize,
-    };
-    setConfig((prev) => ({
-      ...prev,
-      overlayElements: [...(prev.overlayElements ?? []), newEl],
-    }));
-    setSelectedElId(newEl.id);
-    // Switch to canvas view
+    setConfig((prev) => {
+      const existing = prev.overlayElements ?? [];
+      // Offset each new image slightly so multiple images don't stack exactly
+      const offset = (existing.length % 5) * 24;
+      const newEl: OverlayElement = {
+        id: `el-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: 'image',
+        url,
+        x: Math.round((CARD_W - imgSize) / 2) + offset,
+        y: 300 + offset,
+        width: imgSize,
+        height: imgSize,
+      };
+      setSelectedElId(newEl.id);
+      return { ...prev, overlayElements: [...existing, newEl] };
+    });
     setActiveTab(null);
   }
 

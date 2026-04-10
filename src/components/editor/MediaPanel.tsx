@@ -23,46 +23,64 @@ async function uploadFile(file: File): Promise<string> {
 }
 
 export default function MediaPanel({ config, onChange, onAddToCanvas }: Props) {
-  const heroInputRef    = useRef<HTMLInputElement>(null);
+  const heroInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
-  const canvasInputRef  = useRef<HTMLInputElement>(null);
-  const [heroUploading,    setHeroUploading]    = useState(false);
+  const canvasInputRef = useRef<HTMLInputElement>(null);
+  const [heroUploading, setHeroUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
-  const [canvasUploading,  setCanvasUploading]  = useState(false);
+  const [canvasUploading, setCanvasUploading] = useState(false);
   const [error, setError] = useState('');
 
   async function handleHeroUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setHeroUploading(true); setError('');
-    try { onChange({ heroImage: await uploadFile(file) }); }
-    catch { setError('Lỗi upload ảnh chính'); }
-    finally { setHeroUploading(false); }
+    setHeroUploading(true);
+    setError('');
+    try {
+      onChange({ heroImage: await uploadFile(file) });
+    } catch {
+      setError('Lỗi upload ảnh chính');
+    } finally {
+      setHeroUploading(false);
+    }
   }
 
   async function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
     if (config.gallery.length + files.length > 12) {
-      setError('Tối đa 12 ảnh trong gallery'); return;
+      setError('Tối đa 12 ảnh trong gallery');
+      return;
     }
-    setGalleryUploading(true); setError('');
+    setGalleryUploading(true);
+    setError('');
     try {
       const urls = await Promise.all(files.map(uploadFile));
       onChange({ gallery: [...config.gallery, ...urls] });
-    } catch { setError('Lỗi upload ảnh gallery'); }
-    finally { setGalleryUploading(false); }
+      // Auto-insert each uploaded image as a draggable overlay element
+      urls.forEach((url) => onAddToCanvas?.(url));
+    } catch {
+      setError('Lỗi upload ảnh gallery');
+    } finally {
+      setGalleryUploading(false);
+      e.target.value = '';
+    }
   }
 
   async function handleCanvasUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setCanvasUploading(true); setError('');
+    setCanvasUploading(true);
+    setError('');
     try {
       const url = await uploadFile(file);
       onAddToCanvas?.(url);
-    } catch { setError('Lỗi upload ảnh'); }
-    finally { setCanvasUploading(false); e.target.value = ''; }
+    } catch {
+      setError('Lỗi upload ảnh');
+    } finally {
+      setCanvasUploading(false);
+      e.target.value = '';
+    }
   }
 
   function removeGalleryImage(index: number) {
@@ -72,20 +90,25 @@ export default function MediaPanel({ config, onChange, onAddToCanvas }: Props) {
   return (
     <div className="space-y-6">
       {error && (
-        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{error}</p>
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+          {error}
+        </p>
       )}
 
       {/* ── Chèn ảnh vào thiệp ── */}
       {onAddToCanvas && (
         <div className="rounded-xl border-2 border-dashed border-blue-200 bg-blue-50 p-4">
-          <p className="mb-1 text-xs font-semibold text-blue-700">Chèn ảnh vào thiệp</p>
+          <p className="mb-1 text-xs font-semibold text-blue-700">
+            Chèn ảnh vào thiệp
+          </p>
           <p className="mb-3 text-[11px] leading-relaxed text-blue-500">
-            Ảnh sẽ xuất hiện trên thiệp — kéo để di chuyển, kéo góc để thay đổi kích thước
+            Ảnh sẽ xuất hiện trên thiệp — kéo để di chuyển, kéo góc để thay đổi
+            kích thước
           </p>
           <button
             onClick={() => canvasInputRef.current?.click()}
             disabled={canvasUploading}
-            className="flex items-center gap-1.5 mx-auto rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-60 transition-colors"
+            className="mx-auto flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
           >
             <PlusCircle size={13} />
             {canvasUploading ? 'Đang upload...' : 'Tải ảnh lên & chèn'}
@@ -104,16 +127,16 @@ export default function MediaPanel({ config, onChange, onAddToCanvas }: Props) {
               <p className="mb-2 text-center text-[10px] text-blue-400">
                 Hoặc chọn từ gallery bên dưới
               </p>
-              <div className="flex flex-wrap gap-1.5 justify-center">
+              <div className="flex flex-wrap justify-center gap-1.5">
                 {config.gallery.map((url, i) => (
                   <button
                     key={i}
                     onClick={() => onAddToCanvas(url)}
-                    className="group relative overflow-hidden rounded-lg border-2 border-transparent hover:border-blue-400 transition-all"
+                    className="group relative overflow-hidden rounded-lg border-2 border-transparent transition-all hover:border-blue-400"
                     title="Thêm vào thiệp"
                   >
                     <img src={url} alt="" className="h-12 w-12 object-cover" />
-                    <div className="absolute inset-0 flex items-center justify-center bg-blue-600/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute inset-0 flex items-center justify-center bg-blue-600/60 opacity-0 transition-opacity group-hover:opacity-100">
                       <PlusCircle size={16} className="text-white" />
                     </div>
                   </button>
@@ -155,7 +178,7 @@ export default function MediaPanel({ config, onChange, onAddToCanvas }: Props) {
           <button
             onClick={() => heroInputRef.current?.click()}
             disabled={heroUploading}
-            className="flex h-32 w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-sm text-gray-400 hover:border-gray-300 hover:text-gray-600 transition-colors"
+            className="flex h-32 w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-sm text-gray-400 transition-colors hover:border-gray-300 hover:text-gray-600"
           >
             {heroUploading ? 'Đang upload...' : '+ Chọn ảnh chính'}
           </button>
@@ -182,7 +205,7 @@ export default function MediaPanel({ config, onChange, onAddToCanvas }: Props) {
                 alt=""
                 className="h-20 w-full rounded-lg object-cover"
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                 {onAddToCanvas && (
                   <button
                     onClick={() => onAddToCanvas(url)}
@@ -204,7 +227,7 @@ export default function MediaPanel({ config, onChange, onAddToCanvas }: Props) {
             <button
               onClick={() => galleryInputRef.current?.click()}
               disabled={galleryUploading}
-              className="flex h-20 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-xs text-gray-400 hover:border-gray-300 transition-colors"
+              className="flex h-20 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-xs text-gray-400 transition-colors hover:border-gray-300"
             >
               {galleryUploading ? '...' : '+'}
             </button>
