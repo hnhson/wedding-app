@@ -270,7 +270,13 @@ export default function EditorShell({ card }: { card: Card }) {
             {activeTab === 'map' && (
               <MapPanel config={config} onChange={updateConfig} />
             )}
-            {activeTab === 'decor' && <DecorPanel addRect={addRect} />}
+            {activeTab === 'decor' && (
+              <DecorPanel
+                cardHeight={config.cardHeight ?? 900}
+                onChangeHeight={(h) => updateConfig({ cardHeight: h })}
+                addRect={addRect}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -571,8 +577,12 @@ const QUICK = [
 ];
 
 function DecorPanel({
+  cardHeight,
+  onChangeHeight,
   addRect,
 }: {
+  cardHeight: number;
+  onChangeHeight: (h: number) => void;
   addRect: (opts: {
     backgroundColor: string;
     borderRadius: number;
@@ -589,6 +599,60 @@ function DecorPanel({
 
   return (
     <div className="space-y-5">
+      {/* Card height */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Chiều dài thiệp
+        </p>
+        <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+          <div className="mb-3 text-center">
+            <span className="text-2xl font-bold text-gray-800">
+              {cardHeight}
+            </span>
+            <span className="ml-1 text-xs text-gray-400">px</span>
+          </div>
+          {/* Step buttons */}
+          <div className="mb-3 grid grid-cols-2 gap-2">
+            {[100, 200].map((step) => (
+              <button
+                key={step}
+                onClick={() =>
+                  onChangeHeight(Math.min(5000, cardHeight + step))
+                }
+                className="rounded-lg border border-gray-200 bg-white py-1.5 text-xs font-medium text-gray-700 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+              >
+                + {step}px
+              </button>
+            ))}
+            {[100, 200].map((step) => (
+              <button
+                key={step}
+                onClick={() => onChangeHeight(Math.max(400, cardHeight - step))}
+                className="rounded-lg border border-gray-200 bg-white py-1.5 text-xs font-medium text-gray-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+              >
+                − {step}px
+              </button>
+            ))}
+          </div>
+          {/* Slider */}
+          <input
+            type="range"
+            min={400}
+            max={5000}
+            step={50}
+            value={cardHeight}
+            onChange={(e) => onChangeHeight(+e.target.value)}
+            className="w-full accent-blue-500"
+          />
+          <div className="mt-1 flex justify-between text-[10px] text-gray-400">
+            <span>400px</span>
+            <span>5000px</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-px bg-gray-100" />
+
       {/* Quick presets */}
       <div>
         <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
