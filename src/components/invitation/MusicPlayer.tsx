@@ -13,12 +13,12 @@ export default function MusicPlayer({ music }: { music: MusicConfig }) {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.loop = music.loop;
+    audio.loop = music.loop ?? true;
 
     const onCanPlay = () => setReady(true);
     audio.addEventListener('canplaythrough', onCanPlay);
 
-    if (music.autoPlay) {
+    if (music.autoPlay ?? true) {
       // Attempt silent autoplay; browsers usually block it — we catch and wait
       audio
         .play()

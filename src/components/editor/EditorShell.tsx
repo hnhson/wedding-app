@@ -1546,14 +1546,14 @@ function MusicPanel({
                 </p>
               </div>
               <div
-                onClick={() => updateField({ autoPlay: !music.autoPlay })}
+                onClick={() => updateField({ autoPlay: !(music.autoPlay ?? true) })}
                 className={`relative h-6 w-11 rounded-full transition-colors ${
-                  music.autoPlay ? 'bg-blue-500' : 'bg-gray-300'
+                  (music.autoPlay ?? true) ? 'bg-blue-500' : 'bg-gray-300'
                 }`}
               >
                 <span
                   className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
-                    music.autoPlay ? 'translate-x-5' : 'translate-x-0.5'
+                    (music.autoPlay ?? true) ? 'translate-x-5' : 'translate-x-0.5'
                   }`}
                 />
               </div>
