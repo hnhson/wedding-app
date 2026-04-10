@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { GripHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import type { Card, CardConfig, OverlayElement } from '@/types/card';
 import DraggableCanvas from './DraggableCanvas';
@@ -292,6 +293,13 @@ export default function EditorShell({ card }: { card: Card }) {
               onUpdateElements={updateElements}
             />
           </div>
+
+          {/* Height resize handle */}
+          <HeightHandle
+            scale={scale}
+            cardHeight={config.cardHeight ?? 900}
+            onChange={(h) => updateConfig({ cardHeight: h })}
+          />
         </div>
 
         {/* Padding at bottom so content isn't cut */}
@@ -453,6 +461,67 @@ export default function EditorShell({ card }: { card: Card }) {
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ── Height resize handle ─────────────────────────────────────────── */
+function HeightHandle({
+  scale,
+  cardHeight,
+  onChange,
+}: {
+  scale: number;
+  cardHeight: number;
+  onChange: (h: number) => void;
+}) {
+  const startRef = useRef<{ py: number; startH: number } | null>(null);
+
+  function onPointerDown(e: React.PointerEvent) {
+    e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    startRef.current = { py: e.clientY, startH: cardHeight };
+  }
+
+  function onPointerMove(e: React.PointerEvent) {
+    if (!startRef.current) return;
+    const dy = (e.clientY - startRef.current.py) / scale;
+    const next = Math.max(400, Math.round(startRef.current.startH + dy));
+    onChange(next);
+  }
+
+  function onPointerUp(e: React.PointerEvent) {
+    startRef.current = null;
+    (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+  }
+
+  return (
+    <div
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      title={`Kéo để thay đổi chiều dài thiệp (hiện tại: ${cardHeight}px)`}
+      style={{
+        width: '100%',
+        height: 28,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'ns-resize',
+        background: 'rgba(59,130,246,0.08)',
+        borderTop: '2px dashed rgba(59,130,246,0.35)',
+        borderRadius: '0 0 16px 16px',
+        userSelect: 'none',
+        touchAction: 'none',
+        gap: 6,
+        color: '#3b82f6',
+        fontSize: 11,
+        fontWeight: 500,
+      }}
+    >
+      <GripHorizontal size={14} />
+      <span>Kéo để thay đổi chiều dài</span>
+      <span style={{ opacity: 0.6 }}>({cardHeight}px)</span>
     </div>
   );
 }

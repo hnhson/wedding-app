@@ -25,9 +25,9 @@ export interface OverlayElement {
   id: string;
   type: 'image';
   url: string;
-  x: number;      // px, in card space (card width = 480px)
-  y: number;      // px, from top
-  width: number;  // px
+  x: number; // px, in card space (card width = 480px)
+  y: number; // px, from top
+  width: number; // px
   height: number; // px
 }
 
@@ -50,6 +50,7 @@ export interface CardConfig {
   heroImage: string | null;
   gallery: string[];
   overlayElements?: OverlayElement[];
+  cardHeight?: number; // px, min height of card (default 900)
 }
 
 export interface Template {

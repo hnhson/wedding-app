@@ -12,10 +12,12 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
       })
     : 'Chưa có ngày';
 
+  const cardHeight = config.cardHeight ?? 900;
+
   return (
     <div
-      className="min-h-screen"
       style={{
+        minHeight: cardHeight,
         background: 'var(--card-bg)',
         color: 'var(--card-primary)',
         fontFamily: 'var(--card-font-body, serif)',

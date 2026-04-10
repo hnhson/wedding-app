@@ -11,16 +11,18 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
       })
     : 'Chưa có ngày';
 
+  const cardHeight = config.cardHeight ?? 900;
+
   return (
     <div
-      className="min-h-screen"
       style={{
+        minHeight: cardHeight,
         background: 'var(--card-bg)',
         fontFamily: 'var(--card-font-body, sans-serif)',
       }}
     >
       {/* Split hero */}
-      <div className="grid min-h-screen md:grid-cols-2">
+      <div className="grid md:grid-cols-2" style={{ minHeight: cardHeight }}>
         <div className="flex flex-col items-start justify-center px-12 py-20">
           <p
             className="mb-6 text-xs tracking-widest uppercase"

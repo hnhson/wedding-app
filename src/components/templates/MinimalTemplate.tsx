@@ -11,10 +11,13 @@ export default function MinimalTemplate({ config }: { config: CardConfig }) {
       })
     : '';
 
+  const cardHeight = config.cardHeight ?? 900;
+
   return (
     <div
-      className="min-h-screen px-8 py-20"
+      className="px-8 py-20"
       style={{
+        minHeight: cardHeight,
         background: 'var(--card-bg)',
         color: 'var(--card-primary)',
         fontFamily: 'var(--card-font-body, sans-serif)',
