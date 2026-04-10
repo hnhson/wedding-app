@@ -7,6 +7,8 @@ import type { CardConfig, OverlayElement } from '@/types/card';
 
 type Dir = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
+const CARD_NATURAL_W = 480; // natural width of the card in px (before CSS scale)
+
 const HANDLES: { dir: Dir; style: React.CSSProperties }[] = [
   { dir: 'nw', style: { top: -5, left: -5, cursor: 'nw-resize' } },
   {
@@ -61,6 +63,8 @@ interface DragState {
   startW: number;
   startH: number;
   snapshot: OverlayElement[];
+  /** actual px-per-card-unit at drag start, computed from getBoundingClientRect */
+  pxPerUnit: number;
 }
 
 interface Props {
@@ -73,38 +77,41 @@ interface Props {
 
 export default function DraggableCanvas({
   config,
-  scale,
   selectedId,
   onSelect,
   onUpdateElements,
 }: Props) {
   const elements = config.overlayElements ?? [];
   const dragRef = useRef<DragState | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
 
-  /* ── Get client coords from mouse or touch ── */
-  function getClientXY(e: MouseEvent | TouchEvent) {
-    if ('touches' in e && e.touches.length > 0) {
-      return { x: e.touches[0]!.clientX, y: e.touches[0]!.clientY };
-    }
-    if ('clientX' in e) {
-      return { x: e.clientX, y: e.clientY };
-    }
-    return { x: 0, y: 0 };
+  /** Compute the current px-per-card-unit from the element's actual rendered size */
+  function getPxPerUnit(): number {
+    const rect = rootRef.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0) return 1;
+    return rect.width / CARD_NATURAL_W;
   }
 
-  /* ── Global move/up handlers (mouse + touch) ── */
+  /* ── Global move/up handlers ── */
   useEffect(() => {
+    function getXY(e: MouseEvent | TouchEvent) {
+      if ('touches' in e && e.touches.length > 0) {
+        return { x: e.touches[0]!.clientX, y: e.touches[0]!.clientY };
+      }
+      if ('clientX' in e) return { x: e.clientX, y: e.clientY };
+      return { x: 0, y: 0 };
+    }
+
     function onMove(e: MouseEvent | TouchEvent) {
       const d = dragRef.current;
       if (!d) return;
-
-      // Prevent scroll while dragging on touch
       if ('touches' in e) e.preventDefault();
 
-      const { x: cx, y: cy } = getClientXY(e);
-      const dx = (cx - d.startMX) / scale;
-      const dy = (cy - d.startMY) / scale;
+      const { x: cx, y: cy } = getXY(e);
+      // convert viewport delta → card-space delta using the scale captured at drag-start
+      const dx = (cx - d.startMX) / d.pxPerUnit;
+      const dy = (cy - d.startMY) / d.pxPerUnit;
 
       const next = d.snapshot.map((el) => {
         if (el.id !== d.id) return el;
@@ -155,7 +162,7 @@ export default function DraggableCanvas({
       window.removeEventListener('touchmove', onMove as EventListener);
       window.removeEventListener('touchend', onUp);
     };
-  }, [scale, onUpdateElements]);
+  }, [onUpdateElements]);
 
   /* ── Drag start (mouse) ── */
   function startDrag(e: React.MouseEvent, id: string) {
@@ -172,6 +179,7 @@ export default function DraggableCanvas({
       startW: el.width,
       startH: el.height,
       snapshot: [...elements],
+      pxPerUnit: getPxPerUnit(),
     };
     setDraggingId(id);
     onSelect(id);
@@ -193,6 +201,7 @@ export default function DraggableCanvas({
       startW: el.width,
       startH: el.height,
       snapshot: [...elements],
+      pxPerUnit: getPxPerUnit(),
     };
     setDraggingId(id);
     onSelect(id);
@@ -214,6 +223,7 @@ export default function DraggableCanvas({
       startW: el.width,
       startH: el.height,
       snapshot: [...elements],
+      pxPerUnit: getPxPerUnit(),
     };
   }
 
@@ -224,11 +234,15 @@ export default function DraggableCanvas({
   }
 
   return (
-    <div className="relative select-none" onClick={() => onSelect(null)}>
+    <div
+      ref={rootRef}
+      className="relative select-none"
+      onClick={() => onSelect(null)}
+    >
       {/* Template base */}
       <TemplateRenderer config={config} />
 
-      {/* Overlay — pointer-events: none so template links still work; each element opts back in */}
+      {/* Overlay */}
       <div className="absolute inset-0" style={{ pointerEvents: 'none' }}>
         {elements.map((el) => {
           const sel = selectedId === el.id;
@@ -246,11 +260,10 @@ export default function DraggableCanvas({
                 pointerEvents: 'auto',
                 outline: sel
                   ? '2px solid #3b82f6'
-                  : '1.5px dashed rgba(59,130,246,0.4)',
+                  : '1.5px dashed rgba(59,130,246,0.45)',
                 outlineOffset: sel ? 1 : 0,
                 cursor: dragging ? 'grabbing' : 'grab',
                 boxSizing: 'border-box',
-                transition: dragging ? 'none' : undefined,
               }}
               onMouseDown={(e) => startDrag(e, el.id)}
               onTouchStart={(e) => startDragTouch(e, el.id)}
@@ -274,23 +287,6 @@ export default function DraggableCanvas({
                 }}
               />
 
-              {/* Move icon hint when hovered but not selected */}
-              {!sel && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'rgba(0,0,0,0)',
-                    transition: 'background 0.15s',
-                    pointerEvents: 'none',
-                  }}
-                  className="opacity-0 group-hover:opacity-100"
-                />
-              )}
-
               {/* Delete button */}
               {sel && (
                 <button
@@ -311,7 +307,7 @@ export default function DraggableCanvas({
                 </button>
               )}
 
-              {/* Move handle icon (top-left, shown when selected) */}
+              {/* Move handle (top-left, shown when selected) */}
               {sel && (
                 <div
                   style={{
@@ -326,10 +322,11 @@ export default function DraggableCanvas({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    cursor: 'grab',
+                    cursor: dragging ? 'grabbing' : 'grab',
                     color: '#fff',
                   }}
                   onMouseDown={(e) => startDrag(e, el.id)}
+                  onTouchStart={(e) => startDragTouch(e, el.id)}
                 >
                   <Move size={12} />
                 </div>
