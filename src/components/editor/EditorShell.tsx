@@ -1283,9 +1283,29 @@ function MusicPanel({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [testing, setTesting] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [nameInput, setNameInput] = useState(music?.name ?? '');
   const [error, setError] = useState('');
+
+  // Sites that are NOT direct audio file hosts
+  const STREAMING_PATTERNS = [
+    { re: /youtube\.com|youtu\.be/, name: 'YouTube' },
+    { re: /spotify\.com/, name: 'Spotify' },
+    { re: /soundcloud\.com/, name: 'SoundCloud' },
+    { re: /zingmp3\.vn/, name: 'Zing MP3' },
+    { re: /nhaccuatui\.com/, name: 'NhacCuaTui' },
+    { re: /keeng\.vn/, name: 'Keeng' },
+    { re: /nhac\.vn/, name: 'Nhac.vn' },
+    { re: /chiasenhac\.com/, name: 'ChiaSeNhac' },
+    { re: /tiktok\.com/, name: 'TikTok' },
+    { re: /apple\.com\/music/, name: 'Apple Music' },
+    { re: /deezer\.com/, name: 'Deezer' },
+  ];
+
+  function detectStreaming(url: string) {
+    return STREAMING_PATTERNS.find(({ re }) => re.test(url));
+  }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -1314,16 +1334,66 @@ function MusicPanel({
     }
   }
 
-  function applyUrl() {
+  async function applyUrl() {
     const url = urlInput.trim();
     if (!url) return;
-    onChange({
-      url,
-      name: nameInput.trim() || 'Nhạc nền',
-      autoPlay: music?.autoPlay ?? true,
-      loop: music?.loop ?? true,
-    });
-    setUrlInput('');
+    setError('');
+
+    // Detect known streaming platforms
+    const streaming = detectStreaming(url);
+    if (streaming) {
+      setError(
+        `${streaming.name} không hỗ trợ phát trực tiếp. Hãy tải file MP3 lên thay thế, hoặc dùng link file MP3 trực tiếp (kết thúc bằng .mp3).`,
+      );
+      return;
+    }
+
+    // Test if the URL actually loads as audio
+    setTesting(true);
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const audio = new Audio();
+        const timer = setTimeout(() => reject(new Error('timeout')), 8000);
+        audio.oncanplay = () => {
+          clearTimeout(timer);
+          resolve();
+        };
+        audio.onerror = () => {
+          clearTimeout(timer);
+          reject(new Error('load_error'));
+        };
+        audio.src = url;
+        audio.load();
+      });
+      // Passed — apply
+      onChange({
+        url,
+        name:
+          nameInput.trim() ||
+          url
+            .split('/')
+            .pop()
+            ?.replace(/\.[^.]+$/, '') ||
+          'Nhạc nền',
+        autoPlay: music?.autoPlay ?? true,
+        loop: music?.loop ?? true,
+      });
+      setUrlInput('');
+      setNameInput('');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      if (msg === 'timeout') {
+        setError(
+          'Không thể tải nhạc từ link này (quá thời gian). Hãy kiểm tra lại link hoặc tải file MP3 lên.',
+        );
+      } else {
+        setError(
+          'Link này không phải file audio hợp lệ. Cần link MP3/OGG/AAC trực tiếp — ví dụ: https://example.com/song.mp3',
+        );
+      }
+    } finally {
+      setTesting(false);
+    }
   }
 
   function updateField(patch: Partial<MusicConfig>) {
@@ -1403,15 +1473,22 @@ function MusicPanel({
 
       {/* URL input */}
       <div>
-        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+        <p className="mb-1 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
           Hoặc dán link nhạc
+        </p>
+        <p className="mb-2 text-[10px] leading-relaxed text-gray-400">
+          Chỉ hỗ trợ link file audio trực tiếp (.mp3, .ogg, .aac…). Không dùng
+          được link YouTube, Spotify, Zing MP3.
         </p>
         <div className="space-y-2">
           <input
             type="url"
             value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            placeholder="https://... (link MP3 trực tiếp)"
+            onChange={(e) => {
+              setUrlInput(e.target.value);
+              setError('');
+            }}
+            placeholder="https://example.com/song.mp3"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-700 focus:border-blue-400 focus:outline-none"
             onKeyDown={(e) => e.key === 'Enter' && applyUrl()}
           />
@@ -1424,10 +1501,17 @@ function MusicPanel({
           />
           <button
             onClick={applyUrl}
-            disabled={!urlInput.trim()}
-            className="w-full rounded-lg bg-gray-900 py-2 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-40"
+            disabled={!urlInput.trim() || testing}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 py-2 text-xs font-medium text-white transition hover:bg-gray-700 disabled:opacity-40"
           >
-            Áp dụng
+            {testing ? (
+              <>
+                <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Đang kiểm tra...
+              </>
+            ) : (
+              'Áp dụng'
+            )}
           </button>
         </div>
       </div>
