@@ -1,7 +1,7 @@
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import TemplateRenderer from '@/components/templates/TemplateRenderer';
+import CardView from '@/components/templates/CardView';
 import CountdownWidget from '@/components/CountdownWidget';
 import type { Card } from '@/types/card';
 import { FONT_PAIRS } from '@/lib/templates/presets';
@@ -74,9 +74,9 @@ export default async function PreviewCardPage({
         </div>
       )}
 
-      {/* Template */}
+      {/* Template + overlay elements */}
       <div className="pt-4">
-        <TemplateRenderer config={card.config} />
+        <CardView config={card.config} />
       </div>
     </div>
   );

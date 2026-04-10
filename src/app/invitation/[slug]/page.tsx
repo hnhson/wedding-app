@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
-import TemplateRenderer from '@/components/templates/TemplateRenderer';
+import CardView from '@/components/templates/CardView';
 import CountdownWidget from '@/components/CountdownWidget';
 import ShareButtons from '@/components/invitation/ShareButtons';
 import QRCodeDownload from '@/components/invitation/QRCodeDownload';
@@ -98,9 +98,8 @@ export default async function InvitationPage({
       )}
 
       {/* Card container — 1/4 screen width, centered */}
-      <div className="flex min-h-screen justify-center py-10 px-4">
+      <div className="flex min-h-screen justify-center px-4 py-10">
         <div className="w-full max-w-[25vw] min-w-[320px] overflow-hidden rounded-2xl bg-white shadow-2xl">
-
           {/* Countdown */}
           {card.config.weddingDate && (
             <div className="py-8 text-center">
@@ -108,8 +107,8 @@ export default async function InvitationPage({
             </div>
           )}
 
-          {/* Wedding template */}
-          <TemplateRenderer config={card.config} />
+          {/* Wedding template + overlay elements */}
+          <CardView config={card.config} />
 
           {/* RSVP section */}
           <div className="bg-white px-6 py-10">
@@ -117,7 +116,8 @@ export default async function InvitationPage({
               Xác nhận tham dự
             </h2>
             <p className="mb-6 text-center text-sm text-gray-500">
-              Vui lòng xác nhận để chúng tôi chuẩn bị tốt nhất cho ngày trọng đại
+              Vui lòng xác nhận để chúng tôi chuẩn bị tốt nhất cho ngày trọng
+              đại
             </p>
             <RSVPForm cardId={card.id} />
           </div>
