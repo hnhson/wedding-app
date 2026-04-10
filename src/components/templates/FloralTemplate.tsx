@@ -1,15 +1,8 @@
 import type { CardConfig } from '@/types/card';
 
 export default function FloralTemplate({ config }: { config: CardConfig }) {
-  const {
-    coupleNames,
-    weddingDate,
-    venue,
-    loveStory,
-    schedule,
-    heroImage,
-    gallery,
-  } = config;
+  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
+    config;
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -144,21 +137,7 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
         </div>
       )}
 
-      {gallery.length > 0 && (
-        <div className="px-8 py-12">
-          <div className="mx-auto grid max-w-3xl grid-cols-2 gap-4 md:grid-cols-3">
-            {gallery.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt=""
-                className="h-48 w-full rounded-lg object-cover"
-                style={{ border: `2px solid var(--card-secondary)` }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Gallery images are placed as draggable overlay elements — not rendered here */}
 
       <div
         className="h-3"

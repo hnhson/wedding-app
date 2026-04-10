@@ -13,7 +13,6 @@ export default function ClassicTemplate({ config }: Props) {
     schedule,
     families,
     heroImage,
-    gallery,
   } = config;
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
@@ -135,32 +134,7 @@ export default function ClassicTemplate({ config }: Props) {
         </div>
       )}
 
-      {/* Gallery */}
-      {gallery.length > 0 && (
-        <div className="px-8 py-12">
-          <div className="mx-auto max-w-3xl">
-            <h2
-              className="mb-8 text-center text-2xl"
-              style={{
-                fontFamily: 'var(--card-font-heading, serif)',
-                color: 'var(--card-accent)',
-              }}
-            >
-              Khoảnh khắc đáng nhớ
-            </h2>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-              {gallery.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt={`Gallery ${i + 1}`}
-                  className="h-40 w-full rounded-lg object-cover"
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Gallery images are placed as draggable overlay elements — not rendered here */}
 
       {/* Venue */}
       {venue.address && (

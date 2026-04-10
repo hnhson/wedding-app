@@ -1,15 +1,8 @@
 import type { CardConfig } from '@/types/card';
 
 export default function ModernTemplate({ config }: { config: CardConfig }) {
-  const {
-    coupleNames,
-    weddingDate,
-    venue,
-    loveStory,
-    schedule,
-    heroImage,
-    gallery,
-  } = config;
+  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
+    config;
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         year: 'numeric',
@@ -153,22 +146,7 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
         </div>
       )}
 
-      {gallery.length > 0 && (
-        <div className="px-8 py-16">
-          <div className="mx-auto max-w-3xl">
-            <div className="grid grid-cols-3 gap-2">
-              {gallery.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt=""
-                  className="aspect-square w-full object-cover"
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Gallery images are placed as draggable overlay elements — not rendered here */}
     </div>
   );
 }
