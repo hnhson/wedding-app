@@ -53,7 +53,11 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
           {/* User info */}
           <div className="avatar-dropdown-header">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Avatar" className="dropdown-avatar-img" />
+              <img
+                src={avatarUrl}
+                alt="Avatar"
+                className="dropdown-avatar-img"
+              />
             ) : (
               <div className="dropdown-avatar-initial">{initial}</div>
             )}
@@ -80,7 +84,11 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
 
           {/* Sign out */}
           <form action="/api/auth/signout" method="post">
-            <button type="submit" role="menuitem" className="avatar-dropdown-item avatar-dropdown-signout">
+            <button
+              type="submit"
+              role="menuitem"
+              className="avatar-dropdown-item avatar-dropdown-signout"
+            >
               <span className="dropdown-item-icon">→</span>
               Đăng xuất
             </button>
@@ -89,6 +97,25 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
       )}
 
       <style>{`
+        .landing-avatar-img {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+        }
+        .landing-avatar-initial {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #1a1714;
+          color: #faf8f5;
+          font-size: 0.85rem;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
         .avatar-trigger {
           display: inline-flex;
           align-items: center;
