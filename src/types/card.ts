@@ -23,14 +23,8 @@ export interface FamilyInfo {
 
 export interface OverlayElement {
   id: string;
-  type: 'image' | 'rect';
-  // image
-  url?: string;
-  // rect
-  backgroundColor?: string;
-  borderRadius?: number;
-  opacity?: number;
-  // common
+  type: 'image';
+  url: string;
   x: number; // px, in card space (card width = 480px)
   y: number; // px, from top
   width: number; // px
