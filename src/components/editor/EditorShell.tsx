@@ -130,6 +130,15 @@ export default function EditorShell({ card }: { card: Card }) {
     setConfig((prev) => ({ ...prev, overlayElements: elements }));
   }, []);
 
+  function updateElement(id: string, patch: Partial<OverlayElement>) {
+    setConfig((prev) => ({
+      ...prev,
+      overlayElements: (prev.overlayElements ?? []).map((el) =>
+        el.id === id ? { ...el, ...patch } : el,
+      ),
+    }));
+  }
+
   function addToCanvas(url: string) {
     const CARD_W = 480;
     const imgSize = 200;
@@ -345,6 +354,29 @@ export default function EditorShell({ card }: { card: Card }) {
 
       {/* ── 4. Right panel ── */}
       <div className="flex w-60 flex-shrink-0 flex-col border-l border-gray-200 bg-white">
+        {/* Image edit panel — shown when an image element is selected */}
+        {selectedElId &&
+          (() => {
+            const el = (config.overlayElements ?? []).find(
+              (e) => e.id === selectedElId,
+            );
+            if (!el) return null;
+            return (
+              <ImageEditPanel
+                el={el}
+                onChange={(patch) => updateElement(selectedElId, patch)}
+                onDelete={() => {
+                  updateElements(
+                    (config.overlayElements ?? []).filter(
+                      (e) => e.id !== selectedElId,
+                    ),
+                  );
+                  setSelectedElId(null);
+                }}
+              />
+            );
+          })()}
+
         {/* Save status */}
         <div className="flex h-10 items-center gap-2 border-b px-4">
           {saveStatus === 'saving' && (
@@ -804,6 +836,250 @@ function DecorPanel({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ── Image / Element Edit Panel ───────────────────────────────────── */
+function ImageEditPanel({
+  el,
+  onChange,
+  onDelete,
+}: {
+  el: OverlayElement;
+  onChange: (patch: Partial<OverlayElement>) => void;
+  onDelete: () => void;
+}) {
+  const isImage = el.type === 'image';
+
+  return (
+    <div className="border-b border-gray-200 bg-blue-50/40">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-blue-100 px-4 py-2.5">
+        <span className="text-[11px] font-semibold text-blue-700">
+          {isImage ? '🖼 Chỉnh sửa ảnh' : '⬛ Chỉnh sửa khối'}
+        </span>
+        <button
+          onClick={onDelete}
+          className="rounded-md px-2 py-0.5 text-[10px] font-medium text-red-500 hover:bg-red-50"
+        >
+          Xoá
+        </button>
+      </div>
+
+      <div className="space-y-3 px-4 py-3">
+        {/* Opacity — all elements */}
+        <SliderRow
+          label="Độ mờ"
+          value={Math.round((el.opacity ?? 1) * 100)}
+          min={10}
+          max={100}
+          unit="%"
+          onChange={(v) => onChange({ opacity: v / 100 })}
+        />
+
+        {/* Border radius — all */}
+        <SliderRow
+          label="Bo góc"
+          value={el.borderRadius ?? 0}
+          min={0}
+          max={120}
+          unit="px"
+          onChange={(v) => onChange({ borderRadius: v })}
+        />
+
+        {/* Border */}
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-[11px] text-gray-600">Viền</span>
+            <span className="text-[10px] text-gray-400">
+              {el.borderWidth ?? 0}px
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="range"
+              min={0}
+              max={20}
+              value={el.borderWidth ?? 0}
+              onChange={(e) => onChange({ borderWidth: +e.target.value })}
+              className="flex-1 accent-blue-500"
+            />
+            <input
+              type="color"
+              value={el.borderColor ?? '#ffffff'}
+              onChange={(e) => onChange({ borderColor: e.target.value })}
+              className="h-6 w-8 cursor-pointer rounded border border-gray-200"
+            />
+          </div>
+        </div>
+
+        {/* Image-only controls */}
+        {isImage && (
+          <>
+            {/* Object fit */}
+            <div>
+              <p className="mb-1.5 text-[11px] text-gray-600">Kiểu hiển thị</p>
+              <div className="flex gap-1">
+                {(
+                  [
+                    { v: 'cover', label: 'Lấp đầy' },
+                    { v: 'contain', label: 'Vừa khung' },
+                    { v: 'fill', label: 'Kéo giãn' },
+                  ] as { v: OverlayElement['objectFit']; label: string }[]
+                ).map(({ v, label }) => (
+                  <button
+                    key={v}
+                    onClick={() => onChange({ objectFit: v })}
+                    className={`flex-1 rounded-md py-1 text-[10px] font-medium transition ${
+                      (el.objectFit ?? 'cover') === v
+                        ? 'bg-blue-600 text-white'
+                        : 'border border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Flip */}
+            <div>
+              <p className="mb-1.5 text-[11px] text-gray-600">Lật ảnh</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onChange({ flipH: !el.flipH })}
+                  className={`flex-1 rounded-md border py-1 text-[10px] font-medium transition ${
+                    el.flipH
+                      ? 'border-blue-400 bg-blue-100 text-blue-700'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                  }`}
+                >
+                  ↔ Ngang
+                </button>
+                <button
+                  onClick={() => onChange({ flipV: !el.flipV })}
+                  className={`flex-1 rounded-md border py-1 text-[10px] font-medium transition ${
+                    el.flipV
+                      ? 'border-blue-400 bg-blue-100 text-blue-700'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-blue-300'
+                  }`}
+                >
+                  ↕ Dọc
+                </button>
+              </div>
+            </div>
+
+            {/* Brightness */}
+            <SliderRow
+              label="Độ sáng"
+              value={el.brightness ?? 100}
+              min={0}
+              max={200}
+              unit="%"
+              onChange={(v) => onChange({ brightness: v })}
+            />
+
+            {/* Contrast */}
+            <SliderRow
+              label="Tương phản"
+              value={el.contrast ?? 100}
+              min={0}
+              max={200}
+              unit="%"
+              onChange={(v) => onChange({ contrast: v })}
+            />
+
+            {/* Grayscale */}
+            <SliderRow
+              label="Đen trắng"
+              value={el.grayscale ?? 0}
+              min={0}
+              max={100}
+              unit="%"
+              onChange={(v) => onChange({ grayscale: v })}
+            />
+
+            {/* Sepia */}
+            <SliderRow
+              label="Tông nâu (Sepia)"
+              value={el.sepia ?? 0}
+              min={0}
+              max={100}
+              unit="%"
+              onChange={(v) => onChange({ sepia: v })}
+            />
+
+            {/* Blur */}
+            <SliderRow
+              label="Làm mờ"
+              value={el.blur ?? 0}
+              min={0}
+              max={20}
+              unit="px"
+              onChange={(v) => onChange({ blur: v })}
+            />
+
+            {/* Reset */}
+            <button
+              onClick={() =>
+                onChange({
+                  brightness: 100,
+                  contrast: 100,
+                  grayscale: 0,
+                  sepia: 0,
+                  blur: 0,
+                  flipH: false,
+                  flipV: false,
+                  opacity: 1,
+                  borderRadius: 0,
+                  borderWidth: 0,
+                  objectFit: 'cover',
+                })
+              }
+              className="w-full rounded-lg border border-gray-200 bg-white py-1.5 text-[11px] text-gray-500 transition hover:border-gray-300 hover:text-gray-700"
+            >
+              Đặt lại về mặc định
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SliderRow({
+  label,
+  value,
+  min,
+  max,
+  unit,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  unit: string;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-[11px] text-gray-600">{label}</span>
+        <span className="text-[10px] text-gray-400">
+          {value}
+          {unit}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        onChange={(e) => onChange(+e.target.value)}
+        className="w-full accent-blue-500"
+      />
     </div>
   );
 }

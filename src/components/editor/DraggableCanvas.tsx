@@ -234,10 +234,35 @@ export default function DraggableCanvas({
                   style={{
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover',
+                    objectFit: el.objectFit ?? 'cover',
                     display: 'block',
                     pointerEvents: 'none',
                     userSelect: 'none',
+                    borderRadius: el.borderRadius ?? 0,
+                    opacity: el.opacity ?? 1,
+                    transform: `scaleX(${el.flipH ? -1 : 1}) scaleY(${el.flipV ? -1 : 1})`,
+                    filter:
+                      [
+                        el.brightness !== undefined && el.brightness !== 100
+                          ? `brightness(${el.brightness}%)`
+                          : '',
+                        el.contrast !== undefined && el.contrast !== 100
+                          ? `contrast(${el.contrast}%)`
+                          : '',
+                        el.grayscale ? `grayscale(${el.grayscale}%)` : '',
+                        el.sepia ? `sepia(${el.sepia}%)` : '',
+                        el.blur ? `blur(${el.blur}px)` : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ') || undefined,
+                    outline:
+                      el.borderWidth && el.borderWidth > 0
+                        ? `${el.borderWidth}px solid ${el.borderColor ?? '#ffffff'}`
+                        : undefined,
+                    outlineOffset:
+                      el.borderWidth && el.borderWidth > 0
+                        ? -el.borderWidth
+                        : undefined,
                   }}
                 />
               ) : (
@@ -248,6 +273,14 @@ export default function DraggableCanvas({
                     background: el.backgroundColor ?? '#ffffff',
                     borderRadius: el.borderRadius ?? 0,
                     opacity: el.opacity ?? 1,
+                    outline:
+                      el.borderWidth && el.borderWidth > 0
+                        ? `${el.borderWidth}px solid ${el.borderColor ?? '#ffffff'}`
+                        : undefined,
+                    outlineOffset:
+                      el.borderWidth && el.borderWidth > 0
+                        ? -el.borderWidth
+                        : undefined,
                     pointerEvents: 'none',
                   }}
                 />

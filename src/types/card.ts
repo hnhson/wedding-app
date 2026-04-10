@@ -26,11 +26,21 @@ export interface OverlayElement {
   type: 'image' | 'rect';
   // image only
   url?: string;
+  objectFit?: 'cover' | 'contain' | 'fill';
+  flipH?: boolean;
+  flipV?: boolean;
+  brightness?: number; // 0–200, default 100
+  contrast?: number; // 0–200, default 100
+  grayscale?: number; // 0–100, default 0
+  sepia?: number; // 0–100, default 0
+  blur?: number; // 0–20, default 0
   // rect only
   backgroundColor?: string;
-  borderRadius?: number;
-  opacity?: number;
   // common
+  borderRadius?: number;
+  borderColor?: string;
+  borderWidth?: number;
+  opacity?: number;
   x: number;
   y: number;
   width: number;
