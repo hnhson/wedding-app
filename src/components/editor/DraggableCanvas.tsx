@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { X, Move } from 'lucide-react';
 import TemplateRenderer from '@/components/templates/TemplateRenderer';
 import type { CardConfig, OverlayElement } from '@/types/card';
 
 type Dir = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
-const CARD_NATURAL_W = 480; // natural width of the card in px (before CSS scale)
+const CARD_NATURAL_W = 480;
 
 const HANDLES: { dir: Dir; style: React.CSSProperties }[] = [
   { dir: 'nw', style: { top: -5, left: -5, cursor: 'nw-resize' } },
@@ -52,19 +52,18 @@ const HANDLES: { dir: Dir; style: React.CSSProperties }[] = [
   },
 ];
 
-interface DragState {
+interface DragOp {
   type: 'drag' | 'resize';
   id: string;
   dir?: Dir;
-  startMX: number;
-  startMY: number;
-  startX: number;
+  startPX: number; // pointer x at drag-start (client space)
+  startPY: number; // pointer y at drag-start (client space)
+  startX: number; // element x at drag-start (card space)
   startY: number;
   startW: number;
   startH: number;
   snapshot: OverlayElement[];
-  /** actual px-per-card-unit at drag start, computed from getBoundingClientRect */
-  pxPerUnit: number;
+  pxPerUnit: number; // card-space px per viewport px (from getBoundingClientRect)
 }
 
 interface Props {
@@ -82,152 +81,104 @@ export default function DraggableCanvas({
   onUpdateElements,
 }: Props) {
   const elements = config.overlayElements ?? [];
-  const dragRef = useRef<DragState | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
-  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const dragRef = useRef<DragOp | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
-  /** Compute the current px-per-card-unit from the element's actual rendered size */
-  function getPxPerUnit(): number {
+  function pxPerUnit() {
     const rect = rootRef.current?.getBoundingClientRect();
-    if (!rect || rect.width === 0) return 1;
-    return rect.width / CARD_NATURAL_W;
+    return rect && rect.width > 0 ? rect.width / CARD_NATURAL_W : 1;
   }
 
-  /* ── Global move/up handlers ── */
-  useEffect(() => {
-    function getXY(e: MouseEvent | TouchEvent) {
-      if ('touches' in e && e.touches.length > 0) {
-        return { x: e.touches[0]!.clientX, y: e.touches[0]!.clientY };
-      }
-      if ('clientX' in e) return { x: e.clientX, y: e.clientY };
-      return { x: 0, y: 0 };
-    }
-
-    function onMove(e: MouseEvent | TouchEvent) {
-      const d = dragRef.current;
-      if (!d) return;
-      if ('touches' in e) e.preventDefault();
-
-      const { x: cx, y: cy } = getXY(e);
-      // convert viewport delta → card-space delta using the scale captured at drag-start
-      const dx = (cx - d.startMX) / d.pxPerUnit;
-      const dy = (cy - d.startMY) / d.pxPerUnit;
-
-      const next = d.snapshot.map((el) => {
-        if (el.id !== d.id) return el;
-
-        if (d.type === 'drag') {
-          return { ...el, x: d.startX + dx, y: d.startY + dy };
-        }
-
-        // resize
-        let x = d.startX,
-          y = d.startY,
-          w = d.startW,
-          h = d.startH;
-        const dir = d.dir!;
-
-        if (dir.includes('e')) w = Math.max(40, d.startW + dx);
-        if (dir.includes('s')) h = Math.max(40, d.startH + dy);
-        if (dir.includes('w')) {
-          w = Math.max(40, d.startW - dx);
-          x = d.startX + d.startW - w;
-        }
-        if (dir.includes('n')) {
-          h = Math.max(40, d.startH - dy);
-          y = d.startY + d.startH - h;
-        }
-
-        return { ...el, x, y, width: w, height: h };
-      });
-
-      onUpdateElements(next);
-    }
-
-    function onUp() {
-      dragRef.current = null;
-      setDraggingId(null);
-    }
-
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    window.addEventListener('touchmove', onMove as EventListener, {
-      passive: false,
-    });
-    window.addEventListener('touchend', onUp);
-
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      window.removeEventListener('touchmove', onMove as EventListener);
-      window.removeEventListener('touchend', onUp);
-    };
-  }, [onUpdateElements]);
-
-  /* ── Drag start (mouse) ── */
-  function startDrag(e: React.MouseEvent, id: string) {
+  // ── Pointer down on element body → drag ──
+  function onElPointerDown(e: React.PointerEvent, id: string) {
     e.stopPropagation();
     e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+
     const el = elements.find((x) => x.id === id)!;
     dragRef.current = {
       type: 'drag',
       id,
-      startMX: e.clientX,
-      startMY: e.clientY,
+      startPX: e.clientX,
+      startPY: e.clientY,
       startX: el.x,
       startY: el.y,
       startW: el.width,
       startH: el.height,
       snapshot: [...elements],
-      pxPerUnit: getPxPerUnit(),
+      pxPerUnit: pxPerUnit(),
     };
-    setDraggingId(id);
+    setActiveId(id);
     onSelect(id);
   }
 
-  /* ── Drag start (touch) ── */
-  function startDragTouch(e: React.TouchEvent, id: string) {
-    e.stopPropagation();
-    const touch = e.touches[0];
-    if (!touch) return;
-    const el = elements.find((x) => x.id === id)!;
-    dragRef.current = {
-      type: 'drag',
-      id,
-      startMX: touch.clientX,
-      startMY: touch.clientY,
-      startX: el.x,
-      startY: el.y,
-      startW: el.width,
-      startH: el.height,
-      snapshot: [...elements],
-      pxPerUnit: getPxPerUnit(),
-    };
-    setDraggingId(id);
-    onSelect(id);
-  }
-
-  /* ── Resize start ── */
-  function startResize(e: React.MouseEvent, id: string, dir: Dir) {
+  // ── Pointer down on resize handle ──
+  function onHandlePointerDown(e: React.PointerEvent, id: string, dir: Dir) {
     e.stopPropagation();
     e.preventDefault();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+
     const el = elements.find((x) => x.id === id)!;
     dragRef.current = {
       type: 'resize',
       id,
       dir,
-      startMX: e.clientX,
-      startMY: e.clientY,
+      startPX: e.clientX,
+      startPY: e.clientY,
       startX: el.x,
       startY: el.y,
       startW: el.width,
       startH: el.height,
       snapshot: [...elements],
-      pxPerUnit: getPxPerUnit(),
+      pxPerUnit: pxPerUnit(),
     };
   }
 
-  /* ── Delete ── */
+  // ── Pointer move (fired on the element that captured the pointer) ──
+  function onPointerMove(e: React.PointerEvent) {
+    const d = dragRef.current;
+    if (!d) return;
+
+    const dx = (e.clientX - d.startPX) / d.pxPerUnit;
+    const dy = (e.clientY - d.startPY) / d.pxPerUnit;
+
+    const next = d.snapshot.map((el) => {
+      if (el.id !== d.id) return el;
+
+      if (d.type === 'drag') {
+        return { ...el, x: d.startX + dx, y: d.startY + dy };
+      }
+
+      // resize
+      let x = d.startX,
+        y = d.startY,
+        w = d.startW,
+        h = d.startH;
+      const dir = d.dir!;
+      if (dir.includes('e')) w = Math.max(40, d.startW + dx);
+      if (dir.includes('s')) h = Math.max(40, d.startH + dy);
+      if (dir.includes('w')) {
+        w = Math.max(40, d.startW - dx);
+        x = d.startX + d.startW - w;
+      }
+      if (dir.includes('n')) {
+        h = Math.max(40, d.startH - dy);
+        y = d.startY + d.startH - h;
+      }
+      return { ...el, x, y, width: w, height: h };
+    });
+
+    onUpdateElements(next);
+  }
+
+  // ── Pointer up ──
+  function onPointerUp(e: React.PointerEvent) {
+    dragRef.current = null;
+    setActiveId(null);
+    (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+  }
+
   function deleteEl(id: string) {
     onUpdateElements(elements.filter((e) => e.id !== id));
     onSelect(null);
@@ -239,14 +190,13 @@ export default function DraggableCanvas({
       className="relative select-none"
       onClick={() => onSelect(null)}
     >
-      {/* Template base */}
       <TemplateRenderer config={config} />
 
-      {/* Overlay */}
+      {/* Overlay — pointer-events:none on container, each element opts back in */}
       <div className="absolute inset-0" style={{ pointerEvents: 'none' }}>
         {elements.map((el) => {
           const sel = selectedId === el.id;
-          const dragging = draggingId === el.id;
+          const dragging = activeId === el.id;
 
           return (
             <div
@@ -258,21 +208,24 @@ export default function DraggableCanvas({
                 width: el.width,
                 height: el.height,
                 pointerEvents: 'auto',
+                touchAction: 'none', // required for pointer events on touch
                 outline: sel
                   ? '2px solid #3b82f6'
-                  : '1.5px dashed rgba(59,130,246,0.45)',
+                  : '1.5px dashed rgba(59,130,246,0.5)',
                 outlineOffset: sel ? 1 : 0,
                 cursor: dragging ? 'grabbing' : 'grab',
                 boxSizing: 'border-box',
+                userSelect: 'none',
+                zIndex: sel ? 10 : 1,
               }}
-              onMouseDown={(e) => startDrag(e, el.id)}
-              onTouchStart={(e) => startDragTouch(e, el.id)}
+              onPointerDown={(e) => onElPointerDown(e, el.id)}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect(el.id);
               }}
             >
-              {/* Image */}
               <img
                 src={el.url}
                 alt=""
@@ -290,7 +243,7 @@ export default function DraggableCanvas({
               {/* Delete button */}
               {sel && (
                 <button
-                  onMouseDown={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
                   onClick={(e) => {
                     e.stopPropagation();
                     deleteEl(el.id);
@@ -301,13 +254,13 @@ export default function DraggableCanvas({
                     right: -12,
                     zIndex: 20,
                   }}
-                  className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md transition-colors hover:bg-red-600"
+                  className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white shadow-md hover:bg-red-600"
                 >
                   <X size={10} />
                 </button>
               )}
 
-              {/* Move handle (top-left, shown when selected) */}
+              {/* Move handle */}
               {sel && (
                 <div
                   style={{
@@ -324,9 +277,12 @@ export default function DraggableCanvas({
                     justifyContent: 'center',
                     cursor: dragging ? 'grabbing' : 'grab',
                     color: '#fff',
+                    pointerEvents: 'auto',
+                    touchAction: 'none',
                   }}
-                  onMouseDown={(e) => startDrag(e, el.id)}
-                  onTouchStart={(e) => startDragTouch(e, el.id)}
+                  onPointerDown={(e) => onElPointerDown(e, el.id)}
+                  onPointerMove={onPointerMove}
+                  onPointerUp={onPointerUp}
                 >
                   <Move size={12} />
                 </div>
@@ -337,7 +293,6 @@ export default function DraggableCanvas({
                 HANDLES.map(({ dir, style }) => (
                   <div
                     key={dir}
-                    onMouseDown={(e) => startResize(e, el.id, dir)}
                     style={{
                       position: 'absolute',
                       width: 10,
@@ -346,8 +301,13 @@ export default function DraggableCanvas({
                       border: '2px solid #3b82f6',
                       borderRadius: 2,
                       zIndex: 20,
+                      pointerEvents: 'auto',
+                      touchAction: 'none',
                       ...style,
                     }}
+                    onPointerDown={(e) => onHandlePointerDown(e, el.id, dir)}
+                    onPointerMove={onPointerMove}
+                    onPointerUp={onPointerUp}
                   />
                 ))}
             </div>
