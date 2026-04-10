@@ -88,16 +88,47 @@ export default async function TemplatePreviewPage({ params }: Props) {
       <div className="min-h-screen bg-gray-50">
         {/* Sticky top bar */}
         <div className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur-md">
-          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-            {/* Left: back + logo */}
-            <div className="flex items-center gap-4">
+          <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5">
+            {/* Back */}
+            <Link
+              href="/templates"
+              className="flex shrink-0 items-center gap-1 text-sm text-gray-500 transition-colors hover:text-gray-800"
+            >
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+              Mẫu thiệp
+            </Link>
+
+            <div className="h-4 w-px shrink-0 bg-gray-200" />
+
+            {/* Template name */}
+            <span className="truncate text-sm font-semibold text-gray-800">
+              {template.name}
+              <span className="ml-1.5 font-normal text-gray-400">
+                {template.description}
+              </span>
+            </span>
+
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Prev/Next */}
+            {prevTemplate && (
               <Link
-                href="/templates"
-                className="flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-800"
+                href={`/templates/${prevTemplate.id}`}
+                className="hidden shrink-0 items-center gap-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs text-gray-600 transition-all hover:bg-gray-50 sm:flex"
               >
                 <svg
-                  width="16"
-                  height="16"
+                  width="12"
+                  height="12"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -105,67 +136,34 @@ export default async function TemplatePreviewPage({ params }: Props) {
                 >
                   <path d="m15 18-6-6 6-6" />
                 </svg>
-                Tất cả mẫu
+                {prevTemplate.name}
               </Link>
-              <div className="h-5 w-px bg-gray-200" />
-              <Logo size={26} variant="dark" />
-            </div>
-
-            {/* Center: template name */}
-            <div className="hidden text-center md:block">
-              <p className="text-xs tracking-wider text-gray-400 uppercase">
-                Đang xem
-              </p>
-              <p className="text-sm font-semibold text-gray-800">
-                {template.name} — {template.description}
-              </p>
-            </div>
-
-            {/* Right: nav + CTA */}
-            <div className="flex items-center gap-2">
-              {prevTemplate && (
-                <Link
-                  href={`/templates/${prevTemplate.id}`}
-                  className="hidden items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50 sm:flex"
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                  {prevTemplate.name}
-                </Link>
-              )}
-              {nextTemplate && (
-                <Link
-                  href={`/templates/${nextTemplate.id}`}
-                  className="hidden items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50 sm:flex"
-                >
-                  {nextTemplate.name}
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </Link>
-              )}
+            )}
+            {nextTemplate && (
               <Link
-                href={user ? '/cards/new' : '/register'}
-                className="rounded-full bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600"
+                href={`/templates/${nextTemplate.id}`}
+                className="hidden shrink-0 items-center gap-1 rounded-lg border border-gray-200 px-2.5 py-1 text-xs text-gray-600 transition-all hover:bg-gray-50 sm:flex"
               >
-                Dùng mẫu này
+                {nextTemplate.name}
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
               </Link>
-            </div>
+            )}
+
+            <Link
+              href={user ? '/cards/new' : '/register'}
+              className="shrink-0 rounded-full bg-rose-500 px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-600"
+            >
+              Dùng mẫu này
+            </Link>
           </div>
         </div>
 
