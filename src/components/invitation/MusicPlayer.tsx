@@ -3,55 +3,36 @@
 import { useEffect, useRef, useState } from 'react';
 import type { MusicConfig } from '@/types/card';
 
-export default function MusicPlayer({ music }: { music: MusicConfig }) {
+export default function MusicPlayer({
+  music,
+  autoStart = false,
+}: {
+  music: MusicConfig;
+  autoStart?: boolean; // true = start playing as soon as component mounts (after user gesture)
+}) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [ready, setReady] = useState(false);
 
-  // Try autoplay on first user interaction if autoPlay is enabled
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     audio.loop = music.loop ?? true;
 
-    const onCanPlay = () => setReady(true);
-    audio.addEventListener('canplaythrough', onCanPlay);
-
-    if (music.autoPlay ?? true) {
-      // Attempt silent autoplay; browsers usually block it — we catch and wait
-      audio
-        .play()
-        .then(() => setPlaying(true))
-        .catch(() => {
-          // Autoplay blocked: wait for first user gesture then start
-          const startOnInteraction = () => {
-            audio
-              .play()
-              .then(() => setPlaying(true))
-              .catch(() => {});
-            document.removeEventListener('click', startOnInteraction);
-            document.removeEventListener('touchstart', startOnInteraction);
-          };
-          document.addEventListener('click', startOnInteraction, {
-            once: true,
-          });
-          document.addEventListener('touchstart', startOnInteraction, {
-            once: true,
-          });
-        });
-    }
-
     audio.addEventListener('play', () => setPlaying(true));
     audio.addEventListener('pause', () => setPlaying(false));
     audio.addEventListener('ended', () => {
-      if (!music.loop) setPlaying(false);
+      if (!(music.loop ?? true)) setPlaying(false);
     });
+  }, [music.loop]);
 
-    return () => {
-      audio.removeEventListener('canplaythrough', onCanPlay);
-    };
-  }, [music.autoPlay, music.loop]);
+  // Start playing when autoStart flips to true (triggered after splash click)
+  useEffect(() => {
+    if (!autoStart) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.play().catch(() => {});
+  }, [autoStart]);
 
   function toggle() {
     const audio = audioRef.current;
@@ -75,13 +56,11 @@ export default function MusicPlayer({ music }: { music: MusicConfig }) {
         style={{ backdropFilter: 'blur(8px)' }}
       >
         {playing ? (
-          /* Pause icon — two bars */
           <span className="flex gap-1">
             <span className="h-5 w-1.5 rounded-full bg-pink-500" />
             <span className="h-5 w-1.5 rounded-full bg-pink-500" />
           </span>
         ) : (
-          /* Play icon — triangle */
           <span
             style={{
               borderTop: '9px solid transparent',
@@ -93,7 +72,6 @@ export default function MusicPlayer({ music }: { music: MusicConfig }) {
           />
         )}
 
-        {/* Spinning vinyl disc behind button when playing */}
         {playing && (
           <span
             className="absolute inset-0 rounded-full border-4 border-pink-300 opacity-40"
@@ -102,7 +80,7 @@ export default function MusicPlayer({ music }: { music: MusicConfig }) {
         )}
       </button>
 
-      {/* Track name tooltip */}
+      {/* Track name */}
       {music.name && (
         <div className="fixed right-20 bottom-7 z-50 max-w-[180px] truncate rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium text-gray-600 shadow-lg ring-1 ring-gray-100 backdrop-blur-sm">
           🎵 {music.name}
