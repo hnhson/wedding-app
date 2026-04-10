@@ -14,7 +14,6 @@ export default function RSVPForm({ cardId }: Props) {
   const [email, setEmail] = useState('');
   const [attending, setAttending] = useState<boolean | null>(null);
   const [guestCount, setGuestCount] = useState(1);
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +36,6 @@ export default function RSVPForm({ cardId }: Props) {
           email,
           attending,
           guestCount: attending ? guestCount : 0,
-          message,
         }),
       });
       if (!res.ok) {
@@ -136,18 +134,6 @@ export default function RSVPForm({ cardId }: Props) {
           />
         </div>
       )}
-
-      <div className="space-y-1">
-        <Label htmlFor="rsvp-message">Lời chúc (tùy chọn)</Label>
-        <textarea
-          id="rsvp-message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          rows={3}
-          placeholder="Gửi lời chúc mừng đến đôi uyên ương..."
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 focus:outline-none"
-        />
-      </div>
 
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Đang gửi...' : 'Xác nhận'}
