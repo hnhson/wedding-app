@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -15,7 +16,10 @@ export default function LoginModal({ onClose }: Props) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {},
+  );
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
@@ -38,7 +42,9 @@ export default function LoginModal({ onClose }: Props) {
   // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -46,14 +52,20 @@ export default function LoginModal({ onClose }: Props) {
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     if (emailError || passwordError) {
-      setErrors({ email: emailError ?? undefined, password: passwordError ?? undefined });
+      setErrors({
+        email: emailError ?? undefined,
+        password: passwordError ?? undefined,
+      });
       return;
     }
     setErrors({});
     setServerError('');
     setLoading(true);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     setLoading(false);
     if (error) {
       setServerError('Email hoặc mật khẩu không đúng');
@@ -69,7 +81,9 @@ export default function LoginModal({ onClose }: Props) {
       <div
         ref={backdropRef}
         className="modal-backdrop"
-        onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
+        onClick={(e) => {
+          if (e.target === backdropRef.current) onClose();
+        }}
         aria-modal="true"
         role="dialog"
         aria-label="Đăng nhập"
@@ -88,12 +102,12 @@ export default function LoginModal({ onClose }: Props) {
           <p className="modal-sub">Chào mừng trở lại</p>
 
           <form onSubmit={handleSubmit} className="modal-form">
-            {serverError && (
-              <p className="modal-error-server">{serverError}</p>
-            )}
+            {serverError && <p className="modal-error-server">{serverError}</p>}
 
             <div className="modal-field">
-              <label htmlFor="m-email" className="modal-label">Email</label>
+              <label htmlFor="m-email" className="modal-label">
+                Email
+              </label>
               <input
                 ref={emailRef}
                 id="m-email"
@@ -108,19 +122,51 @@ export default function LoginModal({ onClose }: Props) {
 
             <div className="modal-field">
               <div className="modal-label-row">
-                <label htmlFor="m-password" className="modal-label">Mật khẩu</label>
-                <Link href="/forgot-password" className="modal-forgot" onClick={onClose}>
+                <label htmlFor="m-password" className="modal-label">
+                  Mật khẩu
+                </label>
+                <Link
+                  href="/forgot-password"
+                  className="modal-forgot"
+                  onClick={onClose}
+                >
                   Quên mật khẩu?
                 </Link>
               </div>
-              <input
-                id="m-password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className={`modal-input ${errors.password ? 'modal-input-err' : ''}`}
-              />
-              {errors.password && <p className="modal-error">{errors.password}</p>}
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="m-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`modal-input ${errors.password ? 'modal-input-err' : ''}`}
+                  style={{ paddingRight: '2.5rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                  style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#9e9590',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: 0,
+                  }}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="modal-error">{errors.password}</p>
+              )}
             </div>
 
             <button type="submit" disabled={loading} className="modal-btn">
@@ -130,7 +176,11 @@ export default function LoginModal({ onClose }: Props) {
 
           <p className="modal-register">
             Chưa có tài khoản?{' '}
-            <Link href="/register" className="modal-register-link" onClick={onClose}>
+            <Link
+              href="/register"
+              className="modal-register-link"
+              onClick={onClose}
+            >
               Đăng ký miễn phí
             </Link>
           </p>

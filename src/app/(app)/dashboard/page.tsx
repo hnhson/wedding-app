@@ -45,6 +45,7 @@ export default async function DashboardPage() {
             .in('card_id', cardIds)
             .gte(
               'view_date',
+              // eslint-disable-next-line react-hooks/purity
               new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0],
             )
             .then((r) => r.data ?? []),
@@ -58,18 +59,19 @@ export default async function DashboardPage() {
   const viewsLast7 = (recentViews as { view_date: string }[]).length;
 
   // Per-card stats
-  const viewsPerCard = cardIds.length > 0
-    ? await supabase
-        .from('page_views')
-        .select('card_id')
-        .in('card_id', cardIds)
-        .then((r) =>
-          (r.data ?? []).reduce<Record<string, number>>((acc, row) => {
-            acc[row.card_id] = (acc[row.card_id] ?? 0) + 1;
-            return acc;
-          }, {}),
-        )
-    : {};
+  const viewsPerCard =
+    cardIds.length > 0
+      ? await supabase
+          .from('page_views')
+          .select('card_id')
+          .in('card_id', cardIds)
+          .then((r) =>
+            (r.data ?? []).reduce<Record<string, number>>((acc, row) => {
+              acc[row.card_id] = (acc[row.card_id] ?? 0) + 1;
+              return acc;
+            }, {}),
+          )
+      : {};
 
   const rsvpPerCard = rsvpList.reduce<Record<string, number>>((acc, row) => {
     acc[row.card_id] = (acc[row.card_id] ?? 0) + 1;
@@ -143,7 +145,9 @@ export default async function DashboardPage() {
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-gray-400">Xin chào,</p>
-          <h1 className="text-2xl font-semibold text-gray-900">{firstName} 👋</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">
+            {firstName} 👋
+          </h1>
         </div>
         <Link
           href="/cards/new"
@@ -155,7 +159,9 @@ export default async function DashboardPage() {
 
       {/* ── Tổng quan stats ── */}
       <section className="mb-10">
-        <h2 className="mb-4 text-base font-semibold text-gray-700">Tổng quan</h2>
+        <h2 className="mb-4 text-base font-semibold text-gray-700">
+          Tổng quan
+        </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
           {statCards.map((s) => (
             <div
@@ -166,10 +172,12 @@ export default async function DashboardPage() {
               }}
               className="rounded-xl p-4"
             >
-              <span style={{ color: s.color, fontSize: '1.1rem' }}>{s.icon}</span>
+              <span style={{ color: s.color, fontSize: '1.1rem' }}>
+                {s.icon}
+              </span>
               <p
                 style={{ color: s.color }}
-                className="mt-2 text-2xl font-bold leading-none"
+                className="mt-2 text-2xl leading-none font-bold"
               >
                 {s.value}
               </p>
@@ -187,10 +195,10 @@ export default async function DashboardPage() {
           </h2>
           <div className="rounded-xl border bg-white p-5">
             <div className="mb-3 flex items-center justify-between text-sm">
-              <span className="text-green-700 font-medium">
+              <span className="font-medium text-green-700">
                 Tham dự: {totalAttending} người
               </span>
-              <span className="text-gray-400 font-medium">
+              <span className="font-medium text-gray-400">
                 Không tham dự: {totalNotAttending} người
               </span>
             </div>
@@ -203,7 +211,8 @@ export default async function DashboardPage() {
               />
             </div>
             <p className="mt-2 text-xs text-gray-400">
-              {Math.round((totalAttending / totalRsvps) * 100)}% xác nhận tham dự
+              {Math.round((totalAttending / totalRsvps) * 100)}% xác nhận tham
+              dự
             </p>
           </div>
         </section>
@@ -222,9 +231,9 @@ export default async function DashboardPage() {
 
         {cardList.length === 0 ? (
           <div className="rounded-xl border-2 border-dashed border-gray-200 py-20 text-center">
-            <p className="text-4xl mb-4">✦</p>
-            <p className="text-gray-500 font-medium">Bạn chưa có thiệp nào.</p>
-            <p className="text-sm text-gray-400 mt-1 mb-4">
+            <p className="mb-4 text-4xl">✦</p>
+            <p className="font-medium text-gray-500">Bạn chưa có thiệp nào.</p>
+            <p className="mt-1 mb-4 text-sm text-gray-400">
               Tạo thiệp đầu tiên để bắt đầu
             </p>
             <Link
@@ -242,8 +251,10 @@ export default async function DashboardPage() {
                 coupleNames.partner1 && coupleNames.partner2
                   ? `${coupleNames.partner1} & ${coupleNames.partner2}`
                   : 'Thiệp chưa đặt tên';
-              const views = (viewsPerCard as Record<string, number>)[card.id] ?? 0;
-              const rsvps = (rsvpPerCard as Record<string, number>)[card.id] ?? 0;
+              const views =
+                (viewsPerCard as Record<string, number>)[card.id] ?? 0;
+              const rsvps =
+                (rsvpPerCard as Record<string, number>)[card.id] ?? 0;
 
               return (
                 <div
@@ -252,7 +263,9 @@ export default async function DashboardPage() {
                 >
                   {/* Card header */}
                   <div className="border-b px-5 py-4">
-                    <h3 className="font-semibold text-gray-900 truncate">{name}</h3>
+                    <h3 className="truncate font-semibold text-gray-900">
+                      {name}
+                    </h3>
                     {weddingDate && (
                       <p className="mt-0.5 text-sm text-gray-400">
                         {new Date(weddingDate).toLocaleDateString('vi-VN', {
@@ -262,7 +275,7 @@ export default async function DashboardPage() {
                         })}
                       </p>
                     )}
-                    <p className="mt-0.5 text-xs text-gray-300 truncate">
+                    <p className="mt-0.5 truncate text-xs text-gray-300">
                       /invitation/{card.slug}
                     </p>
                   </div>
@@ -274,7 +287,9 @@ export default async function DashboardPage() {
                       <p className="text-xs text-gray-400">Lượt xem</p>
                     </div>
                     <div className="flex-1 py-3">
-                      <p className="text-lg font-bold text-purple-600">{rsvps}</p>
+                      <p className="text-lg font-bold text-purple-600">
+                        {rsvps}
+                      </p>
                       <p className="text-xs text-gray-400">RSVP</p>
                     </div>
                   </div>
@@ -305,10 +320,7 @@ export default async function DashboardPage() {
                     >
                       ◎ Thống kê
                     </Link>
-                    <DeleteCardButton
-                      cardId={card.id}
-                      cardName={name}
-                    />
+                    <DeleteCardButton cardId={card.id} cardName={name} />
                   </div>
                 </div>
               );

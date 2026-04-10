@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import PasswordInput from '@/components/ui/PasswordInput';
 
 export default function ChangePasswordForm() {
   const [newPassword, setNewPassword] = useState('');
@@ -58,9 +58,8 @@ export default function ChangePasswordForm() {
 
       <div className="space-y-1">
         <Label htmlFor="new-password">Mật khẩu mới</Label>
-        <Input
+        <PasswordInput
           id="new-password"
-          type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="Ít nhất 8 ký tự"
@@ -70,9 +69,8 @@ export default function ChangePasswordForm() {
 
       <div className="space-y-1">
         <Label htmlFor="confirm-password">Xác nhận mật khẩu</Label>
-        <Input
+        <PasswordInput
           id="confirm-password"
-          type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="Nhập lại mật khẩu mới"

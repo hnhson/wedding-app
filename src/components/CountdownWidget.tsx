@@ -51,6 +51,7 @@ export default function CountdownWidget({
 
   useEffect(() => {
     if (!weddingDate) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTimeLeft(getTimeLeft(weddingDate));
     const interval = setInterval(
       () => setTimeLeft(getTimeLeft(weddingDate)),
