@@ -24,6 +24,37 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
         overflow: 'hidden',
       }}
     >
+      <style>{`
+        @keyframes wFadeInUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes wPulse {
+          0%, 100% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.15); }
+        }
+        @keyframes wFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes wExpandLine {
+          from { transform: scaleX(0); opacity: 0; }
+          to { transform: scaleX(1); opacity: 1; }
+        }
+        @keyframes wShimmer {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+        @keyframes wTwinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.9; transform: scale(1.3); }
+        }
+      `}</style>
+
       {/* Botanical corner decorations */}
       {/* Top-left */}
       <div
@@ -36,6 +67,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           lineHeight: 1,
           pointerEvents: 'none',
           userSelect: 'none',
+          animation: 'wFloat 3s ease-in-out 0s infinite',
         }}
       >
         ✿<br />
@@ -55,6 +87,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           textAlign: 'right',
           pointerEvents: 'none',
           userSelect: 'none',
+          animation: 'wFloat 3s ease-in-out 0.5s infinite',
         }}
       >
         ✿<br />
@@ -73,6 +106,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           lineHeight: 1,
           pointerEvents: 'none',
           userSelect: 'none',
+          animation: 'wFloat 3s ease-in-out 1s infinite',
         }}
       >
         ⚘<br />
@@ -92,6 +126,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           textAlign: 'right',
           pointerEvents: 'none',
           userSelect: 'none',
+          animation: 'wFloat 3s ease-in-out 1.5s infinite',
         }}
       >
         ⚘<br />
@@ -102,7 +137,14 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
 
       {/* Hero image strip */}
       {heroImage && (
-        <div style={{ height: '240px', overflow: 'hidden' }}>
+        <div
+          style={{
+            height: '240px',
+            overflow: 'hidden',
+            animation: 'wFadeIn 1s both',
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={heroImage}
             alt="Hero"
@@ -119,6 +161,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           display: 'flex',
           alignItems: 'center',
           gap: '16px',
+          animation: 'wFadeInUp 0.8s ease 0.2s both',
         }}
       >
         <div>
@@ -165,6 +208,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           display: 'flex',
           alignItems: 'center',
           gap: '24px',
+          animation: 'wFadeIn 0.8s ease 0.5s both',
         }}
       >
         <span style={{ color: 'var(--card-accent)', fontSize: '1.1rem' }}>
@@ -184,6 +228,66 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           </>
         )}
       </div>
+
+      {/* Countdown */}
+      {weddingDate && (
+        <div
+          style={{
+            padding: '20px 40px 8px',
+            animation: 'wFadeIn 0.8s ease 0.9s both',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '0.6rem',
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              opacity: 0.55,
+              marginBottom: '10px',
+              textAlign: 'center',
+            }}
+          >
+            Đếm ngược đến ngày trọng đại
+          </p>
+          <div
+            style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}
+          >
+            {[
+              { label: 'Ngày', value: '---' },
+              { label: 'Giờ', value: '--' },
+              { label: 'Phút', value: '--' },
+            ].map(({ label, value }) => (
+              <div
+                key={label}
+                style={{ textAlign: 'center', minWidth: '40px' }}
+              >
+                <div
+                  style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: 'var(--card-accent)',
+                    lineHeight: 1,
+                    fontFamily: 'var(--card-font-heading)',
+                  }}
+                >
+                  {value}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.55rem',
+                    letterSpacing: '0.15em',
+                    opacity: 0.55,
+                    textTransform: 'uppercase',
+                    marginTop: '4px',
+                  }}
+                >
+                  {label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Love Story */}
       {loveStory && (
@@ -424,6 +528,51 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
               Chỉ đường
             </a>
           )}
+        </div>
+      )}
+
+      {/* Gallery */}
+      {config.gallery && config.gallery.length > 0 && (
+        <div style={{ padding: '32px 24px 40px', background: 'inherit' }}>
+          <p
+            style={{
+              textAlign: 'center',
+              color: 'var(--card-accent)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              marginBottom: '20px',
+            }}
+          >
+            Kỷ niệm
+          </p>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '8px',
+            }}
+          >
+            {config.gallery.slice(0, 3).map((src, i) => (
+              <div
+                key={i}
+                style={{
+                  aspectRatio: '1',
+                  overflow: 'hidden',
+                  borderRadius: '8px',
+                  borderLeft: '3px solid var(--card-accent)',
+                  animation: `wFadeInUp 0.7s ease ${0.1 * i}s both`,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={src}
+                  alt=""
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

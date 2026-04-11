@@ -22,6 +22,33 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
         fontFamily: 'var(--card-font-body, Georgia, serif)',
       }}
     >
+      <style>{`
+        @keyframes wFadeInUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes wPulse {
+          0%, 100% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.15); }
+        }
+        @keyframes wFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        @keyframes wExpandLine {
+          from { transform: scaleX(0); opacity: 0; }
+          to { transform: scaleX(1); opacity: 1; }
+        }
+        @keyframes wShimmer {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 1; }
+        }
+      `}</style>
+
       {/* Outer double-frame border */}
       <div
         style={{
@@ -40,14 +67,24 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                 src={heroImage}
                 alt="Hero"
                 className="h-full w-full object-cover"
-                style={{ opacity: 0.12 }}
+                style={{ opacity: 0.12, objectPosition: 'center top' }}
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.1) 100%)',
+                }}
               />
             </div>
           )}
           <div className="relative z-10 w-full">
             <p
               className="mb-8 text-xs tracking-[0.4em] uppercase"
-              style={{ color: 'var(--card-accent)' }}
+              style={{
+                color: 'var(--card-accent)',
+                animation: 'wFadeIn 1s ease both',
+              }}
             >
               Trân trọng kính mời
             </p>
@@ -57,8 +94,69 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               className="mb-10 flex items-center justify-center gap-4"
               style={{ color: 'var(--card-accent)' }}
             >
-              <span style={{ fontSize: '10px', letterSpacing: '6px' }}>
-                ✦ ✦ ✦ ◆ ✦ ✦ ✦
+              <span
+                style={{
+                  fontSize: '10px',
+                  letterSpacing: '6px',
+                  animation: 'wFloat 3s ease-in-out infinite',
+                  display: 'inline-block',
+                }}
+              >
+                <span
+                  style={{
+                    animation: 'wShimmer 2.5s ease-in-out infinite',
+                    animationDelay: '0s',
+                    display: 'inline-block',
+                  }}
+                >
+                  ✦
+                </span>{' '}
+                <span
+                  style={{
+                    animation: 'wShimmer 2.5s ease-in-out infinite',
+                    animationDelay: '0.4s',
+                    display: 'inline-block',
+                  }}
+                >
+                  ✦
+                </span>{' '}
+                <span
+                  style={{
+                    animation: 'wShimmer 2.5s ease-in-out infinite',
+                    animationDelay: '0.8s',
+                    display: 'inline-block',
+                  }}
+                >
+                  ✦
+                </span>{' '}
+                ◆{' '}
+                <span
+                  style={{
+                    animation: 'wShimmer 2.5s ease-in-out infinite',
+                    animationDelay: '1.2s',
+                    display: 'inline-block',
+                  }}
+                >
+                  ✦
+                </span>{' '}
+                <span
+                  style={{
+                    animation: 'wShimmer 2.5s ease-in-out infinite',
+                    animationDelay: '1.6s',
+                    display: 'inline-block',
+                  }}
+                >
+                  ✦
+                </span>{' '}
+                <span
+                  style={{
+                    animation: 'wShimmer 2.5s ease-in-out infinite',
+                    animationDelay: '2.0s',
+                    display: 'inline-block',
+                  }}
+                >
+                  ✦
+                </span>
               </span>
             </div>
 
@@ -69,18 +167,24 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                 fontSize: '3.5rem',
                 lineHeight: 1.15,
                 letterSpacing: '0.02em',
+                animation: 'wFadeInUp 0.9s ease 0.15s both',
               }}
             >
               {coupleNames.partner1 || 'Cô Dâu'}
             </h1>
 
-            {/* Gold divider with &amp; */}
-            <div className="my-5 flex items-center justify-center gap-5">
+            {/* Gold divider with & */}
+            <div
+              className="my-5 flex items-center justify-center gap-5"
+              style={{ animation: 'wFadeIn 0.8s ease 0.5s both' }}
+            >
               <div
                 style={{
                   height: '1px',
                   width: '60px',
                   background: 'var(--card-accent)',
+                  animation: 'wExpandLine 0.8s ease 0.3s both',
+                  transformOrigin: 'center',
                 }}
               />
               <span
@@ -98,6 +202,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                   height: '1px',
                   width: '60px',
                   background: 'var(--card-accent)',
+                  animation: 'wExpandLine 0.8s ease 0.3s both',
+                  transformOrigin: 'center',
                 }}
               />
             </div>
@@ -109,6 +215,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                 fontSize: '3.5rem',
                 lineHeight: 1.15,
                 letterSpacing: '0.02em',
+                animation: 'wFadeInUp 0.9s ease 0.7s both',
               }}
             >
               {coupleNames.partner2 || 'Chú Rể'}
@@ -117,12 +224,73 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             {/* Bottom ornament */}
             <div
               className="mb-10 flex items-center justify-center gap-4"
-              style={{ color: 'var(--card-accent)' }}
+              style={{
+                color: 'var(--card-accent)',
+                animation: 'wFloat 3s ease-in-out infinite',
+              }}
             >
               <span style={{ fontSize: '10px', letterSpacing: '6px' }}>
                 ❧ ◆ ❧
               </span>
             </div>
+
+            {weddingDate && (
+              <div
+                style={{
+                  marginBottom: '8px',
+                  animation: 'wFadeIn 0.8s ease 0.9s both',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: '0.6rem',
+                    letterSpacing: '0.3em',
+                    textTransform: 'uppercase',
+                    opacity: 0.55,
+                    marginBottom: '8px',
+                  }}
+                >
+                  Đếm ngược đến ngày trọng đại
+                </p>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '16px',
+                  }}
+                >
+                  {[
+                    { label: 'Ngày', value: '---' },
+                    { label: 'Giờ', value: '--' },
+                    { label: 'Phút', value: '--' },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          fontSize: '1.4rem',
+                          fontWeight: 700,
+                          color: 'var(--card-accent)',
+                          lineHeight: 1,
+                        }}
+                      >
+                        {value}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '0.55rem',
+                          letterSpacing: '0.15em',
+                          opacity: 0.55,
+                          textTransform: 'uppercase',
+                          marginTop: '3px',
+                        }}
+                      >
+                        {label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <p
               className="mb-2 text-base"
@@ -130,6 +298,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                 letterSpacing: '0.1em',
                 color: 'var(--card-primary)',
                 opacity: 0.85,
+                animation: 'wFadeIn 0.8s ease 1s both',
               }}
             >
               {formattedDate}
@@ -137,7 +306,11 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             {venue.name && (
               <p
                 className="mt-2 text-sm tracking-widest uppercase"
-                style={{ color: 'var(--card-accent)', opacity: 0.9 }}
+                style={{
+                  color: 'var(--card-accent)',
+                  opacity: 0.9,
+                  animation: 'wFadeIn 0.8s ease 1.2s both',
+                }}
               >
                 {venue.name}
               </p>
@@ -153,6 +326,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               flex: 1,
               background: 'var(--card-accent)',
               opacity: 0.4,
+              animation: 'wExpandLine 0.8s ease 0.3s both',
+              transformOrigin: 'center',
             }}
           />
           <span
@@ -160,6 +335,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               margin: '0 16px',
               color: 'var(--card-accent)',
               fontSize: '12px',
+              animation: 'wShimmer 2.5s ease-in-out infinite',
             }}
           >
             ✦
@@ -170,6 +346,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               flex: 1,
               background: 'var(--card-accent)',
               opacity: 0.4,
+              animation: 'wExpandLine 0.8s ease 0.3s both',
+              transformOrigin: 'center',
             }}
           />
         </div>
@@ -200,6 +378,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               flex: 1,
               background: 'var(--card-accent)',
               opacity: 0.4,
+              animation: 'wExpandLine 0.8s ease 0.3s both',
+              transformOrigin: 'center',
             }}
           />
           <span
@@ -207,6 +387,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               margin: '0 16px',
               color: 'var(--card-accent)',
               fontSize: '12px',
+              animation: 'wShimmer 2.5s ease-in-out infinite',
+              animationDelay: '0.8s',
             }}
           >
             ◆
@@ -217,6 +399,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               flex: 1,
               background: 'var(--card-accent)',
               opacity: 0.4,
+              animation: 'wExpandLine 0.8s ease 0.3s both',
+              transformOrigin: 'center',
             }}
           />
         </div>
@@ -277,6 +461,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               flex: 1,
               background: 'var(--card-accent)',
               opacity: 0.4,
+              animation: 'wExpandLine 0.8s ease 0.3s both',
+              transformOrigin: 'center',
             }}
           />
           <span
@@ -284,6 +470,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               margin: '0 16px',
               color: 'var(--card-accent)',
               fontSize: '12px',
+              animation: 'wShimmer 2.5s ease-in-out infinite',
+              animationDelay: '1.6s',
             }}
           >
             ✦
@@ -294,6 +482,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
               flex: 1,
               background: 'var(--card-accent)',
               opacity: 0.4,
+              animation: 'wExpandLine 0.8s ease 0.3s both',
+              transformOrigin: 'center',
             }}
           />
         </div>
@@ -331,13 +521,92 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
           </div>
         )}
 
+        {/* Gallery */}
+        {config.gallery && config.gallery.length > 0 && (
+          <div style={{ padding: '32px 24px 40px' }}>
+            <p
+              style={{
+                textAlign: 'center',
+                color: 'var(--card-accent)',
+                fontSize: '0.65rem',
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                marginBottom: '20px',
+                animation: 'wFadeIn 0.8s ease both',
+              }}
+            >
+              Kỷ niệm
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+              }}
+            >
+              {config.gallery.slice(0, 3).map((src, i) => (
+                <div
+                  key={i}
+                  style={{
+                    aspectRatio: '1',
+                    overflow: 'hidden',
+                    borderRadius: '8px',
+                    animation: `wFadeInUp 0.7s ease ${0.1 * i}s both`,
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Bottom ornament */}
         <div
           className="flex items-center justify-center pb-12"
-          style={{ color: 'var(--card-accent)' }}
+          style={{
+            color: 'var(--card-accent)',
+            animation: 'wFloat 3s ease-in-out infinite',
+          }}
         >
           <span style={{ fontSize: '10px', letterSpacing: '8px' }}>
-            ✦ ◆ ❧ ◆ ✦
+            <span
+              style={{
+                animation: 'wShimmer 2.5s ease-in-out infinite',
+                animationDelay: '0s',
+                display: 'inline-block',
+              }}
+            >
+              ✦
+            </span>{' '}
+            ◆{' '}
+            <span
+              style={{
+                animation: 'wShimmer 2.5s ease-in-out infinite',
+                animationDelay: '0.6s',
+                display: 'inline-block',
+              }}
+            >
+              ❧
+            </span>{' '}
+            ◆{' '}
+            <span
+              style={{
+                animation: 'wShimmer 2.5s ease-in-out infinite',
+                animationDelay: '1.2s',
+                display: 'inline-block',
+              }}
+            >
+              ✦
+            </span>
           </span>
         </div>
       </div>

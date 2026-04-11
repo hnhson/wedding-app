@@ -14,7 +14,7 @@ export const MOCK_CARD_CONFIG: Omit<
     lng: 106.7009,
   },
   loveStory:
-    'Chúng tôi gặp nhau vào một buổi chiều thu năm 2020, khi những chiếc lá vàng rơi nhẹ trên con phố nhỏ. Từ ánh mắt đầu tiên, chúng tôi đã biết rằng đây là mối duyên của cả cuộc đời.',
+    'Chúng tôi gặp nhau vào một buổi chiều thu năm 2020, khi những chiếc lá vàng rơi nhẹ trên con phố nhỏ. Từ ánh mắt đầu tiên, chúng tôi đã biết rằng đây là mối duyên của cả cuộc đời.\n\nBa năm bên nhau — cùng đi qua những ngày nắng, những ngày mưa — chúng tôi ngày càng chắc chắn rằng mình đã tìm đúng người.',
   schedule: [
     { time: '09:00', title: 'Lễ gia tiên', description: 'Tại nhà gái, Quận 3' },
     {
@@ -37,8 +37,19 @@ export const MOCK_CARD_CONFIG: Omit<
     { side: 'bride', members: ['Ông Nguyễn Văn An', 'Bà Trần Thị Bình'] },
     { side: 'groom', members: ['Ông Phạm Văn Cường', 'Bà Lê Thị Dung'] },
   ],
-  heroImage: null,
-  gallery: [],
+  heroImage:
+    'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=70',
+  gallery: [
+    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=70',
+    'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=70',
+    'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=600&q=70',
+  ],
   overlayElements: [],
   cardHeight: 900,
+  music: {
+    url: '',
+    name: 'A Thousand Years — Christina Perri',
+    autoPlay: false,
+    loop: true,
+  },
 };

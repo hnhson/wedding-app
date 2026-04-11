@@ -20,10 +20,28 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
         background: 'var(--card-bg)',
         color: 'var(--card-primary)',
         fontFamily: 'var(--card-font-body, Georgia, serif)',
-        // Aged paper overlay via filter
         filter: 'sepia(8%)',
       }}
     >
+      <style>{`
+        @keyframes wFadeInUp {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes wFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes wFloat {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-6px); }
+        }
+        @keyframes wExpandLine {
+          from { transform: scaleX(0); opacity: 0; }
+          to   { transform: scaleX(1); opacity: 1; }
+        }
+      `}</style>
+
       {/* Stamp-style dashed outer border */}
       <div
         style={{
@@ -31,6 +49,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
           border: '3px dashed var(--card-accent)',
           minHeight: cardHeight - 36,
           position: 'relative',
+          animation: 'wFadeIn 1s ease both',
         }}
       >
         {/* Inner dotted second border */}
@@ -48,7 +67,14 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
 
         {/* Hero image */}
         {heroImage && (
-          <div style={{ height: '220px', overflow: 'hidden' }}>
+          <div
+            style={{
+              height: '240px',
+              overflow: 'hidden',
+              animation: 'wFadeIn 1.2s ease 0.1s both',
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={heroImage}
               alt="Hero"
@@ -63,12 +89,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
         )}
 
         {/* Postmark header */}
-        <div
-          style={{
-            padding: '40px 48px 10px',
-            textAlign: 'center',
-          }}
-        >
+        <div style={{ padding: '40px 48px 10px', textAlign: 'center' }}>
           {/* Vintage postcard label */}
           <div
             style={{
@@ -80,6 +101,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               textTransform: 'uppercase',
               opacity: 0.5,
               marginBottom: '28px',
+              animation: 'wFadeIn 0.8s ease 0.2s both',
             }}
           >
             Thiệp Cưới
@@ -93,6 +115,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               letterSpacing: '4px',
               marginBottom: '20px',
               opacity: 0.7,
+              animation: 'wFloat 4s ease-in-out infinite',
             }}
           >
             ~~~✦~~~
@@ -105,6 +128,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               textTransform: 'uppercase',
               opacity: 0.55,
               marginBottom: '16px',
+              animation: 'wFadeIn 0.8s ease 0.3s both',
             }}
           >
             Kính mời quý vị đến dự lễ thành hôn
@@ -117,6 +141,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               fontWeight: 700,
               lineHeight: 1.15,
               letterSpacing: '0.01em',
+              animation: 'wFadeInUp 0.9s ease 0.4s both',
             }}
           >
             {coupleNames.partner1 || 'Cô Dâu'}
@@ -129,6 +154,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               letterSpacing: '8px',
               margin: '10px 0',
               opacity: 0.7,
+              animation: 'wFadeIn 0.8s ease 0.65s both',
             }}
           >
             ~~~&amp;~~~
@@ -141,6 +167,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               fontWeight: 700,
               lineHeight: 1.15,
               letterSpacing: '0.01em',
+              animation: 'wFadeInUp 0.9s ease 0.8s both',
             }}
           >
             {coupleNames.partner2 || 'Chú Rể'}
@@ -154,10 +181,76 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               letterSpacing: '4px',
               margin: '20px 0',
               opacity: 0.7,
+              animation: 'wFloat 4s ease-in-out 0.5s infinite',
             }}
           >
             ~~~✦~~~
           </div>
+
+          {/* Countdown */}
+          {weddingDate && (
+            <div
+              style={{
+                marginBottom: '16px',
+                animation: 'wFadeIn 0.8s ease 0.9s both',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: '0.6rem',
+                  letterSpacing: '0.25em',
+                  textTransform: 'uppercase',
+                  opacity: 0.45,
+                  marginBottom: '10px',
+                  fontStyle: 'italic',
+                }}
+              >
+                Đếm ngược đến ngày trọng đại
+              </p>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '20px',
+                }}
+              >
+                {[
+                  { label: 'Ngày', value: '---' },
+                  { label: 'Giờ', value: '--' },
+                  { label: 'Phút', value: '--' },
+                ].map(({ label, value }) => (
+                  <div
+                    key={label}
+                    style={{ textAlign: 'center', minWidth: '40px' }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '1.4rem',
+                        fontWeight: 700,
+                        color: 'var(--card-accent)',
+                        lineHeight: 1,
+                        fontFamily: 'var(--card-font-heading)',
+                      }}
+                    >
+                      {value}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.52rem',
+                        letterSpacing: '0.12em',
+                        opacity: 0.5,
+                        textTransform: 'uppercase',
+                        marginTop: '4px',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      {label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <p
             style={{
@@ -165,20 +258,26 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               letterSpacing: '0.05em',
               opacity: 0.75,
               marginBottom: '6px',
+              animation: 'wFadeIn 0.8s ease 1.1s both',
             }}
           >
             {formattedDate}
           </p>
           {venue.name && (
             <p
-              style={{ fontSize: '0.82rem', opacity: 0.6, fontStyle: 'italic' }}
+              style={{
+                fontSize: '0.82rem',
+                opacity: 0.6,
+                fontStyle: 'italic',
+                animation: 'wFadeIn 0.8s ease 1.25s both',
+              }}
             >
               {venue.name}
             </p>
           )}
         </div>
 
-        {/* Ornate section header style */}
+        {/* Love Story */}
         {loveStory && (
           <div
             style={{
@@ -187,7 +286,6 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
               margin: '0 auto',
             }}
           >
-            {/* Section header with ~~~ */}
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <span
                 style={{
@@ -196,7 +294,6 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
                   letterSpacing: '0.25em',
                   textTransform: 'uppercase',
                   color: 'var(--card-accent)',
-                  position: 'relative',
                 }}
               >
                 ~~~ Câu chuyện tình yêu ~~~
@@ -217,7 +314,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
           </div>
         )}
 
-        {/* Dashed vintage rule */}
+        {/* Dashed rule */}
         <div
           style={{
             margin: '8px 52px',
@@ -263,7 +360,6 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
                       i < schedule.length - 1
                         ? '1px dotted var(--card-primary)'
                         : 'none',
-                    opacity: i < schedule.length - 1 ? 1 : 1,
                   }}
                 >
                   <span
@@ -301,7 +397,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
           </div>
         )}
 
-        {/* Dashed vintage rule */}
+        {/* Dashed rule */}
         <div
           style={{
             margin: '8px 52px',
@@ -312,7 +408,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
 
         {/* Venue */}
         {venue.address && (
-          <div style={{ padding: '28px 52px 52px', textAlign: 'center' }}>
+          <div style={{ padding: '28px 52px 36px', textAlign: 'center' }}>
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
               <span
                 style={{
@@ -364,6 +460,57 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
           </div>
         )}
 
+        {/* Gallery */}
+        {config.gallery && config.gallery.length > 0 && (
+          <div style={{ padding: '16px 52px 36px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+              <span
+                style={{
+                  fontFamily: 'var(--card-font-heading, Georgia, serif)',
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.25em',
+                  textTransform: 'uppercase',
+                  color: 'var(--card-accent)',
+                }}
+              >
+                ~~~ Kỷ niệm ~~~
+              </span>
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '8px',
+              }}
+            >
+              {config.gallery.slice(0, 3).map((src, i) => (
+                <div
+                  key={i}
+                  style={{
+                    aspectRatio: '1',
+                    overflow: 'hidden',
+                    borderRadius: '4px',
+                    border: '1px dashed var(--card-accent)',
+                    animation: `wFadeInUp 0.7s ease ${0.1 * i}s both`,
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      filter: 'sepia(20%) contrast(0.95)',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Bottom flourish */}
         <div
           style={{
@@ -373,6 +520,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
             fontSize: '1rem',
             letterSpacing: '4px',
             opacity: 0.6,
+            animation: 'wFloat 4s ease-in-out 1s infinite',
           }}
         >
           ~~~✦~~~
