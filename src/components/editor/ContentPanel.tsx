@@ -62,6 +62,81 @@ export default function ContentPanel({ config, onChange }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* ── Basic info ── */}
+      <div className="space-y-3">
+        <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase">
+          Thông tin cơ bản
+        </p>
+
+        {/* Couple names */}
+        <div className="space-y-2">
+          <Label>Tên cô dâu</Label>
+          <Input
+            placeholder="Nguyễn Thị Lan Anh"
+            value={config.coupleNames?.partner1 ?? ''}
+            onChange={(e) =>
+              onChange({
+                coupleNames: {
+                  ...config.coupleNames,
+                  partner1: e.target.value,
+                },
+              })
+            }
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tên chú rể</Label>
+          <Input
+            placeholder="Trần Minh Khoa"
+            value={config.coupleNames?.partner2 ?? ''}
+            onChange={(e) =>
+              onChange({
+                coupleNames: {
+                  ...config.coupleNames,
+                  partner2: e.target.value,
+                },
+              })
+            }
+          />
+        </div>
+
+        {/* Wedding date */}
+        <div className="space-y-2">
+          <Label>Ngày cưới</Label>
+          <Input
+            type="date"
+            value={config.weddingDate ?? ''}
+            onChange={(e) => onChange({ weddingDate: e.target.value })}
+          />
+        </div>
+
+        {/* Venue */}
+        <div className="space-y-2">
+          <Label>Tên địa điểm</Label>
+          <Input
+            placeholder="Grand Palace Ballroom"
+            value={config.venue?.name ?? ''}
+            onChange={(e) =>
+              onChange({ venue: { ...config.venue, name: e.target.value } })
+            }
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Địa chỉ</Label>
+          <Input
+            placeholder="123 Nguyễn Huệ, Quận 1, TP.HCM"
+            value={config.venue?.address ?? ''}
+            onChange={(e) =>
+              onChange({ venue: { ...config.venue, address: e.target.value } })
+            }
+          />
+        </div>
+      </div>
+
+      <div className="border-t border-gray-100" />
+
       {/* Love story */}
       <div className="space-y-1">
         <Label>Câu chuyện tình yêu</Label>
