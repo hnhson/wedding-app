@@ -185,6 +185,8 @@ export default function MinimalTemplate({ config }: { config: CardConfig }) {
           />
         )}
 
+        <FamiliesSection config={config} />
+
         {loveStory && (
           <div className="mb-16">
             <p className="text-center leading-relaxed whitespace-pre-wrap opacity-80">
@@ -222,8 +224,6 @@ export default function MinimalTemplate({ config }: { config: CardConfig }) {
             )}
           </div>
         )}
-
-        <FamiliesSection config={config} />
 
         {/* Gallery */}
         {config.gallery && config.gallery.length > 0 && (

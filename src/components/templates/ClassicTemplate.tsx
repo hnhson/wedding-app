@@ -193,6 +193,8 @@ export default function ClassicTemplate({ config }: Props) {
         </div>
       </div>
 
+      <FamiliesSection config={config} />
+
       {/* Love Story */}
       {loveStory && (
         <div className="mx-auto max-w-2xl px-8 py-12 text-center">
@@ -281,8 +283,6 @@ export default function ClassicTemplate({ config }: Props) {
           )}
         </div>
       )}
-
-      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

@@ -193,6 +193,8 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
         </div>
       </div>
 
+      <FamiliesSection config={config} />
+
       {loveStory && (
         <div className="mx-auto max-w-2xl px-8 py-16">
           <h2
@@ -256,8 +258,6 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
           </div>
         </div>
       )}
-
-      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

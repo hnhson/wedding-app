@@ -278,6 +278,8 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
           )}
         </div>
 
+        <FamiliesSection config={config} />
+
         {/* Love Story */}
         {loveStory && (
           <div
@@ -460,8 +462,6 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
             )}
           </div>
         )}
-
-        <FamiliesSection config={config} />
 
         {/* Gallery */}
         {config.gallery && config.gallery.length > 0 && (

@@ -262,6 +262,8 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
       </div>
 
       {/* Love story */}
+      <FamiliesSection config={config} />
+
       {loveStory && (
         <div className="mx-auto max-w-xl px-10 py-14 text-center">
           <h2
@@ -390,8 +392,6 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           )}
         </div>
       )}
-
-      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

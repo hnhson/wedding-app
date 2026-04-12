@@ -506,6 +506,8 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
         <div
           style={{ background: 'var(--card-bg)', color: 'var(--card-primary)' }}
         >
+          <FamiliesSection config={config} />
+
           {/* Love Story */}
           {loveStory && (
             <div
@@ -771,8 +773,6 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
               )}
             </div>
           )}
-
-          <FamiliesSection config={config} />
 
           {/* Gallery */}
           {config.gallery && config.gallery.length > 0 && (

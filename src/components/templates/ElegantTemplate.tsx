@@ -353,6 +353,8 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
           />
         </div>
 
+        <FamiliesSection config={config} />
+
         {/* Love Story */}
         {loveStory && (
           <div className="mx-auto max-w-xl px-10 py-14 text-center">
@@ -521,8 +523,6 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             )}
           </div>
         )}
-
-        <FamiliesSection config={config} />
 
         {/* Gallery */}
         {config.gallery && config.gallery.length > 0 && (

@@ -333,6 +333,8 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
         />
       </div>
 
+      <FamiliesSection config={config} />
+
       {/* Love Story */}
       {loveStory && (
         <div
@@ -580,8 +582,6 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
           )}
         </div>
       )}
-
-      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

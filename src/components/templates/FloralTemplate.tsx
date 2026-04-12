@@ -232,6 +232,8 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
         )}
       </div>
 
+      <FamiliesSection config={config} />
+
       {loveStory && (
         <div className="mx-auto max-w-2xl px-8 py-10 text-center">
           <p
@@ -281,8 +283,6 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
           </div>
         </div>
       )}
-
-      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (
