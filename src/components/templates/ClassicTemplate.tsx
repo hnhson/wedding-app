@@ -1,4 +1,5 @@
 import type { CardConfig } from '@/types/card';
+import FamiliesSection from './FamiliesSection';
 
 interface Props {
   config: CardConfig;
@@ -280,6 +281,8 @@ export default function ClassicTemplate({ config }: Props) {
           )}
         </div>
       )}
+
+      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

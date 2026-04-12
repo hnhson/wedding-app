@@ -1,4 +1,5 @@
 import type { CardConfig } from '@/types/card';
+import FamiliesSection from './FamiliesSection';
 
 const STARS: {
   top: string;
@@ -770,6 +771,8 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
               )}
             </div>
           )}
+
+          <FamiliesSection config={config} />
 
           {/* Gallery */}
           {config.gallery && config.gallery.length > 0 && (

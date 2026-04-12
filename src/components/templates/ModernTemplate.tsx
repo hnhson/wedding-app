@@ -1,4 +1,5 @@
 import type { CardConfig } from '@/types/card';
+import FamiliesSection from './FamiliesSection';
 
 export default function ModernTemplate({ config }: { config: CardConfig }) {
   const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
@@ -255,6 +256,8 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
           </div>
         </div>
       )}
+
+      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

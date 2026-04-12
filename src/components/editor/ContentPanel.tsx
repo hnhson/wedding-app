@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,25 @@ export default function ContentPanel({ config, onChange }: Props) {
   const schedule = Array.isArray(config.schedule) ? config.schedule : [];
   const families = Array.isArray(config.families) ? config.families : [];
 
+  // Local text state — avoids trim() stripping spaces while typing
+  const [groomText, setGroomText] = useState(
+    () => families.find((f) => f.side === 'groom')?.members.join('\n') ?? '',
+  );
+  const [brideText, setBrideText] = useState(
+    () => families.find((f) => f.side === 'bride')?.members.join('\n') ?? '',
+  );
+
+  // Sync if config changes externally (e.g. card loaded)
+  useEffect(() => {
+    setGroomText(
+      families.find((f) => f.side === 'groom')?.members.join('\n') ?? '',
+    );
+    setBrideText(
+      families.find((f) => f.side === 'bride')?.members.join('\n') ?? '',
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.families]);
+
   function addScheduleItem() {
     if (!newScheduleItem.time || !newScheduleItem.title) return;
     onChange({ schedule: [...schedule, newScheduleItem] });
@@ -31,19 +50,15 @@ export default function ContentPanel({ config, onChange }: Props) {
     onChange({ schedule: schedule.filter((_, i) => i !== index) });
   }
 
-  function updateFamily(side: 'groom' | 'bride', members: string) {
+  // Only commit to config on blur — preserves spaces while typing
+  function commitFamily(side: 'groom' | 'bride', text: string) {
     const existing = families.filter((f) => f.side !== side);
-    const memberList = members
+    const memberList = text
       .split('\n')
       .map((m) => m.trim())
       .filter(Boolean);
     onChange({ families: [...existing, { side, members: memberList }] });
   }
-
-  const groomFamily =
-    families.find((f) => f.side === 'groom')?.members.join('\n') ?? '';
-  const brideFamily =
-    families.find((f) => f.side === 'bride')?.members.join('\n') ?? '';
 
   return (
     <div className="space-y-6">
@@ -123,16 +138,18 @@ export default function ContentPanel({ config, onChange }: Props) {
       <div className="space-y-3">
         <Label>Gia đình nhà trai (mỗi người một dòng)</Label>
         <textarea
-          value={groomFamily}
-          onChange={(e) => updateFamily('groom', e.target.value)}
+          value={groomText}
+          onChange={(e) => setGroomText(e.target.value)}
+          onBlur={(e) => commitFamily('groom', e.target.value)}
           rows={3}
           placeholder="Ông Nguyễn Văn A&#10;Bà Trần Thị B"
           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 focus:outline-none"
         />
         <Label>Gia đình nhà gái (mỗi người một dòng)</Label>
         <textarea
-          value={brideFamily}
-          onChange={(e) => updateFamily('bride', e.target.value)}
+          value={brideText}
+          onChange={(e) => setBrideText(e.target.value)}
+          onBlur={(e) => commitFamily('bride', e.target.value)}
           rows={3}
           placeholder="Ông Lê Văn C&#10;Bà Phạm Thị D"
           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-1 focus:ring-gray-900 focus:outline-none"

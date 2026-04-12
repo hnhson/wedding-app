@@ -1,4 +1,5 @@
 import type { CardConfig } from '@/types/card';
+import FamiliesSection from './FamiliesSection';
 
 export default function GardenTemplate({ config }: { config: CardConfig }) {
   const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
@@ -530,6 +531,8 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           )}
         </div>
       )}
+
+      <FamiliesSection config={config} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (
