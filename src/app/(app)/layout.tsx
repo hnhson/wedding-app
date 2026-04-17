@@ -45,7 +45,7 @@ export default async function AppLayout({
             <Link
               href="/dashboard/account"
               title={user.email}
-              className="flex items-center gap-2.5 rounded-full py-1 pl-1 pr-3 transition-colors hover:bg-gray-100"
+              className="flex items-center gap-2.5 rounded-full py-1 pr-3 pl-1 transition-colors hover:bg-gray-100"
             >
               <span className="flex-shrink-0 overflow-hidden rounded-full ring-2 ring-transparent transition-all hover:ring-gray-300">
                 {avatarUrl ? (
@@ -71,9 +71,7 @@ export default async function AppLayout({
       </header>
 
       {/* Body — full width, children control their own layout */}
-      <div className="flex flex-1">
-        {children}
-      </div>
+      <div className="flex flex-1">{children}</div>
 
       <Footer />
     </div>

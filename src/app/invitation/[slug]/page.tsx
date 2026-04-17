@@ -76,7 +76,10 @@ export default async function InvitationPage({
   const ua = headersList.get('user-agent') ?? '';
   const viewHash = await hashViewKey(ip, ua);
   // Use Vietnam time (UTC+7) so views are grouped by the correct local date
-  const today = new Date(Date.now() + 7 * 3600 * 1000).toISOString().split('T')[0];
+  // eslint-disable-next-line react-hooks/purity
+  const today = new Date(Date.now() + 7 * 3600 * 1000)
+    .toISOString()
+    .split('T')[0];
   void getAdminSupabase()
     .from('page_views')
     .upsert(

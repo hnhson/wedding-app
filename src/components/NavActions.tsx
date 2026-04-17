@@ -1,11 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 const LoginModal = dynamic(() => import('./LoginModal'), { ssr: false });
-const AvatarDropdown = dynamic(() => import('./AvatarDropdown'), { ssr: false });
+const RegisterModal = dynamic(() => import('./RegisterModal'), { ssr: false });
+const AvatarDropdown = dynamic(() => import('./AvatarDropdown'), {
+  ssr: false,
+});
+
+type Modal = 'login' | 'register' | null;
 
 interface Props {
   user: {
@@ -16,7 +20,7 @@ interface Props {
 }
 
 export default function NavActions({ user }: Props) {
-  const [showLogin, setShowLogin] = useState(false);
+  const [modal, setModal] = useState<Modal>(null);
 
   if (user) {
     return (
@@ -31,7 +35,7 @@ export default function NavActions({ user }: Props) {
   return (
     <>
       <button
-        onClick={() => setShowLogin(true)}
+        onClick={() => setModal('login')}
         className="landing-nav-link"
         style={{
           background: 'none',
@@ -46,11 +50,26 @@ export default function NavActions({ user }: Props) {
       >
         Đăng nhập
       </button>
-      <Link href="/register" className="landing-btn-sm">
+      <button
+        onClick={() => setModal('register')}
+        className="landing-btn-sm"
+        style={{ fontFamily: 'inherit', border: 'none', cursor: 'pointer' }}
+      >
         Bắt đầu miễn phí
-      </Link>
+      </button>
 
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+      {modal === 'login' && (
+        <LoginModal
+          onClose={() => setModal(null)}
+          onSwitchToRegister={() => setModal('register')}
+        />
+      )}
+      {modal === 'register' && (
+        <RegisterModal
+          onClose={() => setModal(null)}
+          onSwitchToLogin={() => setModal('login')}
+        />
+      )}
     </>
   );
 }

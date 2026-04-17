@@ -223,7 +223,9 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
         >
           {formattedDate}
           {weddingTime && (
-            <span style={{ marginLeft: '8px', opacity: 0.85, fontSize: '1.1rem' }}>
+            <span
+              style={{ marginLeft: '8px', opacity: 0.85, fontSize: '1.1rem' }}
+            >
               🕐 {weddingTime}
             </span>
           )}

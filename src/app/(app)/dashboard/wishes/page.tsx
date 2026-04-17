@@ -72,9 +72,7 @@ export default async function WishesPage() {
                   <div>
                     <p className="font-semibold text-gray-900">{name}</p>
                     <p className="mt-0.5 text-sm text-gray-400">
-                      {count > 0
-                        ? `${count} lời chúc`
-                        : 'Chưa có lời chúc'}
+                      {count > 0 ? `${count} lời chúc` : 'Chưa có lời chúc'}
                     </p>
                   </div>
                 </div>

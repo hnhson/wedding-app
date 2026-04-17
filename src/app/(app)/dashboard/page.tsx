@@ -47,6 +47,7 @@ export default async function DashboardPage() {
             .gte(
               'view_date',
               // Vietnam time UTC+7, last 7 days
+              // eslint-disable-next-line react-hooks/purity
               new Date(Date.now() + 7 * 3600 * 1000 - 7 * 86400000)
                 .toISOString()
                 .split('T')[0],

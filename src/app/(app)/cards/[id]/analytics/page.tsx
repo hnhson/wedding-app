@@ -29,6 +29,7 @@ export default async function AnalyticsPage({
   // Helpers — always use Vietnam time (UTC+7)
   const VN_OFFSET = 7 * 3600 * 1000;
   function vnDateStr(offsetDays = 0) {
+    // eslint-disable-next-line react-hooks/purity
     return new Date(Date.now() + VN_OFFSET - offsetDays * 86400000)
       .toISOString()
       .split('T')[0];

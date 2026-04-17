@@ -63,7 +63,13 @@ export default function NewCardDialog({ trigger }: Props) {
       const res = await fetch('/api/cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partner1, partner2, weddingDate, weddingTime, templateId }),
+        body: JSON.stringify({
+          partner1,
+          partner2,
+          weddingDate,
+          weddingTime,
+          templateId,
+        }),
       });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };

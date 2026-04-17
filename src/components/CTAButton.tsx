@@ -1,10 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import NewCardDialog from '@/components/dashboard/NewCardDialog';
 
 const LoginModal = dynamic(() => import('./LoginModal'), { ssr: false });
+const RegisterModal = dynamic(() => import('./RegisterModal'), { ssr: false });
+
+type Modal = 'login' | 'register' | null;
 
 interface Props {
   isLoggedIn: boolean;
@@ -13,26 +16,45 @@ interface Props {
 }
 
 export default function CTAButton({ isLoggedIn, className, children }: Props) {
-  const [showLogin, setShowLogin] = useState(false);
+  const [modal, setModal] = useState<Modal>(null);
 
   if (isLoggedIn) {
     return (
-      <Link href="/cards/new" className={className}>
-        {children}
-      </Link>
+      <NewCardDialog
+        trigger={
+          <button
+            className={className}
+            style={{ fontFamily: 'inherit', border: 'none', cursor: 'pointer' }}
+          >
+            {children}
+          </button>
+        }
+      />
     );
   }
 
   return (
     <>
       <button
-        onClick={() => setShowLogin(true)}
+        onClick={() => setModal('register')}
         className={className}
         style={{ fontFamily: 'inherit', border: 'none', cursor: 'pointer' }}
       >
         {children}
       </button>
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      {modal === 'login' && (
+        <LoginModal
+          onClose={() => setModal(null)}
+          onSwitchToRegister={() => setModal('register')}
+        />
+      )}
+      {modal === 'register' && (
+        <RegisterModal
+          onClose={() => setModal(null)}
+          onSwitchToLogin={() => setModal('login')}
+        />
+      )}
     </>
   );
 }

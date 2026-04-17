@@ -1,39 +1,65 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import NewCardDialog from '@/components/dashboard/NewCardDialog';
 
 const LoginModal = dynamic(() => import('./LoginModal'), { ssr: false });
+const RegisterModal = dynamic(() => import('./RegisterModal'), { ssr: false });
+
+type Modal = 'login' | 'register' | null;
 
 interface Props {
   isLoggedIn: boolean;
 }
 
 export default function HeroActions({ isLoggedIn }: Props) {
-  const [showLogin, setShowLogin] = useState(false);
+  const [modal, setModal] = useState<Modal>(null);
 
   if (isLoggedIn) {
     return (
-      <Link href="/cards/new" className="landing-btn-primary">
-        Tạo thiệp ngay
-      </Link>
+      <NewCardDialog
+        trigger={
+          <button
+            className="landing-btn-primary"
+            style={{ fontFamily: 'inherit', border: 'none', cursor: 'pointer' }}
+          >
+            Tạo thiệp ngay
+          </button>
+        }
+      />
     );
   }
 
   return (
     <>
-      <Link href="/register" className="landing-btn-primary">
-        Tạo thiệp miễn phí
-      </Link>
       <button
-        onClick={() => setShowLogin(true)}
+        onClick={() => setModal('register')}
+        className="landing-btn-primary"
+        style={{ fontFamily: 'inherit', border: 'none', cursor: 'pointer' }}
+      >
+        Bắt đầu miễn phí
+      </button>
+      <button
+        onClick={() => setModal('login')}
         className="landing-btn-ghost"
         style={{ fontFamily: 'inherit' }}
       >
         Đăng nhập
       </button>
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      {modal === 'login' && (
+        <LoginModal
+          onClose={() => setModal(null)}
+          onSwitchToRegister={() => setModal('register')}
+        />
+      )}
+      {modal === 'register' && (
+        <RegisterModal
+          onClose={() => setModal(null)}
+          onSwitchToLogin={() => setModal('login')}
+        />
+      )}
     </>
   );
 }

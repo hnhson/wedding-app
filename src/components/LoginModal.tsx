@@ -10,9 +10,10 @@ import { validateEmail, validatePassword } from '@/lib/validation';
 
 interface Props {
   onClose: () => void;
+  onSwitchToRegister?: () => void;
 }
 
-export default function LoginModal({ onClose }: Props) {
+export default function LoginModal({ onClose, onSwitchToRegister }: Props) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -176,13 +177,29 @@ export default function LoginModal({ onClose }: Props) {
 
           <p className="modal-register">
             Chưa có tài khoản?{' '}
-            <Link
-              href="/register"
-              className="modal-register-link"
-              onClick={onClose}
-            >
-              Đăng ký miễn phí
-            </Link>
+            {onSwitchToRegister ? (
+              <button
+                onClick={onSwitchToRegister}
+                className="modal-register-link"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  fontFamily: 'inherit',
+                }}
+              >
+                Đăng ký miễn phí
+              </button>
+            ) : (
+              <Link
+                href="/register"
+                className="modal-register-link"
+                onClick={onClose}
+              >
+                Đăng ký miễn phí
+              </Link>
+            )}
           </p>
         </div>
       </div>

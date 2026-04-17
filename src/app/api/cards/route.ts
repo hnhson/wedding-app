@@ -11,7 +11,8 @@ export async function POST(request: Request) {
   if (!user)
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { partner1, partner2, weddingDate, weddingTime, templateId } = await request.json();
+  const { partner1, partner2, weddingDate, weddingTime, templateId } =
+    await request.json();
 
   if (!partner1 || !partner2 || !weddingDate || !templateId) {
     return NextResponse.json(
