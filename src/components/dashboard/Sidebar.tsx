@@ -12,6 +12,7 @@ import {
   Gift,
   User,
   MessageCircle,
+  LogOut,
 } from 'lucide-react';
 import NewCardDialog from '@/components/dashboard/NewCardDialog';
 
@@ -113,6 +114,19 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {/* Sign out */}
+      <div className="border-t px-3 py-3">
+        <form action="/api/auth/signout" method="post">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
+          >
+            <LogOut size={16} strokeWidth={1.8} />
+            Đăng xuất
+          </button>
+        </form>
+      </div>
     </aside>
   );
 }
