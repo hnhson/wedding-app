@@ -26,10 +26,16 @@ export default async function AnalyticsPage({
     .single();
   if (!card) notFound();
 
+  // Helpers — always use Vietnam time (UTC+7)
+  const VN_OFFSET = 7 * 3600 * 1000;
+  function vnDateStr(offsetDays = 0) {
+    return new Date(Date.now() + VN_OFFSET - offsetDays * 86400000)
+      .toISOString()
+      .split('T')[0];
+  }
+
   // Last 14 days of page views
-  const fromDate = new Date();
-  fromDate.setDate(fromDate.getDate() - 13);
-  const fromDateStr = fromDate.toISOString().split('T')[0];
+  const fromDateStr = vnDateStr(13);
 
   const [{ data: viewRows }, { data: rsvps }, { count: wishCount }] =
     await Promise.all([
@@ -50,9 +56,12 @@ export default async function AnalyticsPage({
   for (const row of viewRows ?? []) {
     viewMap.set(row.view_date, (viewMap.get(row.view_date) ?? 0) + 1);
   }
-  const recentDays: DailyView[] = Array.from(viewMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([view_date, view_count]) => ({ view_date, view_count }));
+
+  // Build full 14-day array (including zero-view days)
+  const recentDays: DailyView[] = Array.from({ length: 14 }, (_, i) => {
+    const view_date = vnDateStr(13 - i);
+    return { view_date, view_count: viewMap.get(view_date) ?? 0 };
+  });
   const totalViews = recentDays.reduce((sum, d) => sum + d.view_count, 0);
 
   // RSVP stats

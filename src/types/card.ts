@@ -68,6 +68,7 @@ export interface CardConfig {
   templateId: string;
   coupleNames: { partner1: string; partner2: string };
   weddingDate: string;
+  weddingTime?: string;
   venue: {
     name: string;
     address: string;

@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { createClient } from '@supabase/supabase-js';
 import CardView from '@/components/templates/CardView';
-import CountdownWidget from '@/components/CountdownWidget';
 import ShareButtons from '@/components/invitation/ShareButtons';
 import QRCodeDownload from '@/components/invitation/QRCodeDownload';
 import RSVPForm from '@/components/invitation/RSVPForm';
@@ -17,6 +16,14 @@ function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  );
+}
+
+// Service-role client — bypasses RLS, server-side only, never exposed to browser
+function getAdminSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
   );
 }
 
@@ -60,7 +67,7 @@ export default async function InvitationPage({
 
   const card = data as Card;
 
-  // Track view (fire-and-forget)
+  // Track view — use admin client to bypass RLS (server-side only)
   const headersList = await headers();
   const ip =
     headersList.get('x-forwarded-for')?.split(',')[0].trim() ??
@@ -68,17 +75,17 @@ export default async function InvitationPage({
     'unknown';
   const ua = headersList.get('user-agent') ?? '';
   const viewHash = await hashViewKey(ip, ua);
-  const today = new Date().toISOString().split('T')[0];
-  void Promise.resolve()
-    .then(() =>
-      supabase
-        .from('page_views')
-        .upsert(
-          { card_id: card.id, view_date: today, view_hash: viewHash },
-          { onConflict: 'card_id,view_date,view_hash', ignoreDuplicates: true },
-        ),
+  // Use Vietnam time (UTC+7) so views are grouped by the correct local date
+  const today = new Date(Date.now() + 7 * 3600 * 1000).toISOString().split('T')[0];
+  void getAdminSupabase()
+    .from('page_views')
+    .upsert(
+      { card_id: card.id, view_date: today, view_hash: viewHash },
+      { onConflict: 'card_id,view_date,view_hash', ignoreDuplicates: true },
     )
-    .catch(console.error);
+    .then(({ error }) => {
+      if (error) console.error('[view-track]', error.message);
+    });
 
   const fontPair = FONT_PAIRS[card.config.fontPair];
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? '';
@@ -98,16 +105,9 @@ export default async function InvitationPage({
         />
       )}
 
-      {/* Card container — 1/4 screen width, centered */}
-      <div className="flex min-h-screen justify-center px-4 py-10">
-        <div className="w-full max-w-[25vw] min-w-[320px] overflow-hidden rounded-2xl bg-white shadow-2xl">
-          {/* Countdown */}
-          {card.config.weddingDate && (
-            <div className="py-8 text-center">
-              <CountdownWidget weddingDate={card.config.weddingDate} />
-            </div>
-          )}
-
+      {/* Card container — fixed width centered; only shrinks when no white space left */}
+      <div className="flex min-h-screen justify-center py-10">
+        <div className="w-[420px] max-w-full overflow-hidden bg-white shadow-2xl sm:rounded-2xl">
           {/* Wedding template + overlay elements */}
           <CardView config={card.config} />
 

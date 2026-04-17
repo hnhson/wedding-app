@@ -101,13 +101,22 @@ export default function ContentPanel({ config, onChange }: Props) {
           />
         </div>
 
-        {/* Wedding date */}
+        {/* Wedding date + time */}
         <div className="space-y-2">
           <Label>Ngày cưới</Label>
           <Input
             type="date"
             value={config.weddingDate ?? ''}
             onChange={(e) => onChange({ weddingDate: e.target.value })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Giờ tổ chức</Label>
+          <Input
+            type="time"
+            value={config.weddingTime ?? ''}
+            onChange={(e) => onChange({ weddingTime: e.target.value })}
           />
         </div>
 

@@ -72,21 +72,21 @@ export default function NewCardPage() {
             <CardContent className="space-y-4">
               {error && <p className="text-sm text-red-600">{error}</p>}
               <div className="space-y-1">
-                <Label htmlFor="partner1">Tên người 1</Label>
+                <Label htmlFor="partner1">Tên cô dâu</Label>
                 <Input
                   id="partner1"
                   value={partner1}
                   onChange={(e) => setPartner1(e.target.value)}
-                  placeholder="Nguyễn Văn An"
+                  placeholder="Trần Thị Bình"
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="partner2">Tên người 2</Label>
+                <Label htmlFor="partner2">Tên chú rể</Label>
                 <Input
                   id="partner2"
                   value={partner2}
                   onChange={(e) => setPartner2(e.target.value)}
-                  placeholder="Trần Thị Bình"
+                  placeholder="Nguyễn Văn An"
                 />
               </div>
               <div className="space-y-1">

@@ -13,14 +13,19 @@ import {
   User,
   MessageCircle,
 } from 'lucide-react';
+import NewCardDialog from '@/components/dashboard/NewCardDialog';
 
 const sections = [
   {
     label: 'HOME',
     items: [
-      { href: '/dashboard', icon: LayoutDashboard, label: 'Tổng quan', exact: true },
+      {
+        href: '/dashboard',
+        icon: LayoutDashboard,
+        label: 'Tổng quan',
+        exact: true,
+      },
       { href: '/dashboard/plans', icon: Star, label: 'Gói dịch vụ của tôi' },
-      { href: '/cards/new', icon: PenLine, label: 'Tạo thiết kế' },
     ],
   },
   {
@@ -46,7 +51,11 @@ const sections = [
   {
     label: 'HỖ TRỢ',
     items: [
-      { href: '/dashboard/feedback', icon: MessageCircle, label: 'Đóng góp ý kiến' },
+      {
+        href: '/dashboard/feedback',
+        icon: MessageCircle,
+        label: 'Đóng góp ý kiến',
+      },
     ],
   },
 ];
@@ -87,6 +96,18 @@ export default function Sidebar() {
                   </li>
                 );
               })}
+              {section.label === 'HOME' && (
+                <li>
+                  <NewCardDialog
+                    trigger={
+                      <button className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900">
+                        <PenLine size={16} strokeWidth={1.8} />
+                        Tạo thiết kế
+                      </button>
+                    }
+                  />
+                </li>
+              )}
             </ul>
             <div className="mt-3 border-t" />
           </div>

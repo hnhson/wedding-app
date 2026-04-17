@@ -1,9 +1,12 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
 
 export default function RomanceTemplate({ config }: { config: CardConfig }) {
   const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
     config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -179,47 +182,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
               >
                 đếm ngược đến ngày trọng đại
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                }}
-              >
-                {[
-                  { label: 'Ngày', value: '---' },
-                  { label: 'Giờ', value: '--' },
-                  { label: 'Phút', value: '--' },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    style={{ textAlign: 'center', minWidth: '40px' }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '1.5rem',
-                        fontWeight: 700,
-                        color: 'var(--card-accent)',
-                        lineHeight: 1,
-                        fontFamily: 'var(--card-font-heading)',
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.55rem',
-                        letterSpacing: '0.15em',
-                        opacity: 0.5,
-                        fontStyle: 'italic',
-                        marginTop: '4px',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CountdownWidget weddingDate={weddingDate} />
             </div>
           )}
 
@@ -233,6 +196,11 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           >
             {formattedDate}
           </p>
+          {weddingTime && (
+            <p style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}>
+              🕐 {weddingTime}
+            </p>
+          )}
           {venue.name && (
             <p
               className="mt-1 text-sm"
@@ -242,6 +210,14 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
               }}
             >
               {venue.name}
+            </p>
+          )}
+          {venue.address && (
+            <p
+              className="mt-1 text-sm opacity-60"
+              style={{ animation: 'wFadeIn 0.8s ease 1.35s both' }}
+            >
+              {venue.address}
             </p>
           )}
         </div>

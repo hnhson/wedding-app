@@ -1,4 +1,5 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
 
 const STARS: {
@@ -30,6 +31,8 @@ const STARS: {
 export default function CelestialTemplate({ config }: { config: CardConfig }) {
   const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
     config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -430,48 +433,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
               >
                 Đếm ngược đến ngày trọng đại
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                }}
-              >
-                {[
-                  { label: 'Ngày', value: '---' },
-                  { label: 'Giờ', value: '--' },
-                  { label: 'Phút', value: '--' },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    style={{ textAlign: 'center', minWidth: '40px' }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '1.5rem',
-                        fontWeight: 700,
-                        color: 'var(--card-accent)',
-                        lineHeight: 1,
-                        fontFamily: 'var(--card-font-heading)',
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.52rem',
-                        letterSpacing: '0.15em',
-                        opacity: 0.5,
-                        textTransform: 'uppercase',
-                        marginTop: '4px',
-                        color: 'var(--card-bg)',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CountdownWidget weddingDate={weddingDate} />
             </div>
           )}
 
@@ -487,6 +449,11 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
           >
             {formattedDate}
           </p>
+          {weddingTime && (
+            <p style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}>
+              🕐 {weddingTime}
+            </p>
+          )}
           {venue.name && (
             <p
               style={{
@@ -498,6 +465,19 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
               }}
             >
               {venue.name}
+            </p>
+          )}
+          {venue.address && (
+            <p
+              style={{
+                fontSize: '0.75rem',
+                opacity: 0.55,
+                fontStyle: 'italic',
+                marginTop: '3px',
+                animation: 'wFadeIn 0.8s ease 1.35s both',
+              }}
+            >
+              {venue.address}
             </p>
           )}
         </div>

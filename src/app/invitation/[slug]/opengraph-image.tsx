@@ -93,7 +93,7 @@ export default async function Image({
             lineHeight: 1.1,
           }}
         >
-          {partner1 || 'Người 1'}
+          {partner1 || 'Cô Dâu'}
         </p>
         <p style={{ fontSize: 40, color: '#D4AF37', margin: 0 }}>&amp;</p>
         <p
@@ -105,7 +105,7 @@ export default async function Image({
             lineHeight: 1.1,
           }}
         >
-          {partner2 || 'Người 2'}
+          {partner2 || 'Chú Rể'}
         </p>
         {weddingDate && (
           <p

@@ -2,7 +2,6 @@ import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import CardView from '@/components/templates/CardView';
-import CountdownWidget from '@/components/CountdownWidget';
 import type { Card } from '@/types/card';
 import { FONT_PAIRS } from '@/lib/templates/presets';
 
@@ -67,16 +66,11 @@ export default async function PreviewCardPage({
         />
       )}
 
-      {/* Countdown */}
-      {card.config.weddingDate && (
-        <div className="pt-24 pb-4 text-center">
-          <CountdownWidget weddingDate={card.config.weddingDate} />
+      {/* Template + overlay elements — fixed-width card, centered */}
+      <div className="flex min-h-screen justify-center bg-gray-100 pt-24 pb-10">
+        <div className="w-[420px] max-w-full overflow-hidden bg-white shadow-2xl sm:rounded-2xl">
+          <CardView config={card.config} />
         </div>
-      )}
-
-      {/* Template + overlay elements */}
-      <div className="pt-4">
-        <CardView config={card.config} />
       </div>
     </div>
   );
