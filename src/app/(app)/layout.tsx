@@ -1,19 +1,8 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { Button } from '@/components/ui/button';
 import Footer from '@/components/Footer';
 import Logo from '@/components/Logo';
-
-function SignOutButton() {
-  return (
-    <form action="/api/auth/signout" method="post">
-      <Button variant="ghost" size="sm" type="submit">
-        Đăng xuất
-      </Button>
-    </form>
-  );
-}
 
 export default async function AppLayout({
   children,
@@ -64,8 +53,6 @@ export default async function AppLayout({
                 {user.email}
               </span>
             </Link>
-            <div className="h-4 w-px bg-gray-200" />
-            <SignOutButton />
           </div>
         </div>
       </header>
