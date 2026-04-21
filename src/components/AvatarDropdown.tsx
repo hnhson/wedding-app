@@ -79,6 +79,20 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
               {item.label}
             </Link>
           ))}
+
+          <div className="avatar-dropdown-divider" />
+
+          {/* Sign out */}
+          <form action="/api/auth/signout" method="post">
+            <button
+              type="submit"
+              role="menuitem"
+              className="avatar-dropdown-item avatar-dropdown-signout"
+            >
+              <span className="dropdown-item-icon">→</span>
+              Đăng xuất
+            </button>
+          </form>
         </div>
       )}
 
@@ -198,6 +212,9 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
           text-align: center;
           flex-shrink: 0;
         }
+        .avatar-dropdown-signout { color: #b04040; }
+        .avatar-dropdown-signout:hover { background: #fff5f5; }
+        .avatar-dropdown-signout .dropdown-item-icon { color: #b04040; }
       `}</style>
     </div>
   );
