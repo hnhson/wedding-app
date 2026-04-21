@@ -13,6 +13,7 @@ import {
   User,
   MessageCircle,
   LogOut,
+  ClipboardList,
 } from 'lucide-react';
 import NewCardDialog from '@/components/dashboard/NewCardDialog';
 
@@ -37,8 +38,9 @@ const sections = [
     ],
   },
   {
-    label: 'QUÀ TẶNG & LỜI CHÚC',
+    label: 'KHÁCH MỜI',
     items: [
+      { href: '/dashboard/rsvp', icon: ClipboardList, label: 'Thống kê RSVP' },
       { href: '/dashboard/wishes', icon: MessageSquare, label: 'Lời chúc' },
       { href: '/dashboard/gifts', icon: Gift, label: 'Quà tặng' },
     ],
