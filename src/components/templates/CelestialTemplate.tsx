@@ -259,7 +259,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '3.4rem',
               fontWeight: 700,
               lineHeight: 1.1,
@@ -350,7 +350,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '3.4rem',
               fontWeight: 700,
               lineHeight: 1.1,

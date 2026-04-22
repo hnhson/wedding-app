@@ -175,7 +175,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             <h1
               className="mb-3 font-bold"
               style={{
-                fontFamily: 'var(--card-font-heading, Georgia, serif)',
+                fontFamily: 'var(--card-font-couple, Georgia, serif)',
                 fontSize: '3.5rem',
                 lineHeight: 1.15,
                 letterSpacing: '0.02em',
@@ -223,7 +223,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             <h1
               className="mb-10 font-bold"
               style={{
-                fontFamily: 'var(--card-font-heading, Georgia, serif)',
+                fontFamily: 'var(--card-font-couple, Georgia, serif)',
                 fontSize: '3.5rem',
                 lineHeight: 1.15,
                 letterSpacing: '0.02em',

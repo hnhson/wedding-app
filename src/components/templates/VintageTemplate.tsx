@@ -148,7 +148,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '3.2rem',
               fontWeight: 700,
               lineHeight: 1.15,
@@ -174,7 +174,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '3.2rem',
               fontWeight: 700,
               lineHeight: 1.15,

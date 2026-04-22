@@ -190,7 +190,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           </p>
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, sans-serif)',
+              fontFamily: 'var(--card-font-couple, sans-serif)',
               fontSize: '2.6rem',
               fontWeight: 700,
               color: '#ffffff',

@@ -110,7 +110,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           <h1
             className="mb-1"
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '4rem',
               fontStyle: 'italic',
               fontWeight: 700,
@@ -159,7 +159,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           <h1
             className="mb-8"
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '4rem',
               fontStyle: 'italic',
               fontWeight: 700,

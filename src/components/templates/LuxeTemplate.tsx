@@ -129,7 +129,7 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '5rem',
               fontWeight: 700,
               color: 'var(--card-accent)',
@@ -187,7 +187,7 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '5rem',
               fontWeight: 700,
               color: 'var(--card-accent)',

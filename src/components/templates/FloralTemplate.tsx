@@ -121,7 +121,7 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
         <h1
           className="text-6xl"
           style={{
-            fontFamily: 'var(--card-font-heading, cursive)',
+            fontFamily: 'var(--card-font-couple, cursive)',
             color: 'var(--card-primary)',
             animation: 'wFadeInUp 0.9s ease 0.15s both',
           }}
@@ -140,7 +140,7 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
         <h1
           className="text-6xl"
           style={{
-            fontFamily: 'var(--card-font-heading, cursive)',
+            fontFamily: 'var(--card-font-couple, cursive)',
             color: 'var(--card-primary)',
             animation: 'wFadeInUp 0.9s ease 0.7s both',
           }}

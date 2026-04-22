@@ -102,5 +102,37 @@ export const FONT_PAIRS: Record<string, FontPair> = {
   'gfs-open': { heading: 'GFS Didot', body: 'Open Sans' },
 };
 
+export const COUPLE_FONTS = [
+  'Great Vibes',
+  'Sacramento',
+  'Dancing Script',
+  'Allura',
+  'Alex Brush',
+  'Pinyon Script',
+  'Tangerine',
+  'Playfair Display',
+  'Cormorant Garamond',
+  'Cinzel',
+  'Libre Baskerville',
+  'GFS Didot',
+  'Noto Serif',
+];
+
+export const SCHEDULE_FONTS = [
+  'Be Vietnam Pro',
+  'Lato',
+  'Josefin Sans',
+  'Raleway',
+  'Nunito',
+  'Montserrat',
+  'Poppins',
+  'Jost',
+  'Open Sans',
+  'Mulish',
+  'Source Sans 3',
+  'Noto Serif',
+  'Libre Baskerville',
+];
+
 export const DEFAULT_PALETTE = COLOR_PALETTES['rose-gold'];
 export const DEFAULT_FONT_PAIR = FONT_PAIRS['playfair-lato'];

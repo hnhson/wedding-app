@@ -28,6 +28,9 @@ export default function TemplateRenderer({ config, className }: Props) {
   const palette = COLOR_PALETTES[config.colorPalette] ?? DEFAULT_PALETTE;
   const fontPair = FONT_PAIRS[config.fontPair] ?? DEFAULT_FONT_PAIR;
 
+  const coupleFontFamily = config.fontCouple ?? fontPair.heading;
+  const scheduleFontFamily = config.fontSchedule ?? fontPair.body;
+
   const cssVars = {
     '--card-primary': palette.primary,
     '--card-secondary': palette.secondary,
@@ -35,6 +38,8 @@ export default function TemplateRenderer({ config, className }: Props) {
     '--card-bg': palette.bg,
     '--card-font-heading': `"${fontPair.heading}", serif`,
     '--card-font-body': `"${fontPair.body}", sans-serif`,
+    '--card-font-couple': `"${coupleFontFamily}", serif`,
+    '--card-font-schedule': `"${scheduleFontFamily}", sans-serif`,
   } as React.CSSProperties;
 
   const TemplateComponent =

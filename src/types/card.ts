@@ -89,6 +89,8 @@ export interface CardConfig {
   families: FamilyInfo[];
   colorPalette: string;
   fontPair: string;
+  fontCouple?: string;
+  fontSchedule?: string;
   heroImage: string | null;
   gallery: string[];
   overlayElements?: OverlayElement[];

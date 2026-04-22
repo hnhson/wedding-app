@@ -77,7 +77,7 @@ export default function MinimalTemplate({ config }: { config: CardConfig }) {
           <h1
             className="text-4xl"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               animation: 'wFadeInUp 0.9s ease 0.15s both',
             }}
           >
@@ -95,7 +95,7 @@ export default function MinimalTemplate({ config }: { config: CardConfig }) {
           <h1
             className="text-4xl"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               animation: 'wFadeInUp 0.9s ease 0.7s both',
             }}
           >

@@ -75,7 +75,7 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
           <h1
             className="mb-2 text-6xl font-light"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               color: 'var(--card-primary)',
               animation: 'wFadeInUp 0.9s ease 0.15s both',
             }}
@@ -94,7 +94,7 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
           <h1
             className="mb-8 text-6xl font-light"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               color: 'var(--card-primary)',
               animation: 'wFadeInUp 0.9s ease 0.7s both',
             }}

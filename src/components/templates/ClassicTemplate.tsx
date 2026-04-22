@@ -98,7 +98,7 @@ export default function ClassicTemplate({ config }: Props) {
           <h1
             className="mb-2 text-5xl font-bold"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               animation: 'wFadeInUp 0.9s ease 0.15s both',
             }}
           >
@@ -116,7 +116,7 @@ export default function ClassicTemplate({ config }: Props) {
           <h1
             className="mb-6 text-5xl font-bold"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               animation: 'wFadeInUp 0.9s ease 0.7s both',
             }}
           >

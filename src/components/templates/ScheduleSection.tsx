@@ -24,7 +24,7 @@ export default function ScheduleSection({
             className="mb-10 text-center text-sm tracking-[0.25em] uppercase"
             style={{
               color: 'var(--card-accent)',
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-schedule, sans-serif)',
             }}
           >
             {title}
@@ -61,7 +61,7 @@ export default function ScheduleSection({
                     <p
                       className="mt-0.5 font-semibold"
                       style={{
-                        fontFamily: 'var(--card-font-heading, serif)',
+                        fontFamily: 'var(--card-font-schedule, sans-serif)',
                         color: 'var(--card-primary)',
                       }}
                     >
@@ -93,7 +93,7 @@ export default function ScheduleSection({
             className="mb-8 text-center text-sm tracking-[0.25em] uppercase"
             style={{
               color: 'var(--card-accent)',
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-schedule, sans-serif)',
             }}
           >
             {title}
@@ -126,7 +126,7 @@ export default function ScheduleSection({
                     <p
                       className="font-semibold"
                       style={{
-                        fontFamily: 'var(--card-font-heading, serif)',
+                        fontFamily: 'var(--card-font-schedule, sans-serif)',
                         color: 'var(--card-primary)',
                       }}
                     >
@@ -208,7 +208,7 @@ export default function ScheduleSection({
             className="mb-10 text-xs tracking-[0.35em] uppercase"
             style={{
               color: 'var(--card-accent)',
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-schedule, sans-serif)',
             }}
           >
             {title}
@@ -224,7 +224,7 @@ export default function ScheduleSection({
               <p
                 className="mt-1 text-base font-medium"
                 style={{
-                  fontFamily: 'var(--card-font-heading, serif)',
+                  fontFamily: 'var(--card-font-schedule, sans-serif)',
                   color: 'var(--card-primary)',
                 }}
               >
@@ -270,7 +270,7 @@ export default function ScheduleSection({
           className="mb-8 text-center text-sm tracking-[0.25em] uppercase"
           style={{
             color: 'var(--card-accent)',
-            fontFamily: 'var(--card-font-heading, serif)',
+            fontFamily: 'var(--card-font-schedule, sans-serif)',
           }}
         >
           {title}
@@ -283,7 +283,7 @@ export default function ScheduleSection({
                 style={{
                   color: 'var(--card-accent)',
                   opacity: 0.18,
-                  fontFamily: 'var(--card-font-heading, serif)',
+                  fontFamily: 'var(--card-font-schedule, sans-serif)',
                   minWidth: '2.5rem',
                 }}
               >
@@ -299,7 +299,7 @@ export default function ScheduleSection({
                 <p
                   className="mt-0.5 font-semibold"
                   style={{
-                    fontFamily: 'var(--card-font-heading, serif)',
+                    fontFamily: 'var(--card-font-schedule, sans-serif)',
                     color: 'var(--card-primary)',
                   }}
                 >
