@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import type { Card } from '@/types/card';
 import DeleteCardButton from '@/components/dashboard/DeleteCardButton';
+import NewCardDialog from '@/components/dashboard/NewCardDialog';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -45,8 +46,11 @@ export default async function DashboardPage() {
             .in('card_id', cardIds)
             .gte(
               'view_date',
+              // Vietnam time UTC+7, last 7 days
               // eslint-disable-next-line react-hooks/purity
-              new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0],
+              new Date(Date.now() + 7 * 3600 * 1000 - 7 * 86400000)
+                .toISOString()
+                .split('T')[0],
             )
             .then((r) => r.data ?? []),
         ])
@@ -149,12 +153,7 @@ export default async function DashboardPage() {
             {firstName} 👋
           </h1>
         </div>
-        <Link
-          href="/cards/new"
-          className="inline-flex items-center gap-1.5 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-700"
-        >
-          + Tạo thiệp mới
-        </Link>
+        <NewCardDialog />
       </div>
 
       {/* ── Tổng quan stats ── */}
@@ -236,12 +235,13 @@ export default async function DashboardPage() {
             <p className="mt-1 mb-4 text-sm text-gray-400">
               Tạo thiệp đầu tiên để bắt đầu
             </p>
-            <Link
-              href="/cards/new"
-              className="inline-flex items-center gap-1 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700"
-            >
-              + Tạo thiệp đầu tiên
-            </Link>
+            <NewCardDialog
+              trigger={
+                <button className="inline-flex items-center gap-1 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700">
+                  + Tạo thiệp đầu tiên
+                </button>
+              }
+            />
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

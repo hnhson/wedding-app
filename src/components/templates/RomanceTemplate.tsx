@@ -1,9 +1,20 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function RomanceTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -99,7 +110,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           <h1
             className="mb-1"
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '4rem',
               fontStyle: 'italic',
               fontWeight: 700,
@@ -148,7 +159,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           <h1
             className="mb-8"
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '4rem',
               fontStyle: 'italic',
               fontWeight: 700,
@@ -179,47 +190,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
               >
                 đếm ngược đến ngày trọng đại
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                }}
-              >
-                {[
-                  { label: 'Ngày', value: '---' },
-                  { label: 'Giờ', value: '--' },
-                  { label: 'Phút', value: '--' },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    style={{ textAlign: 'center', minWidth: '40px' }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '1.5rem',
-                        fontWeight: 700,
-                        color: 'var(--card-accent)',
-                        lineHeight: 1,
-                        fontFamily: 'var(--card-font-heading)',
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.55rem',
-                        letterSpacing: '0.15em',
-                        opacity: 0.5,
-                        fontStyle: 'italic',
-                        marginTop: '4px',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CountdownWidget weddingDate={weddingDate} />
             </div>
           )}
 
@@ -233,6 +204,11 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
           >
             {formattedDate}
           </p>
+          {weddingTime && (
+            <p style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}>
+              🕐 {weddingTime}
+            </p>
+          )}
           {venue.name && (
             <p
               className="mt-1 text-sm"
@@ -242,6 +218,14 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
               }}
             >
               {venue.name}
+            </p>
+          )}
+          {venue.address && (
+            <p
+              className="mt-1 text-sm opacity-60"
+              style={{ animation: 'wFadeIn 0.8s ease 1.35s both' }}
+            >
+              {venue.address}
             </p>
           )}
         </div>
@@ -296,60 +280,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
         </span>
       </div>
 
-      {/* Schedule */}
-      {schedule.length > 0 && (
-        <div
-          className="mx-auto max-w-lg px-10 py-14"
-          style={{
-            background: 'rgba(255,255,255,0.25)',
-            backdropFilter: 'blur(4px)',
-          }}
-        >
-          <h2
-            className="mb-8 text-center"
-            style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
-              fontStyle: 'italic',
-              color: 'var(--card-accent)',
-              fontSize: '1.3rem',
-            }}
-          >
-            Lịch trình
-          </h2>
-          <div className="space-y-7">
-            {schedule.map((item, i) => (
-              <div key={i} className="text-center">
-                <span
-                  className="text-xs font-semibold tracking-wider uppercase"
-                  style={{ color: 'var(--card-accent)' }}
-                >
-                  {item.time}
-                </span>
-                <p className="mt-1 text-sm font-semibold">{item.title}</p>
-                {item.description && (
-                  <p
-                    className="mt-0.5 text-xs italic"
-                    style={{ opacity: 0.65 }}
-                  >
-                    {item.description}
-                  </p>
-                )}
-                {i < schedule.length - 1 && (
-                  <div
-                    className="mx-auto mt-5"
-                    style={{
-                      height: '1px',
-                      width: '40px',
-                      background: 'var(--card-accent)',
-                      opacity: 0.3,
-                    }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Heart divider */}
       <div

@@ -1,8 +1,12 @@
 'use client';
 
-import { Label } from '@/components/ui/label';
 import type { CardConfig } from '@/types/card';
-import { COLOR_PALETTES, FONT_PAIRS } from '@/lib/templates/presets';
+import {
+  COLOR_PALETTES,
+  FONT_PAIRS,
+  COUPLE_FONTS,
+  SCHEDULE_FONTS,
+} from '@/lib/templates/presets';
 import { TEMPLATES } from '@/lib/templates/data';
 
 interface Props {
@@ -504,30 +508,126 @@ export default function StylePanel({ config, onChange }: Props) {
         </p>
       </div>
 
-      {/* Font pairs */}
+      {/* Font pairs — tổng thể */}
       <div>
         <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
-          Font chữ
+          Font chữ tổng thể
         </p>
         <div className="space-y-1.5">
-          {Object.entries(FONT_PAIRS).map(([key, pair]) => (
-            <button
-              key={key}
-              onClick={() => onChange({ fontPair: key })}
-              className={`w-full rounded-xl border px-3 py-2 text-left transition-all ${
-                config.fontPair === key
-                  ? 'border-blue-400 bg-blue-50'
-                  : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
-              }`}
-            >
-              <p
-                className={`text-xs font-medium ${config.fontPair === key ? 'text-blue-700' : 'text-gray-700'}`}
+          {Object.entries(FONT_PAIRS).map(([key, pair]) => {
+            const active = config.fontPair === key;
+            return (
+              <button
+                key={key}
+                onClick={() => onChange({ fontPair: key })}
+                className={`w-full rounded-xl border px-3 py-2 text-left transition-all ${
+                  active
+                    ? 'border-blue-400 bg-blue-50'
+                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                }`}
               >
-                {pair.heading}
-              </p>
-              <p className="text-[10px] text-gray-400">{pair.body}</p>
-            </button>
-          ))}
+                <p
+                  style={{
+                    fontFamily: `"${pair.heading}", serif`,
+                    fontSize: 16,
+                    lineHeight: 1.2,
+                  }}
+                  className={active ? 'text-blue-700' : 'text-gray-800'}
+                >
+                  {pair.heading}
+                </p>
+                <p
+                  style={{
+                    fontFamily: `"${pair.body}", sans-serif`,
+                    fontSize: 11,
+                  }}
+                  className="mt-0.5 text-gray-400"
+                >
+                  {pair.body}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Font tên cô dâu chú rể */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Font tên cô dâu & chú rể
+        </p>
+        <div className="grid grid-cols-2 gap-1.5">
+          {COUPLE_FONTS.map((font) => {
+            const active = (config.fontCouple ?? '') === font;
+            return (
+              <button
+                key={font}
+                onClick={() => onChange({ fontCouple: font })}
+                className={`rounded-xl border px-2 py-2.5 text-center transition-all ${
+                  active
+                    ? 'border-rose-400 bg-rose-50'
+                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <p
+                  style={{
+                    fontFamily: `"${font}", serif`,
+                    fontSize: 15,
+                    lineHeight: 1.2,
+                  }}
+                  className={active ? 'text-rose-700' : 'text-gray-800'}
+                >
+                  Lan & Khoa
+                </p>
+                <p
+                  style={{ fontSize: 9 }}
+                  className="mt-0.5 truncate text-gray-400"
+                >
+                  {font}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Font chương trình */}
+      <div>
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-gray-400 uppercase">
+          Font chương trình
+        </p>
+        <div className="grid grid-cols-2 gap-1.5">
+          {SCHEDULE_FONTS.map((font) => {
+            const active = (config.fontSchedule ?? '') === font;
+            return (
+              <button
+                key={font}
+                onClick={() => onChange({ fontSchedule: font })}
+                className={`rounded-xl border px-2 py-2.5 text-center transition-all ${
+                  active
+                    ? 'border-indigo-400 bg-indigo-50'
+                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <p
+                  style={{
+                    fontFamily: `"${font}", sans-serif`,
+                    fontSize: 13,
+                    lineHeight: 1.3,
+                  }}
+                  className={active ? 'text-indigo-700' : 'text-gray-700'}
+                >
+                  08:00 Lễ thành hôn
+                </p>
+                <p
+                  style={{ fontSize: 9 }}
+                  className="mt-0.5 truncate text-gray-400"
+                >
+                  {font}
+                </p>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

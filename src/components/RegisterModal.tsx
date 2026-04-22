@@ -1,0 +1,300 @@
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { Eye, EyeOff } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import {
+  validateEmail,
+  validatePassword,
+  validateName,
+} from '@/lib/validation';
+
+interface Props {
+  onClose: () => void;
+  onSwitchToLogin?: () => void;
+}
+
+export default function RegisterModal({ onClose, onSwitchToLogin }: Props) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+  }>({});
+  const [serverError, setServerError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const nameError = validateName(name);
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    if (nameError || emailError || passwordError) {
+      setErrors({
+        name: nameError ?? undefined,
+        email: emailError ?? undefined,
+        password: passwordError ?? undefined,
+      });
+      return;
+    }
+    setErrors({});
+    setServerError('');
+    setLoading(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
+      },
+    });
+    setLoading(false);
+    if (error) {
+      setServerError(error.message);
+      return;
+    }
+    setSubmitted(true);
+  }
+
+  const content = (
+    <>
+      {/* Backdrop */}
+      <div
+        ref={backdropRef}
+        className="modal-backdrop"
+        onClick={(e) => {
+          if (e.target === backdropRef.current) onClose();
+        }}
+        aria-modal="true"
+        role="dialog"
+        aria-label="Đăng ký"
+      >
+        <div className="modal-box">
+          <button className="modal-close" onClick={onClose} aria-label="Đóng">
+            ✕
+          </button>
+
+          <div className="modal-logo">✦</div>
+
+          {submitted ? (
+            <>
+              <h2 className="modal-title">Kiểm tra email</h2>
+              <p className="modal-sub">
+                Chúng tôi đã gửi link xác thực đến <strong>{email}</strong>. Vui
+                lòng kiểm tra hộp thư để hoàn tất đăng ký.
+              </p>
+              <button
+                onClick={onClose}
+                className="modal-btn"
+                style={{ marginTop: '1.5rem' }}
+              >
+                Đóng
+              </button>
+            </>
+          ) : (
+            <>
+              <h2 className="modal-title">Tạo tài khoản</h2>
+              <p className="modal-sub">
+                Bắt đầu miễn phí, không cần thẻ tín dụng
+              </p>
+
+              <form onSubmit={handleSubmit} className="modal-form">
+                {serverError && (
+                  <p className="modal-error-server">{serverError}</p>
+                )}
+
+                <div className="modal-field">
+                  <label htmlFor="r-name" className="modal-label">
+                    Họ tên
+                  </label>
+                  <input
+                    ref={nameRef}
+                    id="r-name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Nguyễn Văn An"
+                    className={`modal-input ${errors.name ? 'modal-input-err' : ''}`}
+                  />
+                  {errors.name && <p className="modal-error">{errors.name}</p>}
+                </div>
+
+                <div className="modal-field">
+                  <label htmlFor="r-email" className="modal-label">
+                    Email
+                  </label>
+                  <input
+                    id="r-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="an@example.com"
+                    className={`modal-input ${errors.email ? 'modal-input-err' : ''}`}
+                  />
+                  {errors.email && (
+                    <p className="modal-error">{errors.email}</p>
+                  )}
+                </div>
+
+                <div className="modal-field">
+                  <label htmlFor="r-password" className="modal-label">
+                    Mật khẩu
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      id="r-password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Ít nhất 8 ký tự"
+                      className={`modal-input ${errors.password ? 'modal-input-err' : ''}`}
+                      style={{ paddingRight: '2.5rem' }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      tabIndex={-1}
+                      aria-label={
+                        showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'
+                      }
+                      style={{
+                        position: 'absolute',
+                        right: '0.75rem',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#9e9590',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: 0,
+                      }}
+                    >
+                      {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="modal-error">{errors.password}</p>
+                  )}
+                </div>
+
+                <button type="submit" disabled={loading} className="modal-btn">
+                  {loading ? 'Đang đăng ký...' : 'Đăng ký miễn phí'}
+                </button>
+              </form>
+
+              <p className="modal-register">
+                Đã có tài khoản?{' '}
+                {onSwitchToLogin ? (
+                  <button
+                    onClick={onSwitchToLogin}
+                    className="modal-register-link"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Đăng nhập
+                  </button>
+                ) : (
+                  <a href="/login" className="modal-register-link">
+                    Đăng nhập
+                  </a>
+                )}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+
+      <style>{`
+        .modal-backdrop {
+          position: fixed; inset: 0; z-index: 200;
+          background: rgba(26, 23, 20, 0.55);
+          backdrop-filter: blur(6px);
+          display: flex; align-items: center; justify-content: center;
+          padding: 1rem; animation: fadeIn 0.18s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-box {
+          position: relative; background: #fff; border-radius: 20px;
+          padding: 2.5rem 2.25rem 2rem; width: 100%; max-width: 400px;
+          box-shadow: 0 24px 64px rgba(26,23,20,0.22);
+          animation: slideUp 0.2s ease;
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .modal-close {
+          position: absolute; top: 1rem; right: 1rem;
+          width: 28px; height: 28px; border-radius: 50%; border: none;
+          background: #f3f0ec; color: #6b6460; font-size: 0.75rem;
+          cursor: pointer; display: flex; align-items: center;
+          justify-content: center; transition: background 0.15s;
+        }
+        .modal-close:hover { background: #e8e3dd; color: #1a1714; }
+        .modal-logo { font-size: 1.4rem; color: #c9a96e; text-align: center; margin-bottom: 1rem; letter-spacing: 0.2em; }
+        .modal-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.6rem; font-weight: 600; color: #1a1714; text-align: center; margin-bottom: 0.3rem; }
+        .modal-sub { font-size: 0.875rem; color: #9e9590; text-align: center; margin-bottom: 1.75rem; font-weight: 300; }
+        .modal-form { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.25rem; }
+        .modal-field { display: flex; flex-direction: column; gap: 0.35rem; }
+        .modal-label { font-size: 0.8rem; font-weight: 500; color: #3a3430; }
+        .modal-input {
+          width: 100%; padding: 0.7rem 0.9rem;
+          border: 1px solid rgba(26,23,20,0.15); border-radius: 10px;
+          font-size: 0.9rem; color: #1a1714; background: #faf8f5;
+          outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+          font-family: inherit; box-sizing: border-box;
+        }
+        .modal-input:focus { border-color: #c9a96e; box-shadow: 0 0 0 3px rgba(201,169,110,0.15); background: #fff; }
+        .modal-input-err { border-color: #e05555; }
+        .modal-error { font-size: 0.75rem; color: #e05555; margin: 0; }
+        .modal-error-server { font-size: 0.82rem; color: #e05555; background: #fff5f5; border: 1px solid #ffd0d0; border-radius: 8px; padding: 0.6rem 0.75rem; margin: 0; }
+        .modal-btn {
+          width: 100%; padding: 0.85rem; background: #1a1714; color: #faf8f5;
+          border: none; border-radius: 100px; font-size: 0.95rem; font-weight: 500;
+          cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 0.25rem;
+        }
+        .modal-btn:hover:not(:disabled) { background: #3a3430; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,23,20,0.18); }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .modal-register { text-align: center; font-size: 0.82rem; color: #9e9590; margin: 0; }
+        .modal-register-link { color: #b5896a; text-decoration: none; font-weight: 500; }
+        .modal-register-link:hover { text-decoration: underline; }
+      `}</style>
+    </>
+  );
+
+  return createPortal(content, document.body);
+}

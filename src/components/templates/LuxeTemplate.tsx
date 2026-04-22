@@ -1,9 +1,20 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function LuxeTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -118,7 +129,7 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '5rem',
               fontWeight: 700,
               color: 'var(--card-accent)',
@@ -176,7 +187,7 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '5rem',
               fontWeight: 700,
               color: 'var(--card-accent)',
@@ -223,48 +234,7 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
               >
                 Đếm ngược đến ngày trọng đại
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                }}
-              >
-                {[
-                  { label: 'Ngày', value: '---' },
-                  { label: 'Giờ', value: '--' },
-                  { label: 'Phút', value: '--' },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    style={{ textAlign: 'center', minWidth: '40px' }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '1.5rem',
-                        fontWeight: 700,
-                        color: 'var(--card-accent)',
-                        lineHeight: 1,
-                        fontFamily: 'var(--card-font-heading)',
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.55rem',
-                        letterSpacing: '0.15em',
-                        opacity: 0.55,
-                        textTransform: 'uppercase',
-                        marginTop: '4px',
-                        color: '#f5f0e8',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CountdownWidget weddingDate={weddingDate} />
             </div>
           )}
 
@@ -280,6 +250,11 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
           >
             {formattedDate}
           </p>
+          {weddingTime && (
+            <p style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}>
+              🕐 {weddingTime}
+            </p>
+          )}
           {venue.name && (
             <p
               style={{
@@ -293,6 +268,19 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
               }}
             >
               {venue.name}
+            </p>
+          )}
+          {venue.address && (
+            <p
+              style={{
+                fontSize: '0.75rem',
+                opacity: 0.55,
+                fontStyle: 'italic',
+                marginTop: '3px',
+                animation: 'wFadeIn 0.8s ease 1.35s both',
+              }}
+            >
+              {venue.address}
             </p>
           )}
         </div>
@@ -407,89 +395,7 @@ export default function LuxeTemplate({ config }: { config: CardConfig }) {
         />
       </div>
 
-      {/* Schedule */}
-      {schedule.length > 0 && (
-        <div
-          style={{
-            maxWidth: '560px',
-            margin: '0 auto',
-            padding: '48px 48px 40px',
-          }}
-        >
-          <p
-            style={{
-              color: 'var(--card-accent)',
-              fontSize: '0.65rem',
-              letterSpacing: '0.35em',
-              textTransform: 'uppercase',
-              marginBottom: '28px',
-              textAlign: 'center',
-              opacity: 0.7,
-            }}
-          >
-            Chương trình
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            {schedule.map((item, i) => (
-              <div key={i}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '20px',
-                    padding: '14px 0',
-                  }}
-                >
-                  <span
-                    style={{
-                      color: 'var(--card-accent)',
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      letterSpacing: '0.1em',
-                      minWidth: '52px',
-                      paddingTop: '2px',
-                    }}
-                  >
-                    {item.time}
-                  </span>
-                  <div>
-                    <p
-                      style={{
-                        fontWeight: 600,
-                        fontSize: '0.9rem',
-                        color: '#f5f0e8',
-                      }}
-                    >
-                      {item.title}
-                    </p>
-                    {item.description && (
-                      <p
-                        style={{
-                          fontSize: '0.78rem',
-                          opacity: 0.55,
-                          marginTop: '3px',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                {i < schedule.length - 1 && (
-                  <div
-                    style={{
-                      height: '1px',
-                      background: 'var(--card-accent)',
-                      opacity: 0.15,
-                    }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Full-width gold separator */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '0 40px' }}>

@@ -39,10 +39,11 @@ export default function PlansPage() {
         Gói dịch vụ của tôi
       </h1>
       <p className="mb-8 text-gray-500">
-        Bạn đang dùng gói <span className="font-medium text-gray-800">Miễn phí</span>.
+        Bạn đang dùng gói{' '}
+        <span className="font-medium text-gray-800">Miễn phí</span>.
       </p>
 
-      <div className="grid gap-6 sm:grid-cols-2 max-w-2xl">
+      <div className="grid max-w-2xl gap-6 sm:grid-cols-2">
         {plans.map((plan) => (
           <div
             key={plan.name}
@@ -54,7 +55,9 @@ export default function PlansPage() {
           >
             <div className="mb-4 flex items-start justify-between">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">{plan.name}</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {plan.name}
+                </h2>
                 <p className="text-sm text-gray-500">{plan.desc}</p>
               </div>
               {plan.current && (
@@ -67,14 +70,22 @@ export default function PlansPage() {
             <p className="mb-6 text-3xl font-bold text-gray-900">
               {plan.price}
               {plan.period && (
-                <span className="text-base font-normal text-gray-400">{plan.period}</span>
+                <span className="text-base font-normal text-gray-400">
+                  {plan.period}
+                </span>
               )}
             </p>
 
             <ul className="mb-6 space-y-2">
               {plan.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                  <Check size={15} className="mt-0.5 flex-shrink-0 text-green-500" />
+                <li
+                  key={f}
+                  className="flex items-start gap-2 text-sm text-gray-600"
+                >
+                  <Check
+                    size={15}
+                    className="mt-0.5 flex-shrink-0 text-green-500"
+                  />
                   {f}
                 </li>
               ))}
@@ -83,7 +94,7 @@ export default function PlansPage() {
             {plan.soon ? (
               <button
                 disabled
-                className="w-full rounded-xl bg-gray-100 py-2.5 text-sm font-medium text-gray-400 cursor-not-allowed"
+                className="w-full cursor-not-allowed rounded-xl bg-gray-100 py-2.5 text-sm font-medium text-gray-400"
               >
                 Sắp ra mắt
               </button>

@@ -1,9 +1,20 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function ElegantTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -164,7 +175,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             <h1
               className="mb-3 font-bold"
               style={{
-                fontFamily: 'var(--card-font-heading, Georgia, serif)',
+                fontFamily: 'var(--card-font-couple, Georgia, serif)',
                 fontSize: '3.5rem',
                 lineHeight: 1.15,
                 letterSpacing: '0.02em',
@@ -212,7 +223,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             <h1
               className="mb-10 font-bold"
               style={{
-                fontFamily: 'var(--card-font-heading, Georgia, serif)',
+                fontFamily: 'var(--card-font-couple, Georgia, serif)',
                 fontSize: '3.5rem',
                 lineHeight: 1.15,
                 letterSpacing: '0.02em',
@@ -253,43 +264,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                 >
                   Đếm ngược đến ngày trọng đại
                 </p>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '16px',
-                  }}
-                >
-                  {[
-                    { label: 'Ngày', value: '---' },
-                    { label: 'Giờ', value: '--' },
-                    { label: 'Phút', value: '--' },
-                  ].map(({ label, value }) => (
-                    <div key={label} style={{ textAlign: 'center' }}>
-                      <div
-                        style={{
-                          fontSize: '1.4rem',
-                          fontWeight: 700,
-                          color: 'var(--card-accent)',
-                          lineHeight: 1,
-                        }}
-                      >
-                        {value}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '0.55rem',
-                          letterSpacing: '0.15em',
-                          opacity: 0.55,
-                          textTransform: 'uppercase',
-                          marginTop: '3px',
-                        }}
-                      >
-                        {label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <CountdownWidget weddingDate={weddingDate} />
               </div>
             )}
 
@@ -304,6 +279,13 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
             >
               {formattedDate}
             </p>
+            {weddingTime && (
+              <p
+                style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}
+              >
+                🕐 {weddingTime}
+              </p>
+            )}
             {venue.name && (
               <p
                 className="mt-2 text-sm tracking-widest uppercase"
@@ -314,6 +296,14 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
                 }}
               >
                 {venue.name}
+              </p>
+            )}
+            {venue.address && (
+              <p
+                className="mt-1 text-sm opacity-60"
+                style={{ animation: 'wFadeIn 0.8s ease 1.35s both' }}
+              >
+                {venue.address}
               </p>
             )}
           </div>
@@ -409,52 +399,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
         </div>
 
         {/* Schedule */}
-        {schedule.length > 0 && (
-          <div className="mx-auto max-w-lg px-10 py-14">
-            <h2
-              className="mb-8 text-center text-xs tracking-[0.3em] uppercase"
-              style={{ color: 'var(--card-accent)' }}
-            >
-              Chương trình
-            </h2>
-            <div className="space-y-6">
-              {schedule.map((item, i) => (
-                <div key={i} className="flex items-start gap-6">
-                  <div
-                    className="w-16 shrink-0 pt-0.5 text-right text-xs font-semibold"
-                    style={{
-                      color: 'var(--card-accent)',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    {item.time}
-                  </div>
-                  <div
-                    style={{
-                      width: '1px',
-                      background: 'var(--card-accent)',
-                      opacity: 0.4,
-                      minHeight: '40px',
-                    }}
-                  />
-                  <div>
-                    <p
-                      className="text-sm font-semibold"
-                      style={{ letterSpacing: '0.05em' }}
-                    >
-                      {item.title}
-                    </p>
-                    {item.description && (
-                      <p className="mt-1 text-xs italic opacity-60">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <ScheduleSection items={schedule} style={scheduleStyle} />
 
         {/* Gold divider */}
         <div className="mb-2 flex items-center justify-center px-16">

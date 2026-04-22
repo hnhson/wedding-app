@@ -1,13 +1,24 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 interface Props {
   config: CardConfig;
 }
 
 export default function ClassicTemplate({ config }: Props) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -87,11 +98,11 @@ export default function ClassicTemplate({ config }: Props) {
           <h1
             className="mb-2 text-5xl font-bold"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               animation: 'wFadeInUp 0.9s ease 0.15s both',
             }}
           >
-            {coupleNames.partner1 || 'Người 1'}
+            {coupleNames.partner1 || 'Cô Dâu'}
           </h1>
           <p
             className="my-4 text-3xl"
@@ -105,11 +116,11 @@ export default function ClassicTemplate({ config }: Props) {
           <h1
             className="mb-6 text-5xl font-bold"
             style={{
-              fontFamily: 'var(--card-font-heading, serif)',
+              fontFamily: 'var(--card-font-couple, serif)',
               animation: 'wFadeInUp 0.9s ease 0.7s both',
             }}
           >
-            {coupleNames.partner2 || 'Người 2'}
+            {coupleNames.partner2 || 'Chú Rể'}
           </h1>
           <div
             className="mx-auto mb-6 h-px w-32"
@@ -137,43 +148,7 @@ export default function ClassicTemplate({ config }: Props) {
               >
                 Đếm ngược đến ngày trọng đại
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '16px',
-                }}
-              >
-                {[
-                  { label: 'Ngày', value: '---' },
-                  { label: 'Giờ', value: '--' },
-                  { label: 'Phút', value: '--' },
-                ].map(({ label, value }) => (
-                  <div key={label} style={{ textAlign: 'center' }}>
-                    <div
-                      style={{
-                        fontSize: '1.4rem',
-                        fontWeight: 700,
-                        color: 'var(--card-accent)',
-                        lineHeight: 1,
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.55rem',
-                        letterSpacing: '0.15em',
-                        opacity: 0.55,
-                        textTransform: 'uppercase',
-                        marginTop: '3px',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CountdownWidget weddingDate={weddingDate} />
             </div>
           )}
           <p
@@ -182,12 +157,25 @@ export default function ClassicTemplate({ config }: Props) {
           >
             {formattedDate}
           </p>
+          {weddingTime && (
+            <p style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}>
+              🕐 {weddingTime}
+            </p>
+          )}
           {venue.name && (
             <p
               className="mt-2 text-base opacity-80"
               style={{ animation: 'wFadeIn 0.8s ease 1.2s both' }}
             >
               {venue.name}
+            </p>
+          )}
+          {venue.address && (
+            <p
+              className="mt-1 text-sm opacity-60"
+              style={{ animation: 'wFadeIn 0.8s ease 1.35s both' }}
+            >
+              {venue.address}
             </p>
           )}
         </div>
@@ -213,45 +201,7 @@ export default function ClassicTemplate({ config }: Props) {
         </div>
       )}
 
-      {/* Schedule */}
-      {schedule.length > 0 && (
-        <div
-          className="px-8 py-12"
-          style={{ background: 'var(--card-secondary)' }}
-        >
-          <div className="mx-auto max-w-2xl">
-            <h2
-              className="mb-8 text-center text-2xl"
-              style={{
-                fontFamily: 'var(--card-font-heading, serif)',
-                color: 'var(--card-accent)',
-              }}
-            >
-              Lịch trình
-            </h2>
-            <div className="space-y-6">
-              {schedule.map((item, i) => (
-                <div key={i} className="flex gap-4">
-                  <div
-                    className="w-20 shrink-0 text-right text-sm font-semibold"
-                    style={{ color: 'var(--card-accent)' }}
-                  >
-                    {item.time}
-                  </div>
-                  <div>
-                    <p className="font-semibold">{item.title}</p>
-                    {item.description && (
-                      <p className="mt-1 text-sm opacity-70">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Venue */}
       {venue.address && (

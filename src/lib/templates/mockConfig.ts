@@ -6,6 +6,7 @@ export const MOCK_CARD_CONFIG: Omit<
 > = {
   coupleNames: { partner1: 'Lan Anh', partner2: 'Minh Khoa' },
   weddingDate: '2025-10-18',
+  weddingTime: '18:00',
   venue: {
     name: 'Grand Palace Ballroom',
     address: '123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh',

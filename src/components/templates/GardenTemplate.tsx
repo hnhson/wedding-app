@@ -1,9 +1,20 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function GardenTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -179,7 +190,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           </p>
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, sans-serif)',
+              fontFamily: 'var(--card-font-couple, sans-serif)',
               fontSize: '2.6rem',
               fontWeight: 700,
               color: '#ffffff',
@@ -219,6 +230,13 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           style={{ fontSize: '0.82rem', letterSpacing: '0.05em', opacity: 0.9 }}
         >
           {formattedDate}
+          {weddingTime && (
+            <span
+              style={{ marginLeft: '8px', opacity: 0.85, fontSize: '1.1rem' }}
+            >
+              🕐 {weddingTime}
+            </span>
+          )}
         </span>
         {venue.name && (
           <>
@@ -227,6 +245,19 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
               {venue.name}
             </span>
           </>
+        )}
+        {venue.address && (
+          <p
+            style={{
+              fontSize: '0.75rem',
+              opacity: 0.55,
+              fontStyle: 'italic',
+              marginTop: '3px',
+              animation: 'wFadeIn 0.8s ease 1.35s both',
+            }}
+          >
+            {venue.address}
+          </p>
         )}
       </div>
 
@@ -250,43 +281,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
           >
             Đếm ngược đến ngày trọng đại
           </p>
-          <div
-            style={{ display: 'flex', justifyContent: 'center', gap: '20px' }}
-          >
-            {[
-              { label: 'Ngày', value: '---' },
-              { label: 'Giờ', value: '--' },
-              { label: 'Phút', value: '--' },
-            ].map(({ label, value }) => (
-              <div
-                key={label}
-                style={{ textAlign: 'center', minWidth: '40px' }}
-              >
-                <div
-                  style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: 'var(--card-accent)',
-                    lineHeight: 1,
-                    fontFamily: 'var(--card-font-heading)',
-                  }}
-                >
-                  {value}
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.55rem',
-                    letterSpacing: '0.15em',
-                    opacity: 0.55,
-                    textTransform: 'uppercase',
-                    marginTop: '4px',
-                  }}
-                >
-                  {label}
-                </div>
-              </div>
-            ))}
-          </div>
+          <CountdownWidget weddingDate={weddingDate} />
         </div>
       )}
 
@@ -356,101 +351,7 @@ export default function GardenTemplate({ config }: { config: CardConfig }) {
         </div>
       )}
 
-      {/* Schedule */}
-      {schedule.length > 0 && (
-        <div
-          style={{ padding: '32px 48px', maxWidth: '640px', margin: '0 auto' }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              marginBottom: '24px',
-            }}
-          >
-            <div
-              style={{
-                height: '1px',
-                flex: 1,
-                background: 'var(--card-accent)',
-                opacity: 0.3,
-              }}
-            />
-            <span style={{ color: 'var(--card-accent)', fontSize: '14px' }}>
-              ⚘ ❀ ⚘
-            </span>
-            <div
-              style={{
-                height: '1px',
-                flex: 1,
-                background: 'var(--card-accent)',
-                opacity: 0.3,
-              }}
-            />
-          </div>
-
-          <h2
-            style={{
-              fontFamily: 'var(--card-font-heading, sans-serif)',
-              fontSize: '1.1rem',
-              fontWeight: 600,
-              color: 'var(--card-primary)',
-              marginBottom: '20px',
-              letterSpacing: '0.03em',
-            }}
-          >
-            Chương trình
-          </h2>
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
-          >
-            {schedule.map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '14px',
-                  padding: '12px 16px',
-                  background: 'var(--card-secondary)',
-                  borderLeft: '3px solid var(--card-accent)',
-                  borderRadius: '0 6px 6px 0',
-                }}
-              >
-                <span
-                  style={{
-                    color: 'var(--card-accent)',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.05em',
-                    minWidth: '52px',
-                    paddingTop: '2px',
-                  }}
-                >
-                  {item.time}
-                </span>
-                <div>
-                  <p style={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                    {item.title}
-                  </p>
-                  {item.description && (
-                    <p
-                      style={{
-                        fontSize: '0.78rem',
-                        opacity: 0.65,
-                        marginTop: '3px',
-                      }}
-                    >
-                      {item.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Venue */}
       {venue.address && (

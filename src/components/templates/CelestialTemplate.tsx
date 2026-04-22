@@ -1,5 +1,7 @@
 import type { CardConfig } from '@/types/card';
+import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 const STARS: {
   top: string;
@@ -28,8 +30,17 @@ const STARS: {
 ];
 
 export default function CelestialTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
+
+  const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
     ? new Date(weddingDate).toLocaleDateString('vi-VN', {
         weekday: 'long',
@@ -248,7 +259,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '3.4rem',
               fontWeight: 700,
               lineHeight: 1.1,
@@ -339,7 +350,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
 
           <h1
             style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
+              fontFamily: 'var(--card-font-couple, Georgia, serif)',
               fontSize: '3.4rem',
               fontWeight: 700,
               lineHeight: 1.1,
@@ -430,48 +441,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
               >
                 Đếm ngược đến ngày trọng đại
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                }}
-              >
-                {[
-                  { label: 'Ngày', value: '---' },
-                  { label: 'Giờ', value: '--' },
-                  { label: 'Phút', value: '--' },
-                ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    style={{ textAlign: 'center', minWidth: '40px' }}
-                  >
-                    <div
-                      style={{
-                        fontSize: '1.5rem',
-                        fontWeight: 700,
-                        color: 'var(--card-accent)',
-                        lineHeight: 1,
-                        fontFamily: 'var(--card-font-heading)',
-                      }}
-                    >
-                      {value}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '0.52rem',
-                        letterSpacing: '0.15em',
-                        opacity: 0.5,
-                        textTransform: 'uppercase',
-                        marginTop: '4px',
-                        color: 'var(--card-bg)',
-                      }}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <CountdownWidget weddingDate={weddingDate} />
             </div>
           )}
 
@@ -487,6 +457,11 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
           >
             {formattedDate}
           </p>
+          {weddingTime && (
+            <p style={{ fontSize: '1.1rem', opacity: 0.85, marginTop: '6px' }}>
+              🕐 {weddingTime}
+            </p>
+          )}
           {venue.name && (
             <p
               style={{
@@ -498,6 +473,19 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
               }}
             >
               {venue.name}
+            </p>
+          )}
+          {venue.address && (
+            <p
+              style={{
+                fontSize: '0.75rem',
+                opacity: 0.55,
+                fontStyle: 'italic',
+                marginTop: '3px',
+                animation: 'wFadeIn 0.8s ease 1.35s both',
+              }}
+            >
+              {venue.address}
             </p>
           )}
         </div>
@@ -572,122 +560,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
             </div>
           )}
 
-          {/* Schedule */}
-          {schedule.length > 0 && (
-            <div
-              style={{
-                padding: '32px 48px',
-                maxWidth: '580px',
-                margin: '0 auto',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  marginBottom: '20px',
-                }}
-              >
-                <div
-                  style={{
-                    height: '1px',
-                    flex: 1,
-                    background: 'var(--card-accent)',
-                    opacity: 0.3,
-                  }}
-                />
-                <span style={{ color: 'var(--card-accent)', fontSize: '10px' }}>
-                  ★ ✦ ★
-                </span>
-                <div
-                  style={{
-                    height: '1px',
-                    flex: 1,
-                    background: 'var(--card-accent)',
-                    opacity: 0.3,
-                  }}
-                />
-              </div>
-              <h2
-                style={{
-                  fontFamily: 'var(--card-font-heading, Georgia, serif)',
-                  fontSize: '1.1rem',
-                  color: 'var(--card-primary)',
-                  marginBottom: '20px',
-                  textAlign: 'center',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Chương trình
-              </h2>
-              <div
-                style={{ display: 'flex', flexDirection: 'column', gap: '0' }}
-              >
-                {schedule.map((item, i) => (
-                  <div key={i}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '16px',
-                        padding: '13px 0',
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: 'var(--card-accent)',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          minWidth: '52px',
-                          paddingTop: '2px',
-                          letterSpacing: '0.05em',
-                        }}
-                      >
-                        {item.time}
-                      </span>
-                      <span
-                        style={{
-                          color: 'var(--card-accent)',
-                          fontSize: '9px',
-                          paddingTop: '4px',
-                        }}
-                      >
-                        ★
-                      </span>
-                      <div>
-                        <p style={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                          {item.title}
-                        </p>
-                        {item.description && (
-                          <p
-                            style={{
-                              fontSize: '0.78rem',
-                              opacity: 0.6,
-                              marginTop: '3px',
-                              fontStyle: 'italic',
-                            }}
-                          >
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    {i < schedule.length - 1 && (
-                      <div
-                        style={{
-                          height: '1px',
-                          background: 'var(--card-accent)',
-                          opacity: 0.12,
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <ScheduleSection items={schedule} style={scheduleStyle} />
 
           {/* Venue */}
           {venue.address && (

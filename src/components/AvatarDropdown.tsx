@@ -205,12 +205,6 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
         .avatar-dropdown-item:hover {
           background: #faf8f5;
         }
-        .avatar-dropdown-signout {
-          color: #b04040;
-        }
-        .avatar-dropdown-signout:hover {
-          background: #fff5f5;
-        }
         .dropdown-item-icon {
           font-size: 0.8rem;
           color: #c9a96e;
@@ -218,9 +212,9 @@ export default function AvatarDropdown({ avatarUrl, email, initial }: Props) {
           text-align: center;
           flex-shrink: 0;
         }
-        .avatar-dropdown-signout .dropdown-item-icon {
-          color: #b04040;
-        }
+        .avatar-dropdown-signout { color: #b04040; }
+        .avatar-dropdown-signout:hover { background: #fff5f5; }
+        .avatar-dropdown-signout .dropdown-item-icon { color: #b04040; }
       `}</style>
     </div>
   );

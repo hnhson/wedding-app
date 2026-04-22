@@ -54,10 +54,7 @@ export default function Logo({
         />
 
         {/* Small diamond on top of the rings junction */}
-        <path
-          d="M24 13.5 L26 16.5 L24 19.5 L22 16.5 Z"
-          fill={gold}
-        />
+        <path d="M24 13.5 L26 16.5 L24 19.5 L22 16.5 Z" fill={gold} />
 
         {/* Leaf sprigs — left */}
         <path

@@ -64,10 +64,18 @@ export interface MusicConfig {
   loop: boolean;
 }
 
+export type ScheduleStyle =
+  | 'timeline'
+  | 'cards'
+  | 'minimal'
+  | 'elegant'
+  | 'steps';
+
 export interface CardConfig {
   templateId: string;
   coupleNames: { partner1: string; partner2: string };
   weddingDate: string;
+  weddingTime?: string;
   venue: {
     name: string;
     address: string;
@@ -77,9 +85,12 @@ export interface CardConfig {
   };
   loveStory: string;
   schedule: ScheduleItem[];
+  scheduleStyle?: ScheduleStyle;
   families: FamilyInfo[];
   colorPalette: string;
   fontPair: string;
+  fontCouple?: string;
+  fontSchedule?: string;
   heroImage: string | null;
   gallery: string[];
   overlayElements?: OverlayElement[];
