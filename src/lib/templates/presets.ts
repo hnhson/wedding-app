@@ -76,15 +76,29 @@ export const COLOR_PALETTES: Record<string, ColorPalette> = {
 };
 
 export const FONT_PAIRS: Record<string, FontPair> = {
+  // Vietnamese-friendly pairs (recommended for Vietnamese names)
+  'dancing-be-vietnam': { heading: 'Dancing Script', body: 'Be Vietnam Pro' },
+  'playfair-be-vietnam': {
+    heading: 'Playfair Display',
+    body: 'Be Vietnam Pro',
+  },
+  'cormorant-be-vietnam': {
+    heading: 'Cormorant Garamond',
+    body: 'Be Vietnam Pro',
+  },
+  'great-vibes-be-vietnam': { heading: 'Great Vibes', body: 'Be Vietnam Pro' },
+  'noto-be-vietnam': { heading: 'Noto Serif', body: 'Be Vietnam Pro' },
+  // Classic pairs
   'playfair-lato': { heading: 'Playfair Display', body: 'Lato' },
   'cormorant-jost': { heading: 'Cormorant Garamond', body: 'Jost' },
   'libre-nunito': { heading: 'Libre Baskerville', body: 'Nunito' },
   'cinzel-raleway': { heading: 'Cinzel', body: 'Raleway' },
   'great-vibes-montserrat': { heading: 'Great Vibes', body: 'Montserrat' },
   'sacramento-poppins': { heading: 'Sacramento', body: 'Poppins' },
-  'tangerine-roboto': { heading: 'Tangerine', body: 'Roboto' },
+  'tangerine-mulish': { heading: 'Tangerine', body: 'Mulish' },
   'allura-source': { heading: 'Allura', body: 'Source Sans 3' },
   'alex-josefin': { heading: 'Alex Brush', body: 'Josefin Sans' },
+  'pinyon-josefin': { heading: 'Pinyon Script', body: 'Josefin Sans' },
   'gfs-open': { heading: 'GFS Didot', body: 'Open Sans' },
 };
 

@@ -6,6 +6,7 @@ import {
   DEFAULT_PALETTE,
   DEFAULT_FONT_PAIR,
 } from '@/lib/templates/presets';
+import FontLoader from './FontLoader';
 import ClassicTemplate from './ClassicTemplate';
 import ModernTemplate from './ModernTemplate';
 import MinimalTemplate from './MinimalTemplate';
@@ -52,6 +53,7 @@ export default function TemplateRenderer({ config, className }: Props) {
 
   return (
     <div style={cssVars} className={className}>
+      <FontLoader />
       <TemplateComponent config={config} />
     </div>
   );
