@@ -15,7 +15,10 @@ export default function DashboardLoading() {
         <div className="mb-4 h-4 w-20 rounded bg-gray-200" />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
           {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+            <div
+              key={i}
+              className="rounded-xl border border-gray-100 bg-gray-50 p-4"
+            >
               <div className="h-5 w-5 rounded bg-gray-200" />
               <div className="mt-2 h-7 w-10 rounded bg-gray-200" />
               <div className="mt-1.5 h-3 w-full rounded bg-gray-200" />
@@ -29,7 +32,10 @@ export default function DashboardLoading() {
         <div className="mb-4 h-4 w-24 rounded bg-gray-200" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex flex-col rounded-xl border bg-white shadow-sm">
+            <div
+              key={i}
+              className="flex flex-col rounded-xl border bg-white shadow-sm"
+            >
               <div className="border-b px-5 py-4">
                 <div className="h-5 w-3/4 rounded bg-gray-200" />
                 <div className="mt-2 h-3.5 w-1/2 rounded bg-gray-100" />

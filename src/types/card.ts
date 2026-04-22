@@ -64,6 +64,13 @@ export interface MusicConfig {
   loop: boolean;
 }
 
+export type ScheduleStyle =
+  | 'timeline'
+  | 'cards'
+  | 'minimal'
+  | 'elegant'
+  | 'steps';
+
 export interface CardConfig {
   templateId: string;
   coupleNames: { partner1: string; partner2: string };
@@ -78,6 +85,7 @@ export interface CardConfig {
   };
   loveStory: string;
   schedule: ScheduleItem[];
+  scheduleStyle?: ScheduleStyle;
   families: FamilyInfo[];
   colorPalette: string;
   fontPair: string;

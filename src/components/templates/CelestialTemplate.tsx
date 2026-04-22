@@ -1,6 +1,7 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 const STARS: {
   top: string;
@@ -29,8 +30,15 @@ const STARS: {
 ];
 
 export default function CelestialTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -552,122 +560,7 @@ export default function CelestialTemplate({ config }: { config: CardConfig }) {
             </div>
           )}
 
-          {/* Schedule */}
-          {schedule.length > 0 && (
-            <div
-              style={{
-                padding: '32px 48px',
-                maxWidth: '580px',
-                margin: '0 auto',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  marginBottom: '20px',
-                }}
-              >
-                <div
-                  style={{
-                    height: '1px',
-                    flex: 1,
-                    background: 'var(--card-accent)',
-                    opacity: 0.3,
-                  }}
-                />
-                <span style={{ color: 'var(--card-accent)', fontSize: '10px' }}>
-                  ★ ✦ ★
-                </span>
-                <div
-                  style={{
-                    height: '1px',
-                    flex: 1,
-                    background: 'var(--card-accent)',
-                    opacity: 0.3,
-                  }}
-                />
-              </div>
-              <h2
-                style={{
-                  fontFamily: 'var(--card-font-heading, Georgia, serif)',
-                  fontSize: '1.1rem',
-                  color: 'var(--card-primary)',
-                  marginBottom: '20px',
-                  textAlign: 'center',
-                  letterSpacing: '0.05em',
-                }}
-              >
-                Chương trình
-              </h2>
-              <div
-                style={{ display: 'flex', flexDirection: 'column', gap: '0' }}
-              >
-                {schedule.map((item, i) => (
-                  <div key={i}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '16px',
-                        padding: '13px 0',
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: 'var(--card-accent)',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          minWidth: '52px',
-                          paddingTop: '2px',
-                          letterSpacing: '0.05em',
-                        }}
-                      >
-                        {item.time}
-                      </span>
-                      <span
-                        style={{
-                          color: 'var(--card-accent)',
-                          fontSize: '9px',
-                          paddingTop: '4px',
-                        }}
-                      >
-                        ★
-                      </span>
-                      <div>
-                        <p style={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                          {item.title}
-                        </p>
-                        {item.description && (
-                          <p
-                            style={{
-                              fontSize: '0.78rem',
-                              opacity: 0.6,
-                              marginTop: '3px',
-                              fontStyle: 'italic',
-                            }}
-                          >
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    {i < schedule.length - 1 && (
-                      <div
-                        style={{
-                          height: '1px',
-                          background: 'var(--card-accent)',
-                          opacity: 0.12,
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <ScheduleSection items={schedule} style={scheduleStyle} />
 
           {/* Venue */}
           {venue.address && (

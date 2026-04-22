@@ -1,10 +1,18 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function VintageTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -306,79 +314,7 @@ export default function VintageTemplate({ config }: { config: CardConfig }) {
           }}
         />
 
-        {/* Schedule */}
-        {schedule.length > 0 && (
-          <div
-            style={{
-              padding: '28px 52px',
-              maxWidth: '600px',
-              margin: '0 auto',
-            }}
-          >
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <span
-                style={{
-                  fontFamily: 'var(--card-font-heading, Georgia, serif)',
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.25em',
-                  textTransform: 'uppercase',
-                  color: 'var(--card-accent)',
-                }}
-              >
-                ~~~ Chương trình ~~~
-              </span>
-            </div>
-            <div
-              style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
-            >
-              {schedule.map((item, i) => (
-                <div
-                  key={i}
-                  style={{
-                    display: 'flex',
-                    gap: '16px',
-                    alignItems: 'flex-start',
-                    padding: '10px 0',
-                    borderBottom:
-                      i < schedule.length - 1
-                        ? '1px dotted var(--card-primary)'
-                        : 'none',
-                  }}
-                >
-                  <span
-                    style={{
-                      color: 'var(--card-accent)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      minWidth: '52px',
-                      paddingTop: '1px',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    {item.time}
-                  </span>
-                  <div>
-                    <p style={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                      {item.title}
-                    </p>
-                    {item.description && (
-                      <p
-                        style={{
-                          fontSize: '0.78rem',
-                          opacity: 0.6,
-                          marginTop: '3px',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <ScheduleSection items={schedule} style={scheduleStyle} />
 
         {/* Dashed rule */}
         <div

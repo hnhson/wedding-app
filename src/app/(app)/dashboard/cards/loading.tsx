@@ -13,7 +13,10 @@ export default function CardsLoading() {
       {/* Cards grid */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex flex-col rounded-xl border bg-white shadow-sm">
+          <div
+            key={i}
+            className="flex flex-col rounded-xl border bg-white shadow-sm"
+          >
             <div className="border-b px-5 py-4">
               <div className="h-5 w-3/4 rounded bg-gray-200" />
               <div className="mt-2 h-3.5 w-1/2 rounded bg-gray-100" />

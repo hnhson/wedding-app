@@ -1,10 +1,18 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function ElegantTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -391,52 +399,7 @@ export default function ElegantTemplate({ config }: { config: CardConfig }) {
         </div>
 
         {/* Schedule */}
-        {schedule.length > 0 && (
-          <div className="mx-auto max-w-lg px-10 py-14">
-            <h2
-              className="mb-8 text-center text-xs tracking-[0.3em] uppercase"
-              style={{ color: 'var(--card-accent)' }}
-            >
-              Chương trình
-            </h2>
-            <div className="space-y-6">
-              {schedule.map((item, i) => (
-                <div key={i} className="flex items-start gap-6">
-                  <div
-                    className="w-16 shrink-0 pt-0.5 text-right text-xs font-semibold"
-                    style={{
-                      color: 'var(--card-accent)',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    {item.time}
-                  </div>
-                  <div
-                    style={{
-                      width: '1px',
-                      background: 'var(--card-accent)',
-                      opacity: 0.4,
-                      minHeight: '40px',
-                    }}
-                  />
-                  <div>
-                    <p
-                      className="text-sm font-semibold"
-                      style={{ letterSpacing: '0.05em' }}
-                    >
-                      {item.title}
-                    </p>
-                    {item.description && (
-                      <p className="mt-1 text-xs italic opacity-60">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <ScheduleSection items={schedule} style={scheduleStyle} />
 
         {/* Gold divider */}
         <div className="mb-2 flex items-center justify-center px-16">

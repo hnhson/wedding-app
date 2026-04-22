@@ -1,14 +1,22 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 interface Props {
   config: CardConfig;
 }
 
 export default function ClassicTemplate({ config }: Props) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -193,45 +201,7 @@ export default function ClassicTemplate({ config }: Props) {
         </div>
       )}
 
-      {/* Schedule */}
-      {schedule.length > 0 && (
-        <div
-          className="px-8 py-12"
-          style={{ background: 'var(--card-secondary)' }}
-        >
-          <div className="mx-auto max-w-2xl">
-            <h2
-              className="mb-8 text-center text-2xl"
-              style={{
-                fontFamily: 'var(--card-font-heading, serif)',
-                color: 'var(--card-accent)',
-              }}
-            >
-              Lịch trình
-            </h2>
-            <div className="space-y-6">
-              {schedule.map((item, i) => (
-                <div key={i} className="flex gap-4">
-                  <div
-                    className="w-20 shrink-0 text-right text-sm font-semibold"
-                    style={{ color: 'var(--card-accent)' }}
-                  >
-                    {item.time}
-                  </div>
-                  <div>
-                    <p className="font-semibold">{item.title}</p>
-                    {item.description && (
-                      <p className="mt-1 text-sm opacity-70">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Venue */}
       {venue.address && (

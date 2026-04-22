@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import type { CardConfig, ScheduleItem } from '@/types/card';
+import type { CardConfig, ScheduleItem, ScheduleStyle } from '@/types/card';
 
 interface Props {
   config: CardConfig;
@@ -160,7 +160,46 @@ export default function ContentPanel({ config, onChange }: Props) {
 
       {/* Schedule */}
       <div>
-        <Label className="mb-2 block">Lịch trình</Label>
+        <Label className="mb-3 block">Chương trình</Label>
+
+        {/* Style picker */}
+        <div className="mb-4">
+          <p className="mb-2 text-xs text-gray-400">Phong cách hiển thị</p>
+          <div className="grid grid-cols-5 gap-1.5">
+            {(
+              [
+                { value: 'timeline', label: 'Dòng thời gian', icon: '⬡' },
+                { value: 'cards', label: 'Thẻ', icon: '▣' },
+                { value: 'minimal', label: 'Tối giản', icon: '≡' },
+                { value: 'elegant', label: 'Trang trọng', icon: '◆' },
+                { value: 'steps', label: 'Các bước', icon: '①' },
+              ] as { value: ScheduleStyle; label: string; icon: string }[]
+            ).map((opt) => {
+              const active = (config.scheduleStyle ?? 'timeline') === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => onChange({ scheduleStyle: opt.value })}
+                  title={opt.label}
+                  className={`flex flex-col items-center gap-1 rounded-lg border px-1 py-2 text-xs transition-colors ${
+                    active
+                      ? 'border-gray-900 bg-gray-900 text-white'
+                      : 'border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700'
+                  }`}
+                >
+                  <span className="text-base leading-none">{opt.icon}</span>
+                  <span
+                    className="text-center leading-tight"
+                    style={{ fontSize: '10px' }}
+                  >
+                    {opt.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
         {schedule.map((item, i) => (
           <div
             key={i}

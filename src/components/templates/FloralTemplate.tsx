@@ -1,10 +1,18 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function FloralTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -232,38 +240,7 @@ export default function FloralTemplate({ config }: { config: CardConfig }) {
         </div>
       )}
 
-      {schedule.length > 0 && (
-        <div
-          className="px-8 py-12"
-          style={{ background: 'var(--card-secondary)' }}
-        >
-          <div className="mx-auto max-w-lg text-center">
-            <p
-              className="mb-8 text-3xl"
-              style={{
-                fontFamily: 'var(--card-font-heading)',
-                color: 'var(--card-accent)',
-              }}
-            >
-              Chương trình
-            </p>
-            {schedule.map((item, i) => (
-              <div key={i} className="mb-6">
-                <p
-                  className="text-sm font-semibold"
-                  style={{ color: 'var(--card-accent)' }}
-                >
-                  {item.time}
-                </p>
-                <p className="font-medium">{item.title}</p>
-                {item.description && (
-                  <p className="text-sm opacity-70">{item.description}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

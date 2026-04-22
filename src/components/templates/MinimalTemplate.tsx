@@ -1,10 +1,18 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function MinimalTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -175,19 +183,7 @@ export default function MinimalTemplate({ config }: { config: CardConfig }) {
           </div>
         )}
 
-        {schedule.length > 0 && (
-          <div className="mb-16">
-            <p className="mb-6 text-xs tracking-widest uppercase opacity-50">
-              Lịch trình
-            </p>
-            {schedule.map((item, i) => (
-              <div key={i} className="mb-4 flex gap-6 text-sm">
-                <span className="w-14 shrink-0 opacity-50">{item.time}</span>
-                <span>{item.title}</span>
-              </div>
-            ))}
-          </div>
-        )}
+        <ScheduleSection items={schedule} style={scheduleStyle} />
 
         {venue.address && (
           <div className="text-center text-sm opacity-70">

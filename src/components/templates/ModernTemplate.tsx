@@ -1,10 +1,18 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function ModernTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -200,49 +208,7 @@ export default function ModernTemplate({ config }: { config: CardConfig }) {
         </div>
       )}
 
-      {schedule.length > 0 && (
-        <div
-          className="border-t px-8 py-16"
-          style={{
-            borderColor: 'var(--card-secondary)',
-            color: 'var(--card-primary)',
-          }}
-        >
-          <div className="mx-auto max-w-2xl">
-            <h2
-              className="mb-8 text-xl font-light"
-              style={{
-                fontFamily: 'var(--card-font-heading, serif)',
-                color: 'var(--card-accent)',
-              }}
-            >
-              Schedule
-            </h2>
-            {schedule.map((item, i) => (
-              <div
-                key={i}
-                className="mb-6 flex gap-8 border-b pb-6"
-                style={{ borderColor: 'var(--card-secondary)' }}
-              >
-                <p
-                  className="w-16 shrink-0 text-sm font-bold"
-                  style={{ color: 'var(--card-accent)' }}
-                >
-                  {item.time}
-                </p>
-                <div>
-                  <p className="font-semibold">{item.title}</p>
-                  {item.description && (
-                    <p className="mt-1 text-sm opacity-60">
-                      {item.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Gallery */}
       {config.gallery && config.gallery.length > 0 && (

@@ -1,10 +1,18 @@
 import type { CardConfig } from '@/types/card';
 import CountdownWidget from '@/components/CountdownWidget';
 import FamiliesSection from './FamiliesSection';
+import ScheduleSection from './ScheduleSection';
 
 export default function RomanceTemplate({ config }: { config: CardConfig }) {
-  const { coupleNames, weddingDate, venue, loveStory, schedule, heroImage } =
-    config;
+  const {
+    coupleNames,
+    weddingDate,
+    venue,
+    loveStory,
+    schedule,
+    scheduleStyle,
+    heroImage,
+  } = config;
 
   const weddingTime = config.weddingTime ?? '';
   const formattedDate = weddingDate
@@ -272,60 +280,7 @@ export default function RomanceTemplate({ config }: { config: CardConfig }) {
         </span>
       </div>
 
-      {/* Schedule */}
-      {schedule.length > 0 && (
-        <div
-          className="mx-auto max-w-lg px-10 py-14"
-          style={{
-            background: 'rgba(255,255,255,0.25)',
-            backdropFilter: 'blur(4px)',
-          }}
-        >
-          <h2
-            className="mb-8 text-center"
-            style={{
-              fontFamily: 'var(--card-font-heading, Georgia, serif)',
-              fontStyle: 'italic',
-              color: 'var(--card-accent)',
-              fontSize: '1.3rem',
-            }}
-          >
-            Lịch trình
-          </h2>
-          <div className="space-y-7">
-            {schedule.map((item, i) => (
-              <div key={i} className="text-center">
-                <span
-                  className="text-xs font-semibold tracking-wider uppercase"
-                  style={{ color: 'var(--card-accent)' }}
-                >
-                  {item.time}
-                </span>
-                <p className="mt-1 text-sm font-semibold">{item.title}</p>
-                {item.description && (
-                  <p
-                    className="mt-0.5 text-xs italic"
-                    style={{ opacity: 0.65 }}
-                  >
-                    {item.description}
-                  </p>
-                )}
-                {i < schedule.length - 1 && (
-                  <div
-                    className="mx-auto mt-5"
-                    style={{
-                      height: '1px',
-                      width: '40px',
-                      background: 'var(--card-accent)',
-                      opacity: 0.3,
-                    }}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <ScheduleSection items={schedule} style={scheduleStyle} />
 
       {/* Heart divider */}
       <div
